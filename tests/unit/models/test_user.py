@@ -1,20 +1,21 @@
-from unittest import TestCase
+from werkzeug.security import safe_str_cmp
+
 from models.user import UserModel
+from tests.base_test import setUp_tearDown, setUpClass
 
 
-class ModelTest(TestCase):
+def test_create_user(setUp_tearDown, setUpClass):
+    user = UserModel("xyz", "hvhj!@#")
 
-    def test_create_user(self):
-        user = UserModel("xyz", "hvhj!@#")
+    assert safe_str_cmp(user.username, 'xya'), "incorrect username"
+    assert safe_str_cmp(user.password, "hvhj!@#"), "incorrect password"
 
-        self.assertEqual(user.username, 'xyz', "incorrect username")
-        self.assertEqual(user.password, 'hvhj!@#', "incorrect password")
 
-    def test_item_json(self):
-        user = UserModel("xyz", "hvhj!@#")
-        expected = {
-            'username': 'xyz',
-            'password': 'hvhj!@#'
-        }
-
-        self.assertEqual(user.json(), expected, f"expected {expected}")
+def test_item_json(setUp_tearDown, setUpClass):
+    user = UserModel("xyz", "hvhj!@#")
+    expected = {
+        'username': 'xyz',
+        'password': 'hvhj!@#'
+    }
+    similar_records = expected.items() & user.json().items()
+    assert len(similar_records) == len(expected), f"expected {expected}"
