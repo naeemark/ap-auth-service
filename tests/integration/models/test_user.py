@@ -9,6 +9,7 @@ class UserTest(BaseTest):
 
             user.save_to_db()
             self.assertIsNotNone(UserModel.find_by_username("xyz"))
+            self.assertIsNotNone(UserModel.find_by_id(1))
 
             user.delete_from_db()
             self.assertIsNone(UserModel.find_by_username("xyz"), "User should be deleted")

@@ -3,6 +3,7 @@ from models.user import UserModel
 
 
 class ModelTest(TestCase):
+
     def test_create_user(self):
         user = UserModel("xyz", "hvhj!@#")
 
