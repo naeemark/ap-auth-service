@@ -7,13 +7,12 @@ from werkzeug.security import safe_str_cmp
 from models.user import UserModel
 from constant.exception import Exception
 from constant.success_message import USER_CREATION
-from constant.rules import password_policy
 from validation.resources import UserRegisterValidate
 
 
 class UserRegister(Resource):
     parser = reqparse.RequestParser()
-    parser.add_argument('username',
+    parser.add_argument('email',
                         type=str,
                         required=True,
                         help=Exception.FEILD_BLANK
@@ -26,19 +25,19 @@ class UserRegister(Resource):
 
     def post(self):
         data = UserRegister.parser.parse_args()
-        username = data['username']
+        email = data['email']
         password = data['password']
 
-        if UserModel.find_by_username(username):
+        if UserModel.find_by_username(email):
             return {"message": Exception.USER_ALREDY_EXSIST}, 400
 
-        user_register_validate = UserRegisterValidate(password_policy)
-        password_pre_conditions = user_register_validate.validate_password(password)
-        if password_pre_conditions:
-            return {"message": Exception.PASSWORD_CONDITION,
-                    "pre_condition": password_pre_conditions}, 412
+        user_register_validate = UserRegisterValidate(data)
+        validate_error = user_register_validate.validate_login()
 
-        user = UserModel(username, password)
+        if validate_error:
+            return validate_error
+
+        user = UserModel(email, password)
         user.save_to_db()
 
         return {"message": USER_CREATION}, 201
