@@ -28,7 +28,7 @@ class UserRegister(Resource):
         email = data['email']
         password = data['password']
 
-        if UserModel.find_by_username(email):
+        if UserModel.find_by_email(email):
             return {"message": Exception.USER_ALREDY_EXSIST}, 400
 
         user_register_validate = UserRegisterValidate(data)
@@ -45,7 +45,7 @@ class UserRegister(Resource):
 
 class UserLogin(Resource):
     parser = reqparse.RequestParser()
-    parser.add_argument('username',
+    parser.add_argument('email',
                         type=str,
                         required=True,
                         help=Exception.FEILD_BLANK
@@ -59,7 +59,7 @@ class UserLogin(Resource):
     @classmethod
     def post(cls):
         data = cls.parser.parse_args()
-        user = UserModel.find_by_username(data['username'])
+        user = UserModel.find_by_email(data['email'])
 
         if user and safe_str_cmp(user.password, data['password']):
             access_token = create_access_token(identity=user.id, fresh=True)
