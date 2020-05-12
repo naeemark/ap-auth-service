@@ -4,3 +4,5 @@ class Exception:
     INVALID_CREDENTIAL = "Invalid credentials"
     PASSWORD_CONDITION = "'paassword' policy not followed"
     EMAIL_CONDITION = "'email' is not valid"
+    AUTH = "Authorization Required"
+    TOKEN_EXPIRED = "Token has expired"

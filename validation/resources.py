@@ -34,3 +34,22 @@ class UserRegisterValidate():
         elif email_check:
             return {"message": Exception.EMAIL_CONDITION,
                     "pre_condition": email_check}, 406
+
+
+class ChangePasswordValidate():
+    __slots__ = ['new_password']
+
+    def __init__(self, data):
+        self.new_password = data['new_password']
+
+    def validate_password(self):
+        respone = {}
+        password_rules = password_policy.password(self.new_password)
+        password_strength = round(password_rules.strength() * 100, 2)
+        rules_ignored = [str(rule) for rule in password_rules.test()]
+        respone.update({"password_strength": password_strength})
+        if rules_ignored:
+            respone.update({"message": Exception.PASSWORD_CONDITION,
+                            "pre_condition": rules_ignored})
+            return respone, 412
+        return respone, 200

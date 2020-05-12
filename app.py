@@ -1,10 +1,14 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from os import environ
 
-from resources.user import UserRegister, UserLogin
+from resources.user import (UserRegister,
+                            UserLogin,
+                            TokenRefresh,
+                            ChangePassword)
 from db import db
+from constant.exception import Exception
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get("SQLALCHEMY_DATABASE_URI") or 'sqlite:///data.db'
@@ -22,8 +26,27 @@ def create_tables():
 # no endpoint
 jwt = JWTManager(app)
 
+
+@jwt.unauthorized_loader
+def token_required(error):
+    return jsonify(
+        {
+            "message": Exception.AUTH
+        }), 401
+
+
+@jwt.expired_token_loader
+def token_expired(error):
+    return jsonify(
+        {
+            "message": Exception.TOKEN_EXPIRED
+        }), 401
+
+
 api.add_resource(UserRegister, '/register')
 api.add_resource(UserLogin, '/login')
+api.add_resource(TokenRefresh, '/refresh')
+api.add_resource(ChangePassword, '/change-password')
 
 if __name__ == '__main__':
     db.init_app(app)
