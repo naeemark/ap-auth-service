@@ -36,3 +36,24 @@ def test_register_duplicate_user(setUp_tearDown, setUpClass):
 
             assert r.status_code == 400
             assert Exception.USER_ALREDY_EXSIST == json.loads(r.data)['message']
+
+
+def test_password(setUp_tearDown, setUpClass):
+    with setUp_tearDown.get("app")() as c:
+        with setUp_tearDown.get("app_context")():
+            c.post('/register', data={'email': 'john12@gmail.com', 'password': '123!!@@AB123'})
+
+            # to get access token
+            auth_request = c.post('/login', data=json.dumps({
+                'email': 'john12@gmail.com',
+                'password': '123!!@@AB123'
+            }), headers={'Content-Type': 'application/json'})
+            access_token = json.loads(auth_request.data)['access_token']
+
+            # to get password changed
+            password_update_request = c.put('/change-password', data=json.dumps({
+                'new_password': '123!!@@AB12'
+            }), headers={'Authorization': f'Bearer {access_token}', 'Content-Type': 'application/json'})
+
+        assert password_update_request.status_code == 200
+        assert "password_strength" in json.loads(password_update_request.data).keys()

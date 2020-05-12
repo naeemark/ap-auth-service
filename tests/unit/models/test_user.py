@@ -19,3 +19,10 @@ def test_item_json(setUp_tearDown, setUpClass):
     }
     similar_records = expected.items() & user.json().items()
     assert len(similar_records) == len(expected), f"expected {expected}"
+
+
+def test_update_password(setUp_tearDown, setUpClass):
+    user = UserModel("xyz", "hvhj!@#")
+    user.password = "abc!@@jhda"
+    user.save_to_db()
+    assert user.password != 'abc!23('
