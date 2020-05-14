@@ -36,3 +36,5 @@ def test_register_duplicate_user(setUp_tearDown, setUpClass):
 
             assert r.status_code == 400
             assert Exception.USER_ALREDY_EXSIST == json.loads(r.data)['message']
+
+
