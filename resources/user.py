@@ -24,6 +24,40 @@ class UserRegister(Resource):
                         )
 
     def post(self):
+        """
+           This examples uses FlaskRESTful Resource
+           It works to register new users
+           ---
+             consumes:
+               - "application/json"
+             produces:
+               - "application/json"
+             tags:
+                - "UserRegister"
+             parameters:
+               - in: "body"
+                 name: "body"
+                 description: "Registers user"
+                 required: true
+                 schema:
+                   type: "object"
+                   id: Register
+                   properties:
+                     email:
+                       type: "string"
+                       format: "string"
+                       description: email address to get yourself registered
+                       example: "example@gmail.com"
+                     password:
+                       type: "String"
+                       format: "String"
+                       description: password for registration
+                       example: "1234!23@@!AB"
+
+             responses:
+               400:
+                 description: "A user with that email already exists"
+                     """
         data = UserRegister.parser.parse_args()
         email = data['email']
         password = data['password']
