@@ -2,6 +2,7 @@ from flask import Flask, jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from os import environ
+from flasgger import Swagger, APISpec
 
 from resources.user import (UserRegister,
                             UserLogin,
@@ -16,6 +17,14 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = environ.get("SQLALCHEMY_TRACK_MOD
 app.config['PROPAGATE_EXCEPTIONS'] = environ.get("PROPAGATE_EXCEPTIONS") or True
 app.secret_key = environ.get("SECRET_KEY") or 'jose'
 api = Api(app)
+app.config['SWAGGER'] = {
+    'title': 'ALETHEA',
+    'uiversion': 3,
+    'description':'',
+    'version':"1.0"
+}
+
+swagger = Swagger(app)
 
 
 @app.before_first_request

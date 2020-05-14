@@ -26,6 +26,43 @@ class UserRegister(Resource):
                         )
 
     def post(self):
+        """
+           This examples uses FlaskRESTful Resource
+           It works to register new users
+           ---
+             consumes:
+               - "application/json"
+             produces:
+               - "application/json"
+             tags:
+                - "UserRegister"
+             parameters:
+               - in: "body"
+                 name: "body"
+                 description: "Registers user"
+                 required: true
+                 schema:
+                   type: "object"
+                   id: Register
+                   properties:
+                     email:
+                       type: "string"
+                       format: "string"
+                       description: email address to get yourself registered
+                       example: "example@gmail.com"
+                     password:
+                       type: "String"
+                       format: "String"
+                       description: password for registration
+                       example: "1234!23@@!AB"
+
+             responses:
+               400:
+                 description: "A user with that email already exists"
+               200:
+                 description: "User created successfully"
+
+                     """
         data = UserRegister.parser.parse_args()
         email = data['email']
         password = data['password']
@@ -60,6 +97,40 @@ class UserLogin(Resource):
 
     @classmethod
     def post(cls):
+        """
+                   This examples uses FlaskRESTful Resource
+                   log in user and provide token
+                   ---
+                     consumes:
+                       - "application/json"
+                     produces:
+                       - "application/json"
+                     tags:
+                        - "UserLogin"
+                     parameters:
+                       - in: "body"
+                         name: "body"
+                         description: "Registers user"
+                         required: true
+                         schema:
+                           type: "object"
+                           id: login
+                           properties:
+                             email:
+                               type: "string"
+                               format: "string"
+                               description: email address to login
+                               example: "example@gmail.com"
+                             password:
+                               type: "String"
+                               format: "String"
+                               description: password to login
+                               example: "1234!23@@!AB"
+
+                     responses:
+                       401:
+                         description:  "Invalid credentials"
+                             """
         data = cls.parser.parse_args()
         user = UserModel.find_by_email(data['email'])
 
