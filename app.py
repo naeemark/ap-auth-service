@@ -16,7 +16,8 @@ api = Api(app)
 app.config['SWAGGER'] = {
     'title': 'ALETHEA',
     'uiversion': 3,
-    'description':''
+    'description':'',
+    'version':"1.0"
 }
 
 swagger = Swagger(app)

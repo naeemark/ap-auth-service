@@ -1,1 +1,1 @@
-USER_CREATION = "User created successfully."
+USER_CREATION = "User created successfully"
