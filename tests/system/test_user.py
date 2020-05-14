@@ -38,3 +38,13 @@ def test_register_duplicate_user(setUp_tearDown, setUpClass):
             assert Exception.USER_ALREDY_EXSIST == json.loads(r.data)['message']
 
 
+def test_refresh_token(setUp_tearDown, setUpClass):
+    with setUp_tearDown.get("app")() as c:
+        with setUp_tearDown.get("app_context")():
+            c.post('/register', data={'email': 'john12@gmail.com', 'password': '123!!@@AB'})
+            res_user_login = c.post('/login', data={'email': 'john12@gmail.com', 'password': '123!!@@AB'})
+            refresh_token = json.loads(res_user_login.data)['refresh_token']
+            res_refresh = c.post('/refresh', headers={'Authorization': f'Bearer {refresh_token}',
+                                                      'Content-Type': 'application/json'})
+            assert res_refresh.status_code == 200
+            assert 'access_token' in json.loads(res_refresh.data).keys()
