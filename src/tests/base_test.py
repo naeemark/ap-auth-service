@@ -6,7 +6,7 @@ from db import db
 
 @pytest.fixture(scope='module')
 def setUpClass():
-    SQLALCHEMY_DATABASE_URI = "sqlite://"
+    SQLALCHEMY_DATABASE_URI = "sqlite:////sqlite"
     app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
     app.config['DEBUG'] = False
     with app.app_context():
