@@ -73,7 +73,7 @@ class UserLogin(Resource):
         return {"message": Exception.INVALID_CREDENTIAL}, 401
 
 
-class TokenRefresh(Resource):
+class TokenRefresh(Resource):    
     @jwt_refresh_token_required
     def post(self):
         current_user = get_jwt_identity()
