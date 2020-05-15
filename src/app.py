@@ -2,6 +2,7 @@ from flask import Flask, jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from os import environ
+from flask_sqlalchemy import SQLAlchemy
 from flasgger import Swagger, APISpec
 
 from src.resources.user import (UserRegister,
@@ -11,8 +12,16 @@ from src.resources.user import (UserRegister,
 from src.db import db
 from src.constant.exception import Exception
 
+POSTGRES_URL = environ.get("POSTGRES_URL") or "127.0.0.1:5432"
+POSTGRES_USER = environ.get("POSTGRES_USER") or "postgres"
+POSTGRES_PW = environ.get("POSTGRES_PW") or "test123"
+POSTGRES_DB = environ.get("POSTGRES_DB") or "postgres"
+
+DB_URL = 'postgresql://{user}:{pw}@{url}/{db}'.format(user=POSTGRES_USER, pw=POSTGRES_PW, url=POSTGRES_URL,
+                                                      db=POSTGRES_DB)
+
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = environ.get("SQLALCHEMY_DATABASE_URI") or 'sqlite:///data.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = environ.get("SQLALCHEMY_TRACK_MODIFICATIONS") or False
 app.config['PROPAGATE_EXCEPTIONS'] = environ.get("PROPAGATE_EXCEPTIONS") or True
 app.secret_key = environ.get("SECRET_KEY") or 'jose'
