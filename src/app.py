@@ -4,12 +4,12 @@ from flask_jwt_extended import JWTManager
 from os import environ
 from flasgger import Swagger, APISpec
 
-from resources.user import (UserRegister,
+from src.resources.user import (UserRegister,
                             UserLogin,
                             TokenRefresh,
                             ChangePassword)
-from db import db
-from constant.exception import Exception
+from src.db import db
+from src.constant.exception import Exception
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get("SQLALCHEMY_DATABASE_URI") or 'sqlite:///data.db'

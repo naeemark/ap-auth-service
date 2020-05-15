@@ -6,10 +6,10 @@ from flask_jwt_extended import (create_access_token,
 from flask_restful import Resource, reqparse
 from werkzeug.security import safe_str_cmp
 
-from models.user import UserModel
-from constant.exception import Exception
-from constant.success_message import USER_CREATION, UPDATED_PASSWORD
-from validation.resources import UserRegisterValidate, ChangePasswordValidate
+from ..models.user import UserModel
+from ..constant.exception import Exception
+from ..constant.success_message import USER_CREATION, UPDATED_PASSWORD
+from ..validation.resources import UserRegisterValidate, ChangePasswordValidate
 
 
 class UserRegister(Resource):
@@ -27,7 +27,7 @@ class UserRegister(Resource):
 
     def post(self):
         """
-           This examples uses FlaskRESTful Resource
+           register user End Point
            It works to register new users
            ---
              consumes:
@@ -98,7 +98,7 @@ class UserLogin(Resource):
     @classmethod
     def post(cls):
         """
-                   This examples uses FlaskRESTful Resource
+                   login for access token and refresh token End Point
                    log in user and provide token
                    ---
                      consumes:
@@ -144,9 +144,33 @@ class UserLogin(Resource):
         return {"message": Exception.INVALID_CREDENTIAL}, 401
 
 
-class TokenRefresh(Resource):    
+class TokenRefresh(Resource):
     @jwt_refresh_token_required
     def post(self):
+        """refresh token End Point
+       ---
+       tags:
+        - "TokenRefresh"
+       parameters:
+         - name: Authorization
+           in: header
+           description: Bearer <refresh_token>
+           required: true
+           type: string
+           schema:
+               type: "object"
+               id: refresh
+               properties:
+                 Authorization:
+                   type: "string"
+                   format: "string"
+                   description: give refresh token in response
+                   example: Bearer <refresh_token>
+
+       responses:
+         200:
+           description: access_token
+       """
         current_user = get_jwt_identity()
         new_token = create_access_token(identity=current_user, fresh=False)
         return {'access_token': new_token}, 200
@@ -162,6 +186,31 @@ class ChangePassword(Resource):
 
     @fresh_jwt_required
     def put(self):
+        """change password End Point
+               ---
+               tags:
+                - "ChangePassword"
+               parameters:
+                 - name: Authorization
+                   in: header
+                   description: Bearer <access_token>
+                   required: true
+                   type: string
+
+                   schema:
+                       type: "object"
+                       id: change-password
+                       properties:
+                         Authorization:
+                           type: "string"
+                           format: "string"
+                           description: give refresh token in response
+                           example: Bearer <access_token>
+
+               responses:
+                 400:
+                   description: This field cannot be blank
+               """
         current_user = get_jwt_identity()
         data = ChangePassword.parser.parse_args()
         user = UserModel.find_by_id(current_user)

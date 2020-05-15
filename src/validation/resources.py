@@ -1,7 +1,7 @@
 from email_validator import validate_email, EmailNotValidError
 
-from constant.rules import password_policy
-from constant.exception import Exception
+from src.constant.rules import password_policy
+from src.constant.exception import Exception
 
 
 class UserRegisterValidate():
