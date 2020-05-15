@@ -5,6 +5,7 @@ from flask_jwt_extended import (create_access_token,
                                 fresh_jwt_required)
 from flask_restful import Resource, reqparse
 from werkzeug.security import safe_str_cmp
+import bcrypt
 
 from ..models.user import UserModel
 from ..constant.exception import Exception
@@ -76,7 +77,9 @@ class UserRegister(Resource):
         if validate_error:
             return validate_error
 
-        user = UserModel(email, password)
+        password = password.encode()
+        hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
+        user = UserModel(email, hashed_password)
         user.save_to_db()
 
         return {"message": USER_CREATION}, 201
@@ -134,7 +137,7 @@ class UserLogin(Resource):
         data = cls.parser.parse_args()
         user = UserModel.find_by_email(data['email'])
 
-        if user and safe_str_cmp(user.password, data['password']):
+        if user and bcrypt.checkpw(data['password'].encode(), user.password):
             access_token = create_access_token(identity=user.id, fresh=True)
             refresh_token = create_refresh_token(user.id)
             return {
@@ -217,7 +220,9 @@ class ChangePassword(Resource):
         change_password_validate = ChangePasswordValidate(data)
         validate = change_password_validate.validate_password()
         if user and not validate[0].get("message"):
-            user.password = data['new_password']
+            password = data['new_password'].encode()
+            hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
+            user.password = hashed_password
             user.save_to_db()
             return {"message": UPDATED_PASSWORD, "password_strength": validate[0].get("password_strength")}, 200
         else:
