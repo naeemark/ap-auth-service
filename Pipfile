@@ -4,6 +4,10 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+pylint = "*"
+autopep8 = "*"
+pytest = "*"
+pytest-flask = "*"
 
 [packages]
 flask = "*"
@@ -22,10 +26,8 @@ more-itertools = "*"
 password-strength = "*"
 pluggy = "*"
 py = "*"
-pytest = "*"
 pycparser = "*"
 pyparsing = "*"
-pytest-flask = "*"
 pytz = "*"
 six = "*"
 wcwidth = "*"
@@ -38,9 +40,9 @@ sqlalchemy = "*"
 werkzeug = "*"
 flasgger = "*"
 flask-jwt-extended = "*"
-psycopg2 = "==2.7.7"
 python-dotenv = "*"
 bcrypt = "*"
+psycopg2-binary = "*"
 
 [requires]
-python_version = "3.8.3"
+python_version = "3.8"

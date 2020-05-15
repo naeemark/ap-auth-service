@@ -1,35 +1,28 @@
+import os
+import pathlib
 from flask import Flask, jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
-import os
 from dotenv import load_dotenv
-import pathlib
+from flasgger import Swagger
+from src.constant.exception import ValidationException
+from src.db import db
+
+from src.resources.user import (
+    UserRegister, UserLogin, TokenRefresh, ChangePassword
+)
 
 project_folder = pathlib.Path(__file__).parent.absolute()
 load_dotenv(os.path.join(project_folder, '.env'))
 
-from flasgger import Swagger
-
-from src.resources.user import (UserRegister,
-                                UserLogin,
-                                TokenRefresh,
-                                ChangePassword)
-from src.db import db
-from src.constant.exception import Exception
-
-POSTGRES_URL = os.getenv("POSTGRES_URL") or "127.0.0.1:5432"
-POSTGRES_USER = os.getenv("POSTGRES_USER") or "postgres"
-POSTGRES_PW = os.getenv("POSTGRES_PW") or "test123"
-POSTGRES_DB = os.getenv("POSTGRES_DB") or "postgres"
-
-DB_URL = 'postgresql://{user}:{pw}@{url}/{db}'.format(user=POSTGRES_USER, pw=POSTGRES_PW, url=POSTGRES_URL,
-                                                      db=POSTGRES_DB)
-
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.getenv("SQLALCHEMY_TRACK_MODIFICATIONS") or False
-app.config['PROPAGATE_EXCEPTIONS'] = os.getenv("PROPAGATE_EXCEPTIONS") or True
-app.secret_key = os.getenv("SECRET_KEY") or 'jose'
+
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DB_URL")
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.getenv(
+    "SQLALCHEMY_TRACK_MODIFICATIONS")
+app.config['PROPAGATE_EXCEPTIONS'] = os.getenv("PROPAGATE_EXCEPTIONS")
+app.secret_key = os.getenv("SECRET_KEY")
+
 api = Api(app)
 app.config['SWAGGER'] = {
     'title': 'ALETHEA',
@@ -43,6 +36,10 @@ swagger = Swagger(app)
 
 @app.before_first_request
 def create_tables():
+    '''
+       Initialize Database
+    '''
+    db.init_app(app)
     db.create_all()
 
 
@@ -52,18 +49,18 @@ jwt = JWTManager(app)
 
 @jwt.unauthorized_loader
 def token_required(error):
-    return jsonify(
-        {
-            "message": Exception.AUTH
-        }), 401
+    '''
+        Response for Authorization Exception
+    '''
+    return jsonify({"message": ValidationException.AUTH, 'error': error}), 401
 
 
 @jwt.expired_token_loader
 def token_expired(error):
-    return jsonify(
-        {
-            "message": Exception.TOKEN_EXPIRED
-        }), 401
+    '''
+        Response for Token Expired Exception
+    '''
+    return jsonify({"message": ValidationException.TOKEN_EXPIRED, 'error': error}), 401
 
 
 api.add_resource(UserRegister, '/register')

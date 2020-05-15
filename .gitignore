@@ -40,5 +40,6 @@ htmlcov/
 # nosetest
 .noseids
 
-# sqlite db
-*/*.db
+# environment variables
+.env
+.flaskenv

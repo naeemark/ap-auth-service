@@ -1,16 +1,17 @@
+'''
+  User Resource
+'''
+import bcrypt
 from flask_jwt_extended import (create_access_token,
                                 create_refresh_token,
                                 jwt_refresh_token_required,
                                 get_jwt_identity,
                                 fresh_jwt_required)
 from flask_restful import Resource, reqparse
-from werkzeug.security import safe_str_cmp
-import bcrypt
-
-from ..models.user import UserModel
-from ..constant.exception import Exception
-from ..constant.success_message import USER_CREATION, UPDATED_PASSWORD
-from ..validation.resources import UserRegisterValidate, ChangePasswordValidate
+from src.models.user import UserModel
+from src.constant.exception import ValidationException
+from src.constant.success_message import USER_CREATION, UPDATED_PASSWORD
+from src.validation.resources import UserRegisterValidate, ChangePasswordValidate
 
 
 class UserRegister(Resource):
@@ -18,12 +19,12 @@ class UserRegister(Resource):
     parser.add_argument('email',
                         type=str,
                         required=True,
-                        help=Exception.FEILD_BLANK
+                        help=ValidationException.FIELD_BLANK
                         )
     parser.add_argument('password',
                         type=str,
                         required=True,
-                        help=Exception.FEILD_BLANK
+                        help=ValidationException.FIELD_BLANK
                         )
 
     def post(self):
@@ -69,7 +70,7 @@ class UserRegister(Resource):
         password = data['password']
 
         if UserModel.find_by_email(email):
-            return {"message": Exception.USER_ALREDY_EXSIST}, 400
+            return {"message": ValidationException.USER_ALREDY_EXSIST}, 400
 
         user_register_validate = UserRegisterValidate(data)
         validate_error = user_register_validate.validate_login()
@@ -86,16 +87,19 @@ class UserRegister(Resource):
 
 
 class UserLogin(Resource):
+    '''
+      Resource UserLogin
+    '''
     parser = reqparse.RequestParser()
     parser.add_argument('email',
                         type=str,
                         required=True,
-                        help=Exception.FEILD_BLANK
+                        help=ValidationException.FIELD_BLANK
                         )
     parser.add_argument('password',
                         type=str,
                         required=True,
-                        help=Exception.FEILD_BLANK
+                        help=ValidationException.FIELD_BLANK
                         )
 
     @classmethod
@@ -141,50 +145,56 @@ class UserLogin(Resource):
             access_token = create_access_token(identity=user.id, fresh=True)
             refresh_token = create_refresh_token(user.id)
             return {
-                       'access_token': access_token,
-                       'refresh_token': refresh_token
-                   }, 200
-        return {"message": Exception.INVALID_CREDENTIAL}, 401
+                'access_token': access_token,
+                'refresh_token': refresh_token
+            }, 200
+        return {"message": ValidationException.INVALID_CREDENTIAL}, 401
 
 
 class TokenRefresh(Resource):
+    '''
+        Resource TokenRefresh
+    '''
     @jwt_refresh_token_required
     def post(self):
         """refresh token End Point
-       ---
-       tags:
-        - "TokenRefresh"
-       parameters:
-         - name: Authorization
-           in: header
-           description: Bearer <refresh_token>
-           required: true
-           type: string
-           schema:
-               type: "object"
-               id: refresh
-               properties:
-                 Authorization:
-                   type: "string"
-                   format: "string"
-                   description: give refresh token in response
-                   example: Bearer <refresh_token>
+           ---
+           tags:
+            - "TokenRefresh"
+           parameters:
+             - name: Authorization
+               in: header
+               description: Bearer <refresh_token>
+               required: true
+               type: string
+               schema:
+                   type: "object"
+                   id: refresh
+                   properties:
+                     Authorization:
+                       type: "string"
+                       format: "string"
+                       description: give refresh token in response
+                       example: Bearer <refresh_token>
 
-       responses:
-         200:
-           description: access_token
-       """
+           responses:
+             200:
+               description: access_token
+           """
         current_user = get_jwt_identity()
         new_token = create_access_token(identity=current_user, fresh=False)
         return {'access_token': new_token}, 200
 
 
 class ChangePassword(Resource):
+    '''
+        Resource ChangePassword
+    '''
     parser = reqparse.RequestParser()
     parser.add_argument('new_password',
                         type=str,
                         required=True,
-                        help=Exception.FEILD_BLANK
+                        help=ValidationException.FIELD_BLANK
                         )
 
     @fresh_jwt_required

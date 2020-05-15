@@ -1,7 +1,7 @@
 from email_validator import validate_email, EmailNotValidError
 
 from src.constant.rules import password_policy
-from src.constant.exception import Exception
+from src.constant.exception import ValidationException
 
 
 class UserRegisterValidate():
@@ -29,10 +29,10 @@ class UserRegisterValidate():
         password_check = self.validate_password()
         email_check = self.validate_email()
         if password_check:
-            return {"message": Exception.PASSWORD_CONDITION,
+            return {"message": ValidationException.PASSWORD_CONDITION,
                     "pre_condition": password_check}, 412
         elif email_check:
-            return {"message": Exception.EMAIL_CONDITION,
+            return {"message": ValidationException.EMAIL_CONDITION,
                     "pre_condition": email_check}, 406
 
 
@@ -49,7 +49,7 @@ class ChangePasswordValidate():
         rules_ignored = [str(rule) for rule in password_rules.test()]
         respone.update({"password_strength": password_strength})
         if rules_ignored:
-            respone.update({"message": Exception.PASSWORD_CONDITION,
+            respone.update({"message": ValidationException.PASSWORD_CONDITION,
                             "pre_condition": rules_ignored})
             return respone, 412
         return respone, 200
