@@ -1,5 +1,7 @@
+from tests.base_test import setUp_tearDown
+from tests.base_test import setUpClass
+
 from models.user import UserModel
-from tests.base_test import setUp_tearDown, setUpClass
 
 
 def test_crud(setUp_tearDown, setUpClass):
@@ -13,7 +15,7 @@ def test_crud(setUp_tearDown, setUpClass):
         # update
         user.password = "abc!@@jhda"
         user.save_to_db()
-        assert user.password != 'abc!23('
+        assert user.password != "abc!23("
 
         # delete
         user.delete_from_db()

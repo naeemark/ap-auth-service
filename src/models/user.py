@@ -2,7 +2,7 @@ from src.db import db
 
 
 class UserModel(db.Model):
-    __tablename__ = 'users'
+    __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(80))
@@ -21,7 +21,7 @@ class UserModel(db.Model):
         db.session.commit()
 
     def json(self):
-        return {'username': self.email, 'password': self.password}
+        return {"username": self.email, "password": self.password}
 
     @classmethod
     def find_by_email(cls, email):
