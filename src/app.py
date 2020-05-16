@@ -5,7 +5,6 @@ import os
 import pathlib
 
 from dotenv import load_dotenv
-from flasgger import Swagger
 from flask import Flask
 from flask import jsonify
 from flask_jwt_extended import JWTManager
@@ -30,14 +29,6 @@ app.config["PROPAGATE_EXCEPTIONS"] = os.getenv("PROPAGATE_EXCEPTIONS")
 app.secret_key = os.getenv("SECRET_KEY")
 
 api = Api(app)
-app.config["SWAGGER"] = {
-    "title": "ALETHEA",
-    "uiversion": 3,
-    "description": "",
-    "version": "1.0",
-}
-
-swagger = Swagger(app)
 
 
 @app.before_first_request

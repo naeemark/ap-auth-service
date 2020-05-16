@@ -27,43 +27,6 @@ class UserRegister(Resource):
     )
 
     def post(self):
-        """
-           register user End Point
-           It works to register new users
-           ---
-             consumes:
-               - "application/json"
-             produces:
-               - "application/json"
-             tags:
-                - "UserRegister"
-             parameters:
-               - in: "body"
-                 name: "body"
-                 description: "Registers user"
-                 required: true
-                 schema:
-                   type: "object"
-                   id: Register
-                   properties:
-                     email:
-                       type: "string"
-                       format: "string"
-                       description: email address to get yourself registered
-                       example: "example@gmail.com"
-                     password:
-                       type: "String"
-                       format: "String"
-                       description: password for registration
-                       example: "1234!23@@!AB"
-
-             responses:
-               400:
-                 description: "A user with that email already exists"
-               200:
-                 description: "User created successfully"
-
-                     """
         data = UserRegister.parser.parse_args()
         email = data["email"]
         password = data["password"]
@@ -100,40 +63,7 @@ class UserLogin(Resource):
 
     @classmethod
     def post(cls):
-        """
-                   login for access token and refresh token End Point
-                   log in user and provide token
-                   ---
-                     consumes:
-                       - "application/json"
-                     produces:
-                       - "application/json"
-                     tags:
-                        - "UserLogin"
-                     parameters:
-                       - in: "body"
-                         name: "body"
-                         description: "Registers user"
-                         required: true
-                         schema:
-                           type: "object"
-                           id: login
-                           properties:
-                             email:
-                               type: "string"
-                               format: "string"
-                               description: email address to login
-                               example: "example@gmail.com"
-                             password:
-                               type: "String"
-                               format: "String"
-                               description: password to login
-                               example: "1234!23@@!AB"
 
-                     responses:
-                       401:
-                         description:  "Invalid credentials"
-                             """
         data = cls.parser.parse_args()
         user = UserModel.find_by_email(data["email"])
 
@@ -151,30 +81,7 @@ class TokenRefresh(Resource):
 
     @jwt_refresh_token_required
     def post(self):
-        """refresh token End Point
-           ---
-           tags:
-            - "TokenRefresh"
-           parameters:
-             - name: Authorization
-               in: header
-               description: Bearer <refresh_token>
-               required: true
-               type: string
-               schema:
-                   type: "object"
-                   id: refresh
-                   properties:
-                     Authorization:
-                       type: "string"
-                       format: "string"
-                       description: give refresh token in response
-                       example: Bearer <refresh_token>
 
-           responses:
-             200:
-               description: access_token
-           """
         current_user = get_jwt_identity()
         new_token = create_access_token(identity=current_user, fresh=False)
         return {"access_token": new_token}, 200
@@ -192,31 +99,6 @@ class ChangePassword(Resource):
 
     @fresh_jwt_required
     def put(self):
-        """change password End Point
-               ---
-               tags:
-                - "ChangePassword"
-               parameters:
-                 - name: Authorization
-                   in: header
-                   description: Bearer <access_token>
-                   required: true
-                   type: string
-
-                   schema:
-                       type: "object"
-                       id: change-password
-                       properties:
-                         Authorization:
-                           type: "string"
-                           format: "string"
-                           description: give refresh token in response
-                           example: Bearer <access_token>
-
-               responses:
-                 400:
-                   description: This field cannot be blank
-               """
         current_user = get_jwt_identity()
         data = ChangePassword.parser.parse_args()
         user = UserModel.find_by_id(current_user)
