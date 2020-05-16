@@ -1,27 +1,18 @@
 """
-  Flask App Launcher
+  Flask App
 """
-import os
-
-from flask import Flask
 from flask import jsonify
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
+from src import create_app
+from src import db
 from src.constant.exception import ValidationException
-from src.db import db
 from src.resources.user import ChangePassword
 from src.resources.user import TokenRefresh
 from src.resources.user import UserLogin
 from src.resources.user import UserRegister
 
-app = Flask(__name__)
-
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DB_URL")
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = os.getenv(
-    "SQLALCHEMY_TRACK_MODIFICATIONS"
-)
-app.config["PROPAGATE_EXCEPTIONS"] = os.getenv("PROPAGATE_EXCEPTIONS")
-app.secret_key = os.getenv("SECRET_KEY")
+app = create_app("flask.cfg")
 
 
 @app.before_first_request
@@ -53,7 +44,7 @@ def token_expired(error):
     return jsonify({"message": ValidationException.TOKEN_EXPIRED, "error": error}), 401
 
 
-api = Api(app, "/{}/api/v1".format(os.environ.get("STAGE")))
+api = Api(app, "/{}/api/v1".format(app.config.get("STAGE")))
 api.add_resource(UserRegister, "/user/register")
 api.add_resource(UserLogin, "/user/login")
 api.add_resource(TokenRefresh, "/auth/refresh")
