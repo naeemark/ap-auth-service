@@ -42,4 +42,3 @@ htmlcov/
 
 # environment variables
 .env
-.flaskenv
