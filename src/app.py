@@ -2,9 +2,7 @@
   Flask App Launcher
 """
 import os
-import pathlib
 
-from dotenv import load_dotenv
 from flask import Flask
 from flask import jsonify
 from flask_jwt_extended import JWTManager
@@ -16,9 +14,6 @@ from src.resources.user import TokenRefresh
 from src.resources.user import UserLogin
 from src.resources.user import UserRegister
 
-project_folder = pathlib.Path(__file__).parent.absolute()
-load_dotenv(os.path.join(project_folder, ".env"))
-
 app = Flask(__name__)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DB_URL")
@@ -27,8 +22,6 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = os.getenv(
 )
 app.config["PROPAGATE_EXCEPTIONS"] = os.getenv("PROPAGATE_EXCEPTIONS")
 app.secret_key = os.getenv("SECRET_KEY")
-
-api = Api(app)
 
 
 @app.before_first_request
@@ -60,10 +53,16 @@ def token_expired(error):
     return jsonify({"message": ValidationException.TOKEN_EXPIRED, "error": error}), 401
 
 
-api.add_resource(UserRegister, "/register")
-api.add_resource(UserLogin, "/login")
-api.add_resource(TokenRefresh, "/refresh")
-api.add_resource(ChangePassword, "/change-password")
+api = Api(app, "/{}/api/v1".format(os.environ.get("STAGE")))
+api.add_resource(UserRegister, "/user/register")
+api.add_resource(UserLogin, "/user/login")
+api.add_resource(TokenRefresh, "/auth/refresh")
+api.add_resource(ChangePassword, "/user/changePassword")
+
+# temporary logging
+list_routes = ["%s" % rule for rule in app.url_map.iter_rules()][0:-1]
+print("Routes:\n", "\n ".join(str(line) for line in list_routes))
+
 
 if __name__ == "__main__":
     db.init_app(app)
