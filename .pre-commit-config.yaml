@@ -37,4 +37,8 @@ repos:
     rev: v2.5.2
     hooks:
       - id: pylint
-        exclude: "."
+        args:
+          - "--disable=R0201"
+          - "--disable=E0401"
+          - "--disable=R0903"
+          - "--ignore=__init__.py"

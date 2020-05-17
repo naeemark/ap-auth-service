@@ -18,6 +18,10 @@ from src.validation.resources import UserRegisterValidate
 
 
 class UserRegister(Resource):
+    """
+        Resource: User Register
+    """
+
     parser = reqparse.RequestParser()
     parser.add_argument(
         "email", type=str, required=True, help=ValidationException.FIELD_BLANK
@@ -27,6 +31,9 @@ class UserRegister(Resource):
     )
 
     def post(self):
+        """
+            Creates a new User
+        """
         data = UserRegister.parser.parse_args()
         email = data["email"]
         password = data["password"]
@@ -63,7 +70,9 @@ class UserLogin(Resource):
 
     @classmethod
     def post(cls):
-
+        """
+            Returns a new Token
+        """
         data = cls.parser.parse_args()
         user = UserModel.find_by_email(data["email"])
 
@@ -81,7 +90,9 @@ class TokenRefresh(Resource):
 
     @jwt_refresh_token_required
     def post(self):
-
+        """
+            Returns a new Token
+        """
         current_user = get_jwt_identity()
         new_token = create_access_token(identity=current_user, fresh=False)
         return {"access_token": new_token}, 200
@@ -99,6 +110,9 @@ class ChangePassword(Resource):
 
     @fresh_jwt_required
     def put(self):
+        """
+            Updates the Model
+        """
         current_user = get_jwt_identity()
         data = ChangePassword.parser.parse_args()
         user = UserModel.find_by_id(current_user)
@@ -116,5 +130,4 @@ class ChangePassword(Resource):
                 },
                 200,
             )
-        else:
-            return validate
+        return validate

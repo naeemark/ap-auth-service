@@ -1,3 +1,6 @@
+"""
+    Password Policy Rules
+"""
 from password_strength import PasswordPolicy
 
 password_policy = PasswordPolicy.from_names(

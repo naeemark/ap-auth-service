@@ -1,3 +1,6 @@
+"""
+    A configuration file for pytest integration testing
+"""
 import bcrypt
 import pytest
 from src import create_app
@@ -7,13 +10,18 @@ from src.models.user import UserModel
 
 @pytest.fixture(scope="module")
 def new_user():
+    """
+        Creates a new user
+    """
     user = UserModel("patkennedy79@gmail.com", "FlaskIsAwesome")
     return user
 
 
 @pytest.fixture(scope="module")
 def test_client():
-
+    """
+        Configure and provides app-client instance for testing
+    """
     flask_app = create_app("flask_test.cfg")
     db.init_app(flask_app)
 
@@ -31,7 +39,10 @@ def test_client():
 
 
 @pytest.fixture(scope="module")
-def test_database(test_client):
+def test_database():
+    """
+        Configure and provides database instance for testing
+    """
 
     try:
         # Create the database and the database table
@@ -56,5 +67,6 @@ def test_database(test_client):
         yield db  # this is where the testing happens!
 
         db.drop_all()
-    except Exception as e:
-        print(e)
+    # pylint: disable=broad-except
+    except Exception as exception:
+        print(exception)
