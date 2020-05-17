@@ -42,6 +42,7 @@ flask-jwt-extended = "*"
 python-dotenv = "*"
 bcrypt = "*"
 psycopg2-binary = "*"
+pytest-cov = "*"
 
 [requires]
 python_version = "3.8"
