@@ -56,14 +56,14 @@ Please sync and resolve dependencies by using
 - [VS Code](https://code.visualstudio.com/)
 - [Flask](https://flask.palletsprojects.com/en/1.1.x/)
 - [Flask-JWT-Extended](https://pypi.org/project/Flask-JWT-Extended/)
-- [PipEnv](https://pypi.org/project/pipenv/)
+- [pipenv](https://pypi.org/project/pipenv/)
 - [pytest](https://pypi.org/project/pytest/)
 - [Bitbicket](www.bitbucket.org)
 - [Bitbicket-pipelines](https://bitbucket.org/product/features/pipelines)
 
 ## Dependencies
 
-- See [`PipFile`](/PipFile)
+- See [`Pipfile`](/Pipfile)
 
 ## Distribution
 
