@@ -6,10 +6,10 @@ from flask_restful import Api
 from src import create_app
 from src import db
 from src.resources.user import ChangePassword
-from src.resources.user import TokenRefresh
+from src.resources.auth import TokenRefresh
 from src.resources.user import UserLogin
 from src.resources.user import UserRegister
-from src.resources.user import StartSession
+from src.resources.auth import startSession
 
 app = create_app("flask.cfg")
 
@@ -30,7 +30,7 @@ api.add_resource(UserRegister, "/user/register")
 api.add_resource(UserLogin, "/user/login")
 api.add_resource(TokenRefresh, "/auth/refresh")
 api.add_resource(ChangePassword, "/user/changePassword")
-api.add_resource(StartSession, "/user/StartSession")
+api.add_resource(startSession, "/auth/StartSession")
 
 # temporary logging
 # list_routes = ["%s" % rule for rule in app.url_map.iter_rules()][0:-1]

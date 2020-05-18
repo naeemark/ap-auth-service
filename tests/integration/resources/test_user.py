@@ -19,7 +19,7 @@ def test_password_change(test_client, test_database):
     content_type_key = 'Content-Type'
     content_type_value = 'application/json'
 
-    response_start_session = test_client.post('/dev/api/v1/user/StartSession',
+    response_start_session = test_client.post('/dev/api/v1/auth/StartSession',
                                               headers=
                                               {
                                                   'Client-App-Token': '0b0069c752ec14172c5f78208f1863d7ad6755a6fae6fe76ec2c80d13be41e42',
@@ -79,7 +79,7 @@ def test_password_change(test_client, test_database):
 
 
 def test_start_session(test_client, test_database):
-    response_start_session = test_client.post('/dev/api/v1/user/StartSession',
+    response_start_session = test_client.post('/dev/api/v1/auth/StartSession',
                                               headers=
                                               {
                                                   'Client-App-Token': '0b0069c752ec14172c5f78208f1863d7ad6755a6fae6fe76ec2c80d13be41e42',
@@ -103,7 +103,7 @@ def test_register_user_without_token(test_client, test_database):
 
 
 def test_password_change_without_fresh_token(test_client, test_database):
-    response_start_session = test_client.post('/dev/api/v1/user/StartSession',
+    response_start_session = test_client.post('/dev/api/v1/auth/StartSession',
                                               headers=
                                               {
                                                   'Client-App-Token': '0b0069c752ec14172c5f78208f1863d7ad6755a6fae6fe76ec2c80d13be41e42',
