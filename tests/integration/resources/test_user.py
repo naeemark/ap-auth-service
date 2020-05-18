@@ -76,3 +76,55 @@ def test_password_change(test_client, test_database):
                                                )
                                                )
     assert response_password_change.status_code == 200
+
+
+def test_start_session(test_client, test_database):
+    response_start_session = test_client.post('/dev/api/v1/user/StartSession',
+                                              headers=
+                                              {
+                                                  'Client-App-Token': '0b0069c752ec14172c5f78208f1863d7ad6755a6fae6fe76ec2c80d13be41e42',
+                                                  'Timestamp': '131231',
+                                                  'Device-ID': '1321a31x121za'
+                                              })
+    assert response_start_session.status_code == 200
+    assert 'access_token' and 'refresh_token' in json.loads(response_start_session.data).keys()
+
+
+def test_register_user_without_token(test_client, test_database):
+    response_register_user = test_client.post('/dev/api/v1/user/register',
+                                              data=json.dumps(
+                                                  {
+                                                      'email': 'john12@gmail.com',
+                                                      'password': '123!!@@AB'
+                                                  }
+                                              )
+                                              )
+    assert response_register_user.status_code == 401
+
+
+def test_password_change_without_fresh_token(test_client, test_database):
+    response_start_session = test_client.post('/dev/api/v1/user/StartSession',
+                                              headers=
+                                              {
+                                                  'Client-App-Token': '0b0069c752ec14172c5f78208f1863d7ad6755a6fae6fe76ec2c80d13be41e42',
+                                                  'Timestamp': '131231',
+                                                  'Device-ID': '1321a31x121za'
+                                              })
+
+    access_token_session = json.loads(response_start_session.data)['access_token']
+
+    response_password_change = test_client.put('/dev/api/v1/user/changePassword',
+                                               headers=
+                                               {
+                                                   'Authorization': f'Bearer {access_token_session}',
+                                                   'Content-Type': 'application/json'
+                                               },
+
+                                               data=json.dumps(
+                                                   {
+                                                       'new_password': '7897!!@@AB'
+                                                   }
+                                               )
+                                               )
+    assert response_password_change.status_code == 401
+    assert json.loads(response_password_change.data)['message'] == 'Fresh token required'
