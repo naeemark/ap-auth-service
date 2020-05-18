@@ -131,3 +131,36 @@ class ChangePassword(Resource):
                 200,
             )
         return validate
+
+
+class StartSession(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('Client-App-Token',
+                        type=str,
+                        required=True,
+                        help=Exception.FEILD_BLANK,
+                        location='headers')
+
+    parser.add_argument('Timestamp',
+                        type=str,
+                        required=True,
+                        help=Exception.FEILD_BLANK,
+                        location='headers')
+
+    parser.add_argument('Device-ID',
+                        type=str,
+                        required=True,
+                        help=Exception.FEILD_BLANK,
+                        location='headers')
+
+    @classmethod
+    def post(cls):
+        data = cls.parser.parse_args()
+        client_app_token = data['Client-App-Token']
+        access_token = create_access_token(identity=client_app_token, fresh=True)
+        refresh_token = create_refresh_token(client_app_token)
+        current_user = get_jwt_identity()
+        return {
+                   'access_token': access_token,
+                   'refresh_token': refresh_token
+               }, 200
