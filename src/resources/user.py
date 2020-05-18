@@ -85,7 +85,7 @@ class UserLogin(Resource):
         if user and bcrypt.checkpw(data["password"].encode(), user.password):
             access_token = create_access_token(identity=user.id, fresh=True)
             refresh_token = create_refresh_token(user.id)
-            return {"access_token": access_token, "refresh_token": refresh_token}, 200
+            return {"fresh_token": access_token, "message": "successfully logged in"}, 200
         return {"message": ValidationException.INVALID_CREDENTIAL}, 401
 
 
