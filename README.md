@@ -13,7 +13,7 @@ A Flask based JWT Auth system
 
 To set-up the project locally you need to clone this repo, from `master` or `develop` branch or some latest `TAG`
 
-- install `pipenv` if you don't have already
+- Install `pipenv` if you don't have already
 
 ### Directory Structure
 
@@ -25,9 +25,9 @@ To set-up the project locally you need to clone this repo, from `master` or `dev
 
 Set environment variables:
 
-- `cp .env.example .env`
+- **`cp .env.example .env`**
 
-Update `.env` at roor according to your settings
+Update `.env` in the root directory according to your settings
 
 Please sync and resolve dependencies by using
 
