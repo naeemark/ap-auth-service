@@ -65,6 +65,15 @@ Please sync and resolve dependencies by using
 
 - See [`Pipfile`](/Pipfile)
 
+### API endpoint
+- /user/register `<- require(access_token)`
+- /user/login `<- require(access_token) | -> generate(fresh_token)`
+- /user/changePassword `<- require(fresh_token)`
+- /user/StartSession `-> generate(acess_token,refresh_token)`
+- /auth/refresh `<- require(refresh_token)`
+
+
+
 ## Distribution
 
 ### Postman Environments
