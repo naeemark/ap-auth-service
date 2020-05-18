@@ -2,13 +2,15 @@
   User Resource
 """
 import bcrypt
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import jwt_required
 from flask_jwt_extended import create_refresh_token
+from flask_jwt_extended import create_access_token
 from flask_jwt_extended import fresh_jwt_required
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_refresh_token_required
 from flask_restful import reqparse
 from flask_restful import Resource
+
 from src.constant.exception import ValidationException
 from src.constant.success_message import UPDATED_PASSWORD
 from src.constant.success_message import USER_CREATION
@@ -30,6 +32,7 @@ class UserRegister(Resource):
         "password", type=str, required=True, help=ValidationException.FIELD_BLANK
     )
 
+    @jwt_required
     def post(self):
         """
             Creates a new User
@@ -52,7 +55,10 @@ class UserRegister(Resource):
         user = UserModel(email, hashed_password)
         user.save_to_db()
 
-        return {"message": USER_CREATION}, 201
+        current_user = get_jwt_identity()
+        access_token = create_access_token(identity=current_user)
+
+        return {"message": USER_CREATION, "access_token": access_token}, 201
 
 
 class UserLogin(Resource):
@@ -68,12 +74,12 @@ class UserLogin(Resource):
         "password", type=str, required=True, help=ValidationException.FIELD_BLANK
     )
 
-    @classmethod
-    def post(cls):
+    @jwt_required
+    def post(self):
         """
             Returns a new Token
         """
-        data = cls.parser.parse_args()
+        data = UserLogin.parser.parse_args()
         user = UserModel.find_by_email(data["email"])
 
         if user and bcrypt.checkpw(data["password"].encode(), user.password):
@@ -138,26 +144,26 @@ class StartSession(Resource):
     parser.add_argument('Client-App-Token',
                         type=str,
                         required=True,
-                        help=Exception.FEILD_BLANK,
+                        help=ValidationException.FIELD_BLANK,
                         location='headers')
 
     parser.add_argument('Timestamp',
                         type=str,
                         required=True,
-                        help=Exception.FEILD_BLANK,
+                        help=ValidationException.FIELD_BLANK,
                         location='headers')
 
     parser.add_argument('Device-ID',
                         type=str,
                         required=True,
-                        help=Exception.FEILD_BLANK,
+                        help=ValidationException.FIELD_BLANK,
                         location='headers')
 
     @classmethod
     def post(cls):
         data = cls.parser.parse_args()
         client_app_token = data['Client-App-Token']
-        access_token = create_access_token(identity=client_app_token, fresh=True)
+        access_token = create_access_token(identity=client_app_token)
         refresh_token = create_refresh_token(client_app_token)
         current_user = get_jwt_identity()
         return {
