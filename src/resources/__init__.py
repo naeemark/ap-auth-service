@@ -6,8 +6,11 @@ from src.resources.user import UserRegister
 
 
 def initialize_resources(app):
+
+    api_prefix = "/{}/api/v1".format(app.config.get("STAGE"))
+
     # Instantiates API
-    api = Api(app, "/{}/api/v1".format(app.config.get("STAGE")))
+    api = Api(app=app, prefix=api_prefix)
 
     # Adds resources for User Entity
     api.add_resource(UserRegister, "/user/register")
@@ -16,3 +19,6 @@ def initialize_resources(app):
 
     # Adds resources for Auth Entity
     api.add_resource(TokenRefresh, "/auth/refresh")
+
+    # Adding api-prefix for logging purposes
+    app.config["API_PREFIX"] = api_prefix

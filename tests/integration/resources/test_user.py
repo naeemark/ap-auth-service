@@ -13,21 +13,20 @@ def test_sum(test_client, test_database):
     assert 1 + 1 == 2
 
 
-def test_register_login_routes(test_client, test_database):
+def test_register_login_routes(api_prefix, test_client, test_database):
     """
        Integration test for User Register and Login flows
        - Best Case Scenarios
     """
-
     register = test_client.post(
-        "/dev/api/v1/user/register",
+        f"{api_prefix}/user/register",
         data={"email": "abc1@xyz.com", "password": "1234567A@"},
         follow_redirects=True,
     )
     assert register.status_code == 201
 
     login = test_client.post(
-        "/dev/api/v1/user/login",
+        f"{api_prefix}/user/login",
         data={"email": "abc1@xyz.com", "password": "1234567A@"},
         follow_redirects=True,
     )

@@ -76,3 +76,16 @@ def test_database():
     # pylint: disable=broad-except
     except Exception as exception:
         print(exception)
+
+
+@pytest.fixture(scope="module")
+def api_prefix(test_client):
+    """
+        Find and returns API_PREFIX for all integration tests
+    """
+    # pylint: disable=redefined-outer-name
+    return (
+        test_client.application.config["API_PREFIX"]
+        if "API_PREFIX" in test_client.application.config
+        else ""
+    )
