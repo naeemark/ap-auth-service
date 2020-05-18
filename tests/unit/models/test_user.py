@@ -23,3 +23,5 @@ def test_new_user(new_user):
     assert new_user is not None
     assert new_user.email == "abc123@gmail.com"
     assert new_user.password == "FlaskIsAwesome"
+
+

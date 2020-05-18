@@ -19,7 +19,6 @@ def create_tables():
     """
        Initialize Database
     """
-    db.init_app(app)
     db.create_all()
 
 
@@ -39,4 +38,5 @@ api.add_resource(StartSession, "/user/StartSession")
 
 
 if __name__ == "__main__":
+    db.init_app(app)
     app.run()
