@@ -1,6 +1,8 @@
 """
     A configuration file for pytest integration testing
 """
+import os
+
 import bcrypt
 import pytest
 from flask_jwt_extended import JWTManager
@@ -41,6 +43,9 @@ def test_client():
     yield testing_client  # this is where the testing happens!
 
     context.pop()
+
+    # Delete test database file after execution
+    os.remove(flask_app.config["SQLALCHEMY_DATABASE_URI"].split("///")[-1])
 
 
 @pytest.fixture(scope="module")
