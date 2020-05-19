@@ -3,18 +3,21 @@
 """
 import bcrypt
 from flask_jwt_extended import create_access_token
+from flask_jwt_extended import get_raw_jwt
 from flask_jwt_extended import create_refresh_token
 from flask_jwt_extended import fresh_jwt_required
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_refresh_token_required
 from flask_restful import reqparse
 from flask_restful import Resource
+
 from src.constant.exception import ValidationException
 from src.constant.success_message import UPDATED_PASSWORD
 from src.constant.success_message import USER_CREATION
 from src.models.user import UserModel
 from src.validation.resources import ChangePasswordValidate
 from src.validation.resources import UserRegisterValidate
+from src.constant.blacklist import BLACKLIST
 
 
 class UserRegister(Resource):
@@ -131,3 +134,11 @@ class ChangePassword(Resource):
                 200,
             )
         return validate
+
+
+class UserLogout(Resource):
+    @fresh_jwt_required
+    def post(self):
+        jti = get_raw_jwt()['jti']  # jti is "JWT ID", a unique identifier for a JWT.
+        BLACKLIST.add(jti)
+        return {"message": "Successfully logged out"}, 200

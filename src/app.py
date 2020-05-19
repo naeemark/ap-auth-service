@@ -4,6 +4,7 @@
 from flask import jsonify
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
+
 from src import create_app
 from src import db
 from src.constant.exception import ValidationException
@@ -11,6 +12,8 @@ from src.resources.user import ChangePassword
 from src.resources.user import TokenRefresh
 from src.resources.user import UserLogin
 from src.resources.user import UserRegister
+from src.resources.user import UserLogout
+from src.constant.blacklist import BLACKLIST
 
 app = create_app("flask.cfg")
 
@@ -44,11 +47,26 @@ def token_expired(error):
     return jsonify({"message": ValidationException.TOKEN_EXPIRED, "error": error}), 401
 
 
+# This method will check if a token is blacklisted, and will be called automatically when blacklist is enabled
+@jwt.token_in_blacklist_loader
+def check_if_token_in_blacklist(decrypted_token):
+    return decrypted_token['identity'] in BLACKLIST  # Here we blacklist particular users.
+
+
+@jwt.revoked_token_loader
+def revoked_token_callback():
+    return jsonify({
+        "description": "The token has been revoked.",
+        'error': 'token_revoked'
+    }), 401
+
+
 api = Api(app, "/{}/api/v1".format(app.config.get("STAGE")))
 api.add_resource(UserRegister, "/user/register")
 api.add_resource(UserLogin, "/user/login")
 api.add_resource(TokenRefresh, "/auth/refresh")
 api.add_resource(ChangePassword, "/user/changePassword")
+api.add_resource(UserLogout, "/user/logout")
 
 # temporary logging
 # list_routes = ["%s" % rule for rule in app.url_map.iter_rules()][0:-1]
