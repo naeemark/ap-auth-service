@@ -14,6 +14,7 @@ from flask_restful import Resource
 from src.constant.exception import ValidationException
 from src.constant.success_message import UPDATED_PASSWORD
 from src.constant.success_message import USER_CREATION
+from src.constant.success_message import LOGGED_IN
 from src.models.user import UserModel
 from src.validation.resources import ChangePasswordValidate
 from src.validation.resources import UserRegisterValidate
@@ -85,10 +86,8 @@ class UserLogin(Resource):
         if user and bcrypt.checkpw(data["password"].encode(), user.password):
             access_token = create_access_token(identity=user.id, fresh=True)
             refresh_token = create_refresh_token(user.id)
-            return {"fresh_token": access_token, "message": "successfully logged in"}, 200
+            return {"fresh_token": access_token, "message": LOGGED_IN}, 200
         return {"message": ValidationException.INVALID_CREDENTIAL}, 401
-
-
 
 
 class ChangePassword(Resource):

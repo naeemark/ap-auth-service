@@ -5,20 +5,13 @@
 
 import json
 
+from src.constant.success_message import LOGGED_IN
 
-def test_sum(test_client, test_database):
-    """
-        A sample test to demostrate the availability of test_client and test_dataabase
-    """
-    # for mock purpose
-    # pylint: disable=unused-argument
-    assert 1 + 1 == 2
+content_type_key = 'Content-Type'
+content_type_value = 'application/json'
 
 
 def test_password_change(test_client, test_database):
-    content_type_key = 'Content-Type'
-    content_type_value = 'application/json'
-
     response_start_session = test_client.post('/dev/api/v1/auth/StartSession',
                                               headers=
                                               {
@@ -128,3 +121,77 @@ def test_password_change_without_fresh_token(test_client, test_database):
                                                )
     assert response_password_change.status_code == 401
     assert json.loads(response_password_change.data)['message'] == 'Fresh token required'
+
+
+def test_fresh_token_login(test_client, test_database):
+    response_start_session = test_client.post('/dev/api/v1/auth/StartSession',
+                                              headers=
+                                              {
+                                                  'Client-App-Token': '0b0069c252ec14172c5f78208f1863d7ad6755a6fae6fe76ec2c80d13be41e42',
+                                                  'Timestamp': '131231',
+                                                  'Device-ID': '1321a31x121za'
+                                              })
+
+    access_token_session = json.loads(response_start_session.data)['access_token']
+
+    response_register_user = test_client.post('/dev/api/v1/user/register',
+                                              headers=
+                                              {
+                                                  'Authorization': f'Bearer {access_token_session}',
+                                                  content_type_key: content_type_value
+                                              },
+
+                                              data=json.dumps(
+                                                  {
+                                                      'email': 'john123@gmail.com',
+                                                      'password': '123!!@@AB'
+                                                  }
+                                              )
+                                              )
+
+    access_token_register = json.loads(response_register_user.data)['access_token']
+
+    response_login_user = test_client.post('/dev/api/v1/user/login',
+                                           headers=
+                                           {
+                                               'Authorization': f'Bearer {access_token_register}',
+                                               content_type_key: content_type_value
+                                           },
+
+                                           data=json.dumps(
+                                               {
+                                                   'email': 'john123@gmail.com',
+                                                   'password': '123!!@@AB'
+                                               }
+                                           )
+                                           )
+    assert response_login_user.status_code == 200
+    assert json.loads(response_login_user.data)['message'] == LOGGED_IN
+
+
+def test_precondition_password(test_client, test_database):
+    response_start_session = test_client.post('/dev/api/v1/auth/StartSession',
+                                              headers=
+                                              {
+                                                  'Client-App-Token': '0b0069c262ec14172c5f78208f1863d7ad6755a6fae6fe76ec2c80d13be41e42',
+                                                  'Timestamp': '131231',
+                                                  'Device-ID': '1321a31x121za'
+                                              })
+
+    access_token_session = json.loads(response_start_session.data)['access_token']
+
+    response_register_user = test_client.post('/dev/api/v1/user/register',
+                                              headers=
+                                              {
+                                                  'Authorization': f'Bearer {access_token_session}',
+                                                  content_type_key: content_type_value
+                                              },
+
+                                              data=json.dumps(
+                                                  {
+                                                      'email': 'john1231@gmail.com',
+                                                      'password': '12378'
+                                                  }
+                                              )
+                                              )
+    assert response_register_user.status_code == 412
