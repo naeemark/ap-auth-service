@@ -43,6 +43,7 @@ python-dotenv = "*"
 bcrypt = "*"
 psycopg2-binary = "*"
 pytest-cov = "*"
+redis = "*"
 
 [requires]
 python_version = "3.8"

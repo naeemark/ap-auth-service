@@ -50,15 +50,7 @@ def token_expired(error):
 # This method will check if a token is blacklisted, and will be called automatically when blacklist is enabled
 @jwt.token_in_blacklist_loader
 def check_if_token_in_blacklist(decrypted_token):
-    return decrypted_token['identity'] in BLACKLIST  # Here we blacklist particular users.
-
-
-@jwt.revoked_token_loader
-def revoked_token_callback():
-    return jsonify({
-        "description": "The token has been revoked.",
-        'error': 'token_revoked'
-    }), 401
+    return decrypted_token['jti'] in BLACKLIST  # Here we blacklist particular users.
 
 
 api = Api(app, "/{}/api/v1".format(app.config.get("STAGE")))
