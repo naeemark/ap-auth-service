@@ -17,7 +17,6 @@ definitions:
           - export PROPAGATE_EXCEPTIONS=True
 
           - export DB_URL=postgresql://user:password@127.0.0.1:5432/my-db-please-update
-          - export TEST_DB_URL=postgresql://user:password@127.0.0.1:5432/my-db-please-update_test
           - export SECRET_KEY=any-secret-key
 
           - pip install pipenv
@@ -29,11 +28,7 @@ definitions:
           - pipenv run pre-commit run --all-files
 
           # Running Unit and Integration Tests
-          # Disabled to exclude integration test as test_db is not available yet
-          # - pipenv run pytest --cov-report term-missing --cov=src -vvs
-
-          # Running Unit Tests - Temporary
-          - pipenv run pytest --cov-report term-missing --cov=src -vvs tests/unit
+          - pipenv run pytest --cov-report term-missing --cov=src -vvs
 
         artifacts:
           - .coverage
