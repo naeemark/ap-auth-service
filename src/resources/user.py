@@ -13,8 +13,8 @@ from src.constant.exception import ValidationException
 from src.constant.success_message import UPDATED_PASSWORD
 from src.constant.success_message import USER_CREATION
 from src.models.user import UserModel
-from src.validation.resources import ChangePasswordValidate
-from src.validation.resources import UserRegisterValidate
+from src.validators.user import ChangePasswordValidate
+from src.validators.user import UserRegisterValidate
 
 
 class UserRegister(Resource):
