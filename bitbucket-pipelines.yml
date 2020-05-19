@@ -44,17 +44,21 @@ definitions:
           - echo 'SonarScan will happen here'
 
     - step: &deploy-dev
-        name: Deploy -> DEV
+        name: Deploy -> dev
+        deployment: dev
         script:
           - echo 'This will deploy to dev'
 
     - step: &deploy-stg
-        name: Deploy -> STG
+        name: Deploy -> stg
+        deployment: stg
         script:
           - echo 'This will deploy to stg'
 
     - step: &deploy-prod
-        name: Deploy -> PROD
+        name: Deploy -> prod
+        trigger: manual
+        deployment: prod
         script:
           - echo 'This will deploy to prod'
 
