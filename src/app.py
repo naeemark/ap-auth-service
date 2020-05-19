@@ -13,7 +13,7 @@ from src.resources.user import TokenRefresh
 from src.resources.user import UserLogin
 from src.resources.user import UserRegister
 from src.resources.user import UserLogout
-from src.constant.blacklist import BLACKLIST
+from src.utils.blacklist import BlacklistManager
 
 app = create_app("flask.cfg")
 
@@ -50,7 +50,7 @@ def token_expired(error):
 # This method will check if a token is blacklisted, and will be called automatically when blacklist is enabled
 @jwt.token_in_blacklist_loader
 def check_if_token_in_blacklist(decrypted_token):
-    return decrypted_token['jti'] in BLACKLIST  # Here we blacklist particular users.
+    return decrypted_token['jti'] in BlacklistManager().get_jti_list()  # Here we blacklist particular users.
 
 
 api = Api(app, "/{}/api/v1".format(app.config.get("STAGE")))

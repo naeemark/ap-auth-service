@@ -13,3 +13,4 @@ class ValidationException(Exception):
     EMAIL_CONDITION = "'email' is not valid"
     AUTH = "Authorization Required"
     TOKEN_EXPIRED = "Token has expired"
+    BLACKLIST = "Error occured inserting token"

@@ -2,11 +2,12 @@
 blacklist file to handle logout
 """
 import redis
+import os
 
 
-class RedisManager():
-    def __init__(self, port, host):
-        self.redis = redis.Redis(host=host, port=port)
+class BlacklistManager():
+    def __init__(self):
+        self.redis = redis.Redis(host=os.environ["REDIS_HOST"], port=os.environ["REDIS_PORT"])
 
     def insert_blacklist_token_id(self, identity, jti, expire_in_min=15):
         expire_time = expire_in_min * 60

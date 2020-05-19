@@ -14,10 +14,11 @@ from flask_restful import Resource
 from src.constant.exception import ValidationException
 from src.constant.success_message import UPDATED_PASSWORD
 from src.constant.success_message import USER_CREATION
+from src.constant.success_message import LOGOUT
 from src.models.user import UserModel
 from src.validation.resources import ChangePasswordValidate
 from src.validation.resources import UserRegisterValidate
-from src.constant.blacklist import BLACKLIST
+from src.utils.blacklist import BlacklistManager
 
 
 class UserRegister(Resource):
@@ -140,5 +141,11 @@ class UserLogout(Resource):
     @fresh_jwt_required
     def post(self):
         jti = get_raw_jwt()['jti']  # jti is "JWT ID", a unique identifier for a JWT.
-        BLACKLIST.add(jti)
-        return {"message": "Successfully logged out"}, 200
+        identity = get_jwt_identity()
+        try:
+            insert_status = BlacklistManager().insert_blacklist_token_id(identity, jti)
+            if not insert_status:
+                return {"message": ValidationException.BLACKLIST}, 400
+            return {"message": LOGOUT}, 200
+        except Exception as error:
+            return {"message": error}, 400
