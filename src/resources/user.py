@@ -2,17 +2,16 @@
   User Resource
 """
 import bcrypt
-from flask_jwt_extended import jwt_required
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import fresh_jwt_required
 from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import jwt_required
 from flask_restful import reqparse
 from flask_restful import Resource
-
 from src.constant.exception import ValidationException
+from src.constant.success_message import LOGGED_IN
 from src.constant.success_message import UPDATED_PASSWORD
 from src.constant.success_message import USER_CREATION
-from src.constant.success_message import LOGGED_IN
 from src.models.user import UserModel
 from src.validators.user import ChangePasswordValidate
 from src.validators.user import UserRegisterValidate

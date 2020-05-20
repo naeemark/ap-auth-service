@@ -1,7 +1,7 @@
 from flask_restful import Api
-from src.resources.user import ChangePassword
-from src.resources.auth import TokenRefresh
 from src.resources.auth import StartSession
+from src.resources.auth import TokenRefresh
+from src.resources.user import ChangePassword
 from src.resources.user import UserLogin
 from src.resources.user import UserRegister
 
