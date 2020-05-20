@@ -65,7 +65,7 @@ pipelines:
 
   pull-requests:
     "**":
-      - *build-lint-test
+      - step: *build-lint-test
 
   branches:
     develop:
