@@ -12,7 +12,7 @@ from flask_restful import Resource
 from src.constant.exception import ValidationException
 
 
-class startSession(Resource):
+class StartSession(Resource):
     """
     starts session Resource
     """

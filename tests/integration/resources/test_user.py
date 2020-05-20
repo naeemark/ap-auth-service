@@ -115,8 +115,7 @@ def test_password_change_without_preconditions(api_prefix, test_client, test_dat
     access_token_register = json.loads(response_register_user.data)['access_token']
 
     response_login_user = test_client.post(
-        f"{api_prefix}/user/login", headers=
-        {
+        f"{api_prefix}/user/login", headers={
             'Authorization': f'Bearer {access_token_register}',
             CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE
         },
