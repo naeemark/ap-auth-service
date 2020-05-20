@@ -1,12 +1,15 @@
 """
     A configuration file for pytest integration testing
 """
+import os
+
 import bcrypt
 import pytest
+from flask_jwt_extended import JWTManager
 from src import create_app
 from src import db
 from src.models.user import UserModel
-from src.app import app
+from src.resources import initialize_resources
 
 
 @pytest.fixture(scope="module")
@@ -23,26 +26,26 @@ def test_client():
     """
         Configure and provides app-client instance for testing
     """
+    flask_app = create_app("flask_test.cfg")
+    initialize_resources(flask_app)
+    JWTManager(flask_app)
 
-    # update cfg file for test
-    app.config.from_pyfile("flask_test.cfg")
+    db.init_app(flask_app)
 
-    flask_app = app
-    with flask_app.app_context():
-        db.init_app(flask_app)
-        db.create_all()
-        # Flask provides a way to test your application by exposing the Werkzeug test Client
-        # and handling the context locals for you.
-        testing_client = flask_app.test_client()
+    # Flask provides a way to test your application by exposing the Werkzeug test Client
+    # and handling the context locals for you.
+    testing_client = flask_app.test_client()
 
-        # # Establish an application context before running the tests.
-        context = flask_app.app_context()
-        context.push()
+    # # Establish an application context before running the tests.
+    context = flask_app.app_context()
+    context.push()
 
-        yield testing_client  # this is where the testing happens!
-        db.session.remove()
-        db.drop_all()
-        context.pop()
+    yield testing_client  # this is where the testing happens!
+
+    context.pop()
+
+    # Delete test database file after execution
+    os.remove(flask_app.config["SQLALCHEMY_DATABASE_URI"].split("///")[-1])
 
 
 @pytest.fixture(scope="module")
@@ -72,8 +75,22 @@ def test_database():
         db.session.commit()
 
         yield db  # this is where the testing happens!
-        db.session.remove()
+
+        db.session.close()
         db.drop_all()
     # pylint: disable=broad-except
     except Exception as exception:
         print(exception)
+
+
+@pytest.fixture(scope="module")
+def api_prefix(test_client):
+    """
+        Find and returns API_PREFIX for all integration tests
+    """
+    # pylint: disable=redefined-outer-name
+    return (
+        test_client.application.config["API_PREFIX"]
+        if "API_PREFIX" in test_client.application.config
+        else ""
+    )

@@ -16,8 +16,8 @@ from src.constant.success_message import UPDATED_PASSWORD
 from src.constant.success_message import USER_CREATION
 from src.constant.success_message import LOGGED_IN
 from src.models.user import UserModel
-from src.validation.resources import ChangePasswordValidate
-from src.validation.resources import UserRegisterValidate
+from src.validators.user import ChangePasswordValidate
+from src.validators.user import UserRegisterValidate
 
 
 class UserRegister(Resource):
@@ -85,8 +85,7 @@ class UserLogin(Resource):
 
         if user and bcrypt.checkpw(data["password"].encode(), user.password):
             access_token = create_access_token(identity=user.id, fresh=True)
-            refresh_token = create_refresh_token(user.id)
-            return {"fresh_token": access_token, "message": LOGGED_IN}, 200
+            return {"fresh_access_token": access_token, "message": LOGGED_IN}, 200
         return {"message": ValidationException.INVALID_CREDENTIAL}, 401
 
 
