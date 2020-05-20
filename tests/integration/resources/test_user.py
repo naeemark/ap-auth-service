@@ -15,8 +15,8 @@ def test_sum(test_client, test_database):
     assert 1 + 1 == 2
 
 
-content_type_key = 'Content-Type'
-content_type_value = 'application/json'
+CONTENT_TYPE_KEY = 'Content-Type'
+CONTENT_TYPE_VALUE = 'application/json'
 
 
 def test_StartSession_flow(api_prefix, test_client, test_database):
@@ -42,7 +42,7 @@ def test_StartSession_flow(api_prefix, test_client, test_database):
         headers=
         {
             'Authorization': f'Bearer {access_token_session}',
-            content_type_key: content_type_value
+            CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE
         },
         data=json.dumps({'email': 'john12@gmail.com', 'password': '123!!@@AB'}),
         follow_redirects=True,
@@ -55,7 +55,7 @@ def test_StartSession_flow(api_prefix, test_client, test_database):
         headers=
         {
             'Authorization': f'Bearer {access_token_register}',
-            content_type_key: content_type_value
+            CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE
         },
         data=json.dumps({'email': 'john12@gmail.com', 'password': '123!!@@AB'}),
         follow_redirects=True,
@@ -68,7 +68,7 @@ def test_StartSession_flow(api_prefix, test_client, test_database):
         headers=
         {
             'Authorization': f'Bearer {fresh_access_token_login}',
-            content_type_key: content_type_value
+            CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE
         },
         data=json.dumps({'new_password': '7897!!@@AB'}),
         follow_redirects=True,
@@ -126,7 +126,7 @@ def test_password_change_without_preconditions(api_prefix, test_client, test_dat
         headers=
         {
             'Authorization': f'Bearer {access_token_session}',
-            content_type_key: content_type_value
+            CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE
         },
         data=json.dumps({'email': 'john123@gmail.com', 'password': '123!!@@AB'}),
         follow_redirects=True,
@@ -139,7 +139,7 @@ def test_password_change_without_preconditions(api_prefix, test_client, test_dat
         headers=
         {
             'Authorization': f'Bearer {access_token_register}',
-            content_type_key: content_type_value
+            CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE
         },
         data=json.dumps({'email': 'john123@gmail.com', 'password': '123!!@@AB'}),
         follow_redirects=True,
@@ -152,7 +152,7 @@ def test_password_change_without_preconditions(api_prefix, test_client, test_dat
         headers=
         {
             'Authorization': f'Bearer {fresh_access_token_login}',
-            content_type_key: content_type_value
+            CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE
         },
         data=json.dumps({'new_password': '1212312'}),
     )

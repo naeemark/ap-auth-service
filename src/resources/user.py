@@ -3,11 +3,9 @@
 """
 import bcrypt
 from flask_jwt_extended import jwt_required
-from flask_jwt_extended import create_refresh_token
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import fresh_jwt_required
 from flask_jwt_extended import get_jwt_identity
-from flask_jwt_extended import jwt_refresh_token_required
 from flask_restful import reqparse
 from flask_restful import Resource
 
