@@ -94,3 +94,5 @@ def api_prefix(test_client):
         if "API_PREFIX" in test_client.application.config
         else ""
     )
+
+
