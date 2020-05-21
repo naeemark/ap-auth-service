@@ -3,7 +3,6 @@
 """
 import bcrypt
 from flask_jwt_extended import create_access_token
-from flask_jwt_extended import create_refresh_token
 from flask_jwt_extended import fresh_jwt_required
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import get_raw_jwt
@@ -126,8 +125,15 @@ class ChangePassword(Resource):
 
 
 class UserLogout(Resource):
+    """
+    logout user
+    """
+
     @fresh_jwt_required
     def post(self):
+        """
+        :return: success message on logout else give error message
+        """
         jti = get_raw_jwt()["jti"]  # jti is "JWT ID", a unique identifier for a JWT.
         identity = get_jwt_identity()
         try:
@@ -135,5 +141,7 @@ class UserLogout(Resource):
             if not insert_status:
                 return {"message": ValidationException.BLACKLIST}, 400
             return {"message": LOGOUT}, 200
-        except Exception as error:
+        except ImportError as error:
+            return {"message": error}, 400
+        except ValueError as error:
             return {"message": error}, 400

@@ -22,9 +22,14 @@ def create_tables():
 # no endpoint
 jwt = JWTManager(app)
 
-# This method will check if a token is blacklisted, and will be called automatically when blacklist is enabled
+
 @jwt.token_in_blacklist_loader
 def check_if_token_in_blacklist(decrypted_token):
+    """
+    :param decrypted_token: token dict
+    :return: his method will check if a token is blacklisted
+    and will be called automatically when blacklist is enabled
+    """
     return (
         decrypted_token["jti"] in BlacklistManager().get_jti_list()
     )  # Here we blacklist particular users.

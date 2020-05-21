@@ -7,6 +7,10 @@ import redis
 
 
 class BlacklistManager:
+    """
+     managing tokens which are revoked
+    """
+
     def __init__(self):
         self.redis = redis.Redis(
             host=os.environ["REDIS_HOST"], port=os.environ["REDIS_PORT"]
@@ -26,6 +30,12 @@ class BlacklistManager:
         """
         :return: list of jti
         """
-        decode_jti = lambda jti: jti.decode()
-        jti_list = list(map(decode_jti, self.redis.keys()))
+        jti_list = list(map(self.decode_jti, self.redis.keys()))
         return jti_list
+
+    def decode_jti(self, encoded_jti):
+        """
+        :param encoded_jti: jti value
+        :return: decoded jti value
+        """
+        return encoded_jti.decode()
