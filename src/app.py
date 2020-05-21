@@ -5,7 +5,6 @@ from flask_jwt_extended import JWTManager
 from src import create_app
 from src import db
 from src.resources import initialize_resources
-from src.utils.blacklist import BlacklistManager
 
 app = create_app("flask.cfg")
 
@@ -23,19 +22,7 @@ def create_tables():
 jwt = JWTManager(app)
 
 
-@jwt.token_in_blacklist_loader
-def check_if_token_in_blacklist(decrypted_token):
-    """
-    :param decrypted_token: token dict
-    :return: his method will check if a token is blacklisted
-    and will be called automatically when blacklist is enabled
-    """
-    return (
-        decrypted_token["jti"] in BlacklistManager().get_jti_list()
-    )  # Here we blacklist particular users.
-
-
-initialize_resources(app)
+initialize_resources(app, jwt)
 
 if __name__ == "__main__":
     app.run()

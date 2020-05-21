@@ -27,8 +27,8 @@ def test_client():
         Configure and provides app-client instance for testing
     """
     flask_app = create_app("flask_test.cfg")
-    initialize_resources(flask_app)
-    JWTManager(flask_app)
+    jwt = JWTManager(flask_app)
+    initialize_resources(flask_app, jwt)
 
     db.init_app(flask_app)
 
