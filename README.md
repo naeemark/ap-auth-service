@@ -76,6 +76,15 @@ _NOTE_: `pre-commit run --all-files` should always be validated before doing a c
 
 - See [`Pipfile`](/Pipfile)
 
+### API endpoint
+- /user/register `<- require(access_token)`
+- /user/login `<- require(access_token) | -> generate(fresh_access_token)`
+- /user/changePassword `<- require(fresh_token)`
+- /auth/StartSession `-> generate(acess_token,refresh_token)`
+- /auth/refresh `<- require(refresh_token)`
+
+
+
 ## Distribution
 
 ### Postman Environments

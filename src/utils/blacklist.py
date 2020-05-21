@@ -1,13 +1,16 @@
 """
 blacklist file to handle logout
 """
-import redis
 import os
 
+import redis
 
-class BlacklistManager():
+
+class BlacklistManager:
     def __init__(self):
-        self.redis = redis.Redis(host=os.environ["REDIS_HOST"], port=os.environ["REDIS_PORT"])
+        self.redis = redis.Redis(
+            host=os.environ["REDIS_HOST"], port=os.environ["REDIS_PORT"]
+        )
 
     def insert_blacklist_token_id(self, identity, jti, expire_in_min=15):
         """
