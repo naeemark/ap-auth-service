@@ -17,7 +17,7 @@ def initialize_resources(app, jwt):
         and will be called automatically when blacklist is enabled
         """
         return (
-                decrypted_token["jti"] in BlacklistManager().get_jti_list()
+            decrypted_token["jti"] in BlacklistManager().get_jti_list()
         )  # Here we blacklist particular users.
 
     if "BlacklistManager" not in check_if_token_in_blacklist.__code__.co_names:

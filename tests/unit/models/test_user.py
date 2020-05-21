@@ -13,7 +13,6 @@ CONTENT_TYPE_VALUE = "application/json"
 PASSWORD = "123!!@@AB"
 
 
-
 @pytest.fixture(scope="module")
 def new_user():
     """
@@ -88,8 +87,8 @@ def test_start_session_generated_tokens(api_prefix, test_client, test_database):
     )
     assert response_start_session.status_code == 200
     assert (
-            "access_token"
-            and "refresh_token" in json.loads(response_start_session.data).keys()
+        "access_token"
+        and "refresh_token" in json.loads(response_start_session.data).keys()
     )
     assert len(test_database.metadata.sorted_tables[0].columns) == 3
 
@@ -125,9 +124,9 @@ def test_user_logout_with_access_token(api_prefix, test_client, test_database):
         f"{api_prefix}/user/logout",
         headers={
             "Authorization": f"Bearer {access_token_register}",
-            CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE
-        }
+            CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
+        },
     )
     assert response_logout.status_code == 401
-    assert json.loads(response_logout.data)['message'] == 'Fresh token required'
-
+    assert json.loads(response_logout.data)["message"] == "Fresh token required"
+    assert len(test_database.metadata.sorted_tables[0].columns) == 3

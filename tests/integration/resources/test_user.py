@@ -4,6 +4,7 @@
     UserResource
 """
 import json
+
 from src.constant.success_message import LOGOUT
 
 
@@ -100,7 +101,7 @@ def test_password_change_without_fresh_token(api_prefix, test_client, test_datab
     )
     assert response_password_change.status_code == 401
     assert (
-            json.loads(response_password_change.data)["message"] == "Fresh token required"
+        json.loads(response_password_change.data)["message"] == "Fresh token required"
     )
 
 
@@ -201,8 +202,8 @@ def test_user_logout(api_prefix, test_client, test_database):
         f"{api_prefix}/user/logout",
         headers={
             "Authorization": f"Bearer {fresh_access_token_login}",
-            CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE
-        }
+            CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
+        },
     )
     assert response_logout.status_code == 200
-    assert json.loads(response_logout.data)['message'] == LOGOUT
+    assert json.loads(response_logout.data)["message"] == LOGOUT
