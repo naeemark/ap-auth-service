@@ -82,6 +82,7 @@ _NOTE_: `pre-commit run --all-files` should always be validated before doing a c
 - /user/changePassword `<- require(fresh_token)`
 - /auth/StartSession `-> generate(acess_token,refresh_token)`
 - /auth/refresh `<- require(refresh_token)`
+- /user/logout `<- require(fresh_access_token)`
 
 
 
