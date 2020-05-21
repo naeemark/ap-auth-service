@@ -19,27 +19,16 @@ CONTENT_TYPE_VALUE = "application/json"
 PASSWORD = "123!!@@AB"
 
 
-def test_startsession_working(api_prefix, test_client, test_database):
+def test_startsession_working(api_prefix, test_client, start_session):
     """
        Integration test for Start_Session and Login flows
        - Best Case Scenarios
     """
 
-    response_start_session = test_client.post(
-        f"{api_prefix}/auth/StartSession",
-        headers={
-            "Client-App-Token": "0b0069c752ec14172c5f78208f1863d7ad6755a6fae6fe76ec2c80d13be41e42",
-            "Timestamp": "131231",
-            "Device-ID": "1321a31x121za",
-        },
-        follow_redirects=True,
-    )
-    access_token_session = json.loads(response_start_session.data)["access_token"]
-
     response_register_user = test_client.post(
         f"{api_prefix}/user/register",
         headers={
-            "Authorization": f"Bearer {access_token_session}",
+            "Authorization": f"Bearer {start_session[0]}",
             CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
         },
         data=json.dumps({"email": "john12@gmail.com", "password": PASSWORD}),
@@ -74,25 +63,15 @@ def test_startsession_working(api_prefix, test_client, test_database):
     assert response_password_change.status_code == 200
 
 
-def test_password_change_without_fresh_token(api_prefix, test_client, test_database):
+def test_password_change_without_fresh_token(api_prefix, test_client, start_session):
     """
     Test case to change password without fresh access token
     """
-    response_start_session = test_client.post(
-        f"{api_prefix}/auth/StartSession",
-        headers={
-            "Client-App-Token": "0b0069c752ec14172c5f78208f1863d7ad6755a6fae6fe76ec2c80d13be41e42",
-            "Timestamp": "131231",
-            "Device-ID": "1321a31x121za",
-        },
-        follow_redirects=True,
-    )
-    access_token_session = json.loads(response_start_session.data)["access_token"]
 
     response_password_change = test_client.put(
         f"{api_prefix}/user/changePassword",
         headers={
-            "Authorization": f"Bearer {access_token_session}",
+            "Authorization": f"Bearer {start_session[0]}",
             "Content-Type": "application/json",
         },
         data=json.dumps({"new_password": "7897!!@@AB"}),
@@ -103,25 +82,15 @@ def test_password_change_without_fresh_token(api_prefix, test_client, test_datab
     )
 
 
-def test_password_change_without_preconditions(api_prefix, test_client, test_database):
+def test_password_change_without_preconditions(api_prefix, test_client, start_session):
     """
     Test case to change password without preconditions
     """
-    response_start_session = test_client.post(
-        f"{api_prefix}/auth/StartSession",
-        headers={
-            "Client-App-Token": "0b0069c752fc14172c5f78208f1863d7ad6755a6fae6fe76ec2c80d13be41e42",
-            "Timestamp": "131231",
-            "Device-ID": "1321a31x121za",
-        },
-        follow_redirects=True,
-    )
-    access_token_session = json.loads(response_start_session.data)["access_token"]
 
     response_register_user = test_client.post(
         f"{api_prefix}/user/register",
         headers={
-            "Authorization": f"Bearer {access_token_session}",
+            "Authorization": f"Bearer {start_session[0]}",
             CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
         },
         data=json.dumps({"email": "john123@gmail.com", "password": PASSWORD}),
@@ -166,24 +135,15 @@ def test_register_user_without_token(api_prefix, test_client, test_database):
     assert response_register_user.status_code == 401
 
 
-def test_register_precondition_password(api_prefix, test_client, test_database):
+def test_register_precondition_password(api_prefix, test_client, start_session):
     """
     Test case to check preconditions applied on password on user register
     """
-    response_start_session = test_client.post(
-        f"{api_prefix}/auth/StartSession",
-        headers={
-            "Client-App-Token": "0b0069c752ec14172c5f78208f1863d7ad6755a6fae6fe76ec2c80d13be41e42",
-            "Timestamp": "131231",
-            "Device-ID": "1321a31x121za",
-        },
-    )
-    access_token_session = json.loads(response_start_session.data)["access_token"]
 
     response_register_user = test_client.post(
         f"{api_prefix}/user/register",
         headers={
-            "Authorization": f"Bearer {access_token_session}",
+            "Authorization": f"Bearer {start_session[0]}",
             "Content-Type": "application/json",
         },
         data=json.dumps({"email": "john1234@gmail.com", "password": "12378"}),
@@ -191,20 +151,10 @@ def test_register_precondition_password(api_prefix, test_client, test_database):
     assert response_register_user.status_code == 412
 
 
-def test_start_session_generated_tokens(api_prefix, test_client, test_database):
+def test_start_session_generated_tokens(api_prefix, test_client, start_session):
     """
     Test case to check tokens generated by startSession
     """
-    response_start_session = test_client.post(
-        f"{api_prefix}/auth/StartSession",
-        headers={
-            "Client-App-Token": "0b0069c752ec14172c5f78208f1863d7ad6755a6fae6fe76ec2c80d13be41e42",
-            "Timestamp": "131231",
-            "Device-ID": "1321a31x121za",
-        },
-    )
-    assert response_start_session.status_code == 200
-    assert (
-        "access_token"
-        and "refresh_token" in json.loads(response_start_session.data).keys()
-    )
+
+    assert start_session[2] == 200
+    assert "access_token" and "refresh_token" in start_session[1]

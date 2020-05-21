@@ -1,6 +1,7 @@
 """
     A configuration file for pytest integration testing
 """
+import json
 import os
 
 import bcrypt
@@ -96,3 +97,22 @@ def api_prefix(test_client):
     )
 
 
+@pytest.yield_fixture()
+def start_session(api_prefix, test_client):
+    """
+        Generates start_session response
+    """
+    # pylint: disable=redefined-outer-name
+    response_start_session = test_client.post(
+        f"{api_prefix}/auth/StartSession",
+        headers={
+            "Client-App-Token": "0b0069c752ec14172c5f78208f1863d7ad6755a6fae6fe76ec2c80d13be41e42",
+            "Timestamp": "131231",
+            "Device-ID": "1321a31x121za",
+        },
+    )
+    access_token_session = json.loads(response_start_session.data)["access_token"]
+    keys = json.loads(response_start_session.data).keys()
+    status = response_start_session.status_code
+
+    return access_token_session, keys, status
