@@ -10,14 +10,13 @@ from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_refresh_token_required
 from flask_restful import reqparse
 from flask_restful import Resource
-
 from src.constant.exception import ValidationException
 from src.constant.success_message import UPDATED_PASSWORD
 from src.constant.success_message import USER_CREATION
 from src.constant.success_message import LOGOUT
 from src.models.user import UserModel
-from src.validation.resources import ChangePasswordValidate
-from src.validation.resources import UserRegisterValidate
+from src.validators.user import ChangePasswordValidate
+from src.validators.user import UserRegisterValidate
 from src.utils.blacklist import BlacklistManager
 
 

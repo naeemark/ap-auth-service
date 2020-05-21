@@ -1,4 +1,6 @@
-# Flask JWT Auth [POC]
+# AletheaProduct Auth Service [ap-auth-service]
+
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 
 A Flask based JWT Auth system
 
@@ -29,14 +31,11 @@ Set environment variables:
 
 Update `.env` in the root directory according to your settings
 
-Please sync and resolve dependencies by using
+Please sync and resolve `default` and `dev` dependencies by using
 
-- **`pipenv install`**
+- **`pipenv install --dev`**
 - Activate `virtual environment` by running **`pipenv shell`**
-
-### Run App
-
-- `flask run`
+- Setup pre-commit: **`pre-commit install`**
 
 ### Test App
 
@@ -46,9 +45,19 @@ Please sync and resolve dependencies by using
   OR
 - Run **`pytest --cov-report term-missing --cov=src --cov-report=html -v && open htmlcov/index.html`** to open unit test coverage report
 
+### Run App
+
+- `flask run`
+
 ### Execute pre-commit quality checks
 
 - Run **`pre-commit run --all-files`**
+
+  OR
+
+- Run **`pre-commit run --all-files --show-diff-on-failure`**
+
+_NOTE_: `pre-commit run --all-files` should always be validated before doing a code-commit. Otherwise, it could be a potential reason for **failed pipeline builds**
 
 ## System Requirements
 
@@ -59,6 +68,7 @@ Please sync and resolve dependencies by using
 - [Flask-JWT-Extended](https://pypi.org/project/Flask-JWT-Extended/)
 - [pipenv](https://pypi.org/project/pipenv/)
 - [pytest](https://pypi.org/project/pytest/)
+- [pre-commit](https://pre-commit.com/)
 - [Bitbicket](www.bitbucket.org)
 - [Bitbicket-pipelines](https://bitbucket.org/product/features/pipelines)
 

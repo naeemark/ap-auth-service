@@ -33,12 +33,13 @@ __pycache__
 
 #Coverage
 coverage.xml
-nosetests.xml
+pytest.xml
 .coverage
 htmlcov/
 
 # nosetest
 .noseids
+nosetests.xml
 
 # environment variables
 .env
