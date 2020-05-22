@@ -121,7 +121,8 @@ def session(prefix, test_client):
             "Device-ID": "1321a31x121za",
         },
     )
-    return json.loads(response_start_session.data)["access_token"]
+    tokens = json.loads(response_start_session.data)
+    return tokens["access_token"], tokens["refresh_token"]
 
 
 @pytest.yield_fixture()
@@ -136,7 +137,7 @@ def register_token(prefix, test_client, session, data):
     response_register_user = test_client.post(
         f"{prefix}/user/register",
         headers={
-            "Authorization": f"Bearer {session}",
+            "Authorization": f"Bearer {session[0]}",
             "Content-Type": "application/json",
         },
         data=json.dumps(mock_data_manager.get_content()["data"]),

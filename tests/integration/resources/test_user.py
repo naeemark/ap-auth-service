@@ -96,7 +96,7 @@ class TestUserBehaviour:
         response_password_change = test_client.put(
             f"{prefix}/user/changePassword",
             headers={
-                "Authorization": f"Bearer {session}",
+                "Authorization": f"Bearer {session[0]}",
                 "Content-Type": "application/json",
             },
             data=json.dumps(content_data),
@@ -125,7 +125,7 @@ class TestUserBehaviour:
         register_user = test_client.post(
             content_data["url"].format(prefix=prefix),
             headers={
-                "Authorization": f"Bearer {session}",
+                "Authorization": f"Bearer {session[0]}",
                 "Content-Type": "application/json",
             },
             data=json.dumps(content_data["data"]),
@@ -183,7 +183,7 @@ class TestRepeatedCases:
         response_register_user = test_client.post(
             f"{prefix}/user/register",
             headers={
-                "Authorization": f"Bearer {session}",
+                "Authorization": f"Bearer {session[0]}",
                 CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
             },
             data=json.dumps(content_data),
