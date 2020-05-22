@@ -18,8 +18,8 @@ def initialize_resources(app):
     api.add_resource(ChangePassword, "/user/changePassword")
 
     # Adds resources for Auth Entity
-    api.add_resource(TokenRefresh, "/auth/refresh")
-    api.add_resource(StartSession, "/auth/StartSession")
+    api.add_resource(TokenRefresh, "/auth/refreshToken")
+    api.add_resource(StartSession, "/auth/startSession")
 
     # Adding api-prefix for logging purposes
     app.config["API_PREFIX"] = api_prefix

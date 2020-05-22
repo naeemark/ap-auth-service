@@ -104,7 +104,7 @@ def start_session(api_prefix, test_client):
     """
     # pylint: disable=redefined-outer-name
     response_start_session = test_client.post(
-        f"{api_prefix}/auth/StartSession",
+        f"{api_prefix}/auth/startSession",
         headers={
             "Client-App-Token": "0b0069c752ec14172c5f78208f1863d7ad6755a6fae6fe76ec2c80d13be41e42",
             "Timestamp": "131231",
