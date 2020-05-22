@@ -85,7 +85,7 @@ def test_database():
 
 
 @pytest.fixture(scope="module")
-def api_prefix(test_client):
+def prefix(test_client):
     """
         Find and returns API_PREFIX for all integration tests
     """
@@ -98,13 +98,13 @@ def api_prefix(test_client):
 
 
 @pytest.yield_fixture()
-def start_session(api_prefix, test_client):
+def session(prefix, test_client):
     """
-        Generates start_session response
+        Generates session response
     """
     # pylint: disable=redefined-outer-name
     response_start_session = test_client.post(
-        f"{api_prefix}/auth/startSession",
+        f"{prefix}/auth/startSession",
         headers={
             "Client-App-Token": "0b0069c752ec14172c5f78208f1863d7ad6755a6fae6fe76ec2c80d13be41e42",
             "Timestamp": "131231",
@@ -115,15 +115,15 @@ def start_session(api_prefix, test_client):
 
 
 @pytest.yield_fixture()
-def register_token(api_prefix, test_client, start_session):
+def register_token(prefix, test_client, session):
     """
         Generates token after register
     """
     # pylint: disable=redefined-outer-name
     response_register_user = test_client.post(
-        f"{api_prefix}/user/register",
+        f"{prefix}/user/register",
         headers={
-            "Authorization": f"Bearer {start_session}",
+            "Authorization": f"Bearer {session}",
             "Content-Type": "application/json",
         },
         data=json.dumps({"email": "john1223@gmail.com", "password": "123!!@@AB"}),
