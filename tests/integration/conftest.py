@@ -7,10 +7,14 @@ import os
 import bcrypt
 import pytest
 from flask_jwt_extended import JWTManager
+from mock import Mock
 from src import create_app
 from src import db
 from src.models.user import UserModel
 from src.resources import initialize_resources
+
+from tests.integration.mock_data import MockData
+from tests.integration.mock_data import MockDataManager
 
 
 @pytest.fixture(scope="module")
@@ -84,6 +88,12 @@ def test_database():
         print(exception)
 
 
+@pytest.yield_fixture()
+def data():
+    """returns the data sepicified earlier"""
+    return Mock(spec=MockData)
+
+
 @pytest.fixture(scope="module")
 def prefix(test_client):
     """
@@ -115,18 +125,21 @@ def session(prefix, test_client):
 
 
 @pytest.yield_fixture()
-def register_token(prefix, test_client, session):
+def register_token(prefix, test_client, session, data):
     """
         Generates token after register
     """
     # pylint: disable=redefined-outer-name
+    mock_data_manager = MockDataManager(data)
+    data.content.return_value = "register_user_1"
+
     response_register_user = test_client.post(
         f"{prefix}/user/register",
         headers={
             "Authorization": f"Bearer {session}",
             "Content-Type": "application/json",
         },
-        data=json.dumps({"email": "john1223@gmail.com", "password": "123!!@@AB"}),
+        data=json.dumps(mock_data_manager.get_content()["data"]),
         follow_redirects=True,
     )
 
