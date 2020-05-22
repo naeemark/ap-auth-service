@@ -111,6 +111,23 @@ def start_session(api_prefix, test_client):
             "Device-ID": "1321a31x121za",
         },
     )
-    access_token_session = json.loads(response_start_session.data)["access_token"]
+    return json.loads(response_start_session.data)["access_token"]
 
-    return access_token_session
+
+@pytest.yield_fixture()
+def register_token(api_prefix, test_client, start_session):
+    """
+        Generates token after register
+    """
+    # pylint: disable=redefined-outer-name
+    response_register_user = test_client.post(
+        f"{api_prefix}/user/register",
+        headers={
+            "Authorization": f"Bearer {start_session}",
+            "Content-Type": "application/json",
+        },
+        data=json.dumps({"email": "john1223@gmail.com", "password": "123!!@@AB"}),
+        follow_redirects=True,
+    )
+
+    return json.loads(response_register_user.data)["access_token"]
