@@ -1,6 +1,6 @@
 # pylint: disable=unused-argument
 """
-    A file to containe all integration tests of
+    A file to contain all integration tests of
     UserResource
 """
 import json
