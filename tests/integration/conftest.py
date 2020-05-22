@@ -112,7 +112,5 @@ def start_session(api_prefix, test_client):
         },
     )
     access_token_session = json.loads(response_start_session.data)["access_token"]
-    keys = json.loads(response_start_session.data).keys()
-    status = response_start_session.status_code
 
-    return access_token_session, keys, status
+    return access_token_session
