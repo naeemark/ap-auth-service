@@ -12,7 +12,6 @@ from src import create_app
 from src import db
 from src.models.user import UserModel
 from src.resources import initialize_resources
-
 from tests.integration.mock_data import MockData
 from tests.integration.mock_data import MockDataManager
 
