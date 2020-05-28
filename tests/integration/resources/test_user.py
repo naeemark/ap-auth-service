@@ -58,9 +58,7 @@ class TestUserBehaviour:
             follow_redirects=True,
         )
 
-        fresh_access_token_login = json.loads(response_login_user.data)[
-            "fresh_access_token"
-        ]
+        fresh_access_token_login = json.loads(response_login_user.data)["access_token"]
 
         assert isinstance(fresh_access_token_login, str)
         assert response_login_user.status_code == 200
@@ -208,10 +206,8 @@ class TestRepeatedCases:
             follow_redirects=True,
         )
 
-        fresh_access_token_login = json.loads(response_login_user.data)[
-            "fresh_access_token"
-        ]
+        fresh_access_token_login = json.loads(response_login_user.data)["access_token"]
 
         assert isinstance(fresh_access_token_login, str)
         assert response_login_user.status_code == 200
-        assert "fresh_access_token" in json.loads(response_login_user.data).keys()
+        assert "access_token" in json.loads(response_login_user.data).keys()
