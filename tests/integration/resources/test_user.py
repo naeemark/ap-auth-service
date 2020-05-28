@@ -85,9 +85,7 @@ class TestUserBehaviour:
         )
         assert response_password_change.status_code == 412
 
-    def test_password_change_without_fresh_token(
-        self, api_prefix, test_client, session
-    ):
+    def test_pwd_change_without_fresh_token(self, api_prefix, test_client, session):
         """
         Test case to change password without fresh access token
         """
