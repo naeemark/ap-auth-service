@@ -95,7 +95,7 @@ def data():
 
 
 @pytest.fixture(scope="module")
-def prefix(test_client):
+def api_prefix(test_client):
     """
         Find and returns API_PREFIX for all integration tests
     """
@@ -108,7 +108,7 @@ def prefix(test_client):
 
 
 @pytest.yield_fixture()
-def session(prefix, test_client, data):
+def session(api_prefix, test_client, data):
     """
         Generates session response
     """
@@ -116,7 +116,7 @@ def session(prefix, test_client, data):
     mock_data_manager = MockDataManager(data)
     data.content.return_value = "base_startSession"
     response_start_session = test_client.post(
-        f"{prefix}/auth/startSession",
+        f"{api_prefix}/auth/startSession",
         headers=mock_data_manager.get_content()["headers"],
     )
     tokens = json.loads(response_start_session.data)
@@ -124,7 +124,7 @@ def session(prefix, test_client, data):
 
 
 @pytest.yield_fixture()
-def register_token(prefix, test_client, session, data):
+def register_token(api_prefix, test_client, session, data):
     """
         Generates token after register
     """
@@ -133,7 +133,7 @@ def register_token(prefix, test_client, session, data):
     data.content.return_value = "register_user_1"
 
     response_register_user = test_client.post(
-        f"{prefix}/user/register",
+        f"{api_prefix}/user/register",
         headers={
             "Authorization": f"Bearer {session[0]}",
             "Content-Type": "application/json",

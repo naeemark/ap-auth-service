@@ -44,12 +44,12 @@ class TestUserBehaviour:
         assert isinstance(register_token, str)
         TestUserBehaviour.token_dict.update({"register_token": register_token})
 
-    def test_login_user(self, prefix, test_client):
+    def test_login_user(self, api_prefix, test_client):
         """login user for fresh_token and check status in case of login"""
         login_user_data = TestUserBehaviour.content_data["login"]["data"]
 
         response_login_user = test_client.post(
-            f"{prefix}/user/login",
+            f"{api_prefix}/user/login",
             headers={
                 "Authorization": f"Bearer {TestUserBehaviour.token_dict['register_token']}",
                 CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
@@ -68,7 +68,7 @@ class TestUserBehaviour:
             {"fresh_access_token_login": fresh_access_token_login}
         )
 
-    def test_password_change_without_preconditions(self, prefix, test_client):
+    def test_password_change_without_preconditions(self, api_prefix, test_client):
         """Changing password without preconditons"""
         content_data = TestUserBehaviour.content_data["changePassword_precondition"][
             "data"
@@ -76,7 +76,7 @@ class TestUserBehaviour:
 
         fresh_token = TestUserBehaviour.token_dict["fresh_access_token_login"]
         response_password_change = test_client.put(
-            f"{prefix}/user/changePassword",
+            f"{api_prefix}/user/changePassword",
             headers={
                 "Authorization": f"Bearer {fresh_token}",
                 CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
@@ -85,7 +85,9 @@ class TestUserBehaviour:
         )
         assert response_password_change.status_code == 412
 
-    def test_password_change_without_fresh_token(self, prefix, test_client, session):
+    def test_password_change_without_fresh_token(
+        self, api_prefix, test_client, session
+    ):
         """
         Test case to change password without fresh access token
         """
@@ -94,7 +96,7 @@ class TestUserBehaviour:
         ]
 
         response_password_change = test_client.put(
-            f"{prefix}/user/changePassword",
+            f"{api_prefix}/user/changePassword",
             headers={
                 "Authorization": f"Bearer {session[0]}",
                 "Content-Type": "application/json",
@@ -107,23 +109,23 @@ class TestUserBehaviour:
             == "Fresh token required"
         )
 
-    def test_register_user_without_token(self, prefix, test_client):
+    def test_register_user_without_token(self, api_prefix, test_client):
         """
         Test case to check user register without authentication token
         """
         content_data = TestUserBehaviour.content_data["register_without_token"]["data"]
         response_register_user = test_client.post(
-            f"{prefix}/user/register", data=json.dumps(content_data),
+            f"{api_prefix}/user/register", data=json.dumps(content_data),
         )
         assert response_register_user.status_code == 401
 
-    def test_register_precondition_password(self, prefix, test_client, session):
+    def test_register_precondition_password(self, api_prefix, test_client, session):
         """
         Test case to check preconditions applied on password on userregister
         """
         content_data = TestUserBehaviour.content_data["register_precondition_password"]
         register_user = test_client.post(
-            content_data["url"].format(prefix=prefix),
+            content_data["url"].format(prefix=api_prefix),
             headers={
                 "Authorization": f"Bearer {session[0]}",
                 "Content-Type": "application/json",
@@ -132,13 +134,13 @@ class TestUserBehaviour:
         )
         assert register_user.status_code == 412
 
-    def test_password_change(self, prefix, test_client):
+    def test_password_change(self, api_prefix, test_client):
         """password change case """
         content_data = TestUserBehaviour.content_data["password_change"]["data"]
 
         fresh_token = TestUserBehaviour.token_dict["fresh_access_token_login"]
         response_password_change = test_client.put(
-            f"{prefix}/user/changePassword",
+            f"{api_prefix}/user/changePassword",
             headers={
                 "Authorization": f"Bearer {fresh_token}",
                 CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
@@ -165,11 +167,11 @@ class TestRepeatedCases:
         assert isinstance(content_data, dict)
         TestRepeatedCases.content_data.update(content_data)
 
-    def test_start_session_success(self, prefix, test_client):
+    def test_start_session_success(self, api_prefix, test_client):
         """session start success case"""
         content_data = TestRepeatedCases.content_data["start_session"]["headers"]
         response_start_session = test_client.post(
-            f"{prefix}/auth/startSession", headers=content_data,
+            f"{api_prefix}/auth/startSession", headers=content_data,
         )
 
         assert (
@@ -177,11 +179,11 @@ class TestRepeatedCases:
             and "refresh_token" in json.loads(response_start_session.data).keys()
         )
 
-    def test_register_user_success(self, prefix, test_client, session):
+    def test_register_user_success(self, api_prefix, test_client, session):
         """register user success case"""
         content_data = TestRepeatedCases.content_data["user_register"]["data"]
         response_register_user = test_client.post(
-            f"{prefix}/user/register",
+            f"{api_prefix}/user/register",
             headers={
                 "Authorization": f"Bearer {session[0]}",
                 CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
@@ -194,12 +196,12 @@ class TestRepeatedCases:
         assert "access_token" in json.loads(response_register_user.data).keys()
         TestRepeatedCases.token_dict.update({"register_token": access_token})
 
-    def test_login_user_success(self, prefix, test_client):
+    def test_login_user_success(self, api_prefix, test_client):
         """valid login case """
         content_data = TestRepeatedCases.content_data["login"]["data"]
 
         response_login_user = test_client.post(
-            f"{prefix}/user/login",
+            f"{api_prefix}/user/login",
             headers={
                 "Authorization": f"Bearer {TestRepeatedCases.token_dict['register_token']}",
                 CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
