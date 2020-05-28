@@ -5,6 +5,13 @@ content_data = {
     "register_user_1": {
         "data": {"email": "john1223@gmail.com", "password": "123!!@@AB"}
     },
+    "base_startSession": {
+        "headers": {
+            "Client-App-Token": "0b0069c752ec14172c5f78208f1863d7ad6755a6fae6fe76ec2c80d13be41e42",
+            "Timestamp": "131231",
+            "Device-ID": "1321a31x121za",
+        }
+    },
     "TestRepeatedCases": {
         "login": {"data": {"email": "john12211a3@gmail.com", "password": "123!!@@AB"}},
         "user_register": {

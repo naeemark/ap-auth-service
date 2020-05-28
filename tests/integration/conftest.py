@@ -12,6 +12,7 @@ from src import create_app
 from src import db
 from src.models.user import UserModel
 from src.resources import initialize_resources
+
 from tests.integration.mock_data import MockData
 from tests.integration.mock_data import MockDataManager
 
@@ -107,18 +108,16 @@ def prefix(test_client):
 
 
 @pytest.yield_fixture()
-def session(prefix, test_client):
+def session(prefix, test_client, data):
     """
         Generates session response
     """
     # pylint: disable=redefined-outer-name
+    mock_data_manager = MockDataManager(data)
+    data.content.return_value = "base_startSession"
     response_start_session = test_client.post(
         f"{prefix}/auth/startSession",
-        headers={
-            "Client-App-Token": "0b0069c752ec14172c5f78208f1863d7ad6755a6fae6fe76ec2c80d13be41e42",
-            "Timestamp": "131231",
-            "Device-ID": "1321a31x121za",
-        },
+        headers=mock_data_manager.get_content()["headers"],
     )
     tokens = json.loads(response_start_session.data)
     return tokens["access_token"], tokens["refresh_token"]
