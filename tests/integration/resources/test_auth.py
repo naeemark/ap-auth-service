@@ -38,7 +38,7 @@ def test_revoke_access(api_prefix, test_client, session):
 
 
 def test_revoke_access_without_token(api_prefix, test_client):
-    """revoke access"""
+    """revoke access without token"""
 
     response_revoke = test_client.post(f"{api_prefix}/auth/revokeAccess")
     assert response_revoke.status_code == 401
