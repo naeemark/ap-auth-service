@@ -5,6 +5,8 @@
 """
 import json
 
+from src.constant.success_message import LOGOUT
+
 from ..mock_data import MockDataManager
 
 
@@ -145,6 +147,19 @@ class TestUserBehaviour:
             follow_redirects=True,
         )
         assert response_password_change.status_code == 200
+
+    def test_user_logout(self, api_prefix, test_client):
+        """logout user case"""
+        fresh_token = TestUserBehaviour.token_dict["fresh_access_token_login"]
+        response_logout = test_client.post(
+            f"{api_prefix}/user/logout",
+            headers={
+                "Authorization": f"Bearer {fresh_token}",
+                CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
+            },
+        )
+        assert response_logout.status_code == 200
+        assert json.loads(response_logout.data)["message"] == LOGOUT
 
 
 class TestRepeatedCases:
