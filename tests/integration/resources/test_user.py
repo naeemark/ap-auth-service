@@ -53,7 +53,7 @@ class TestUserBehaviour:
         response_login_user = test_client.post(
             f"{api_prefix}/user/login",
             headers={
-                "Authorization": f"Bearer {TestUserBehaviour.token_dict['register_token']}",
+                "Authorization": f" {TestUserBehaviour.token_dict['register_token']}",
                 CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
             },
             data=json.dumps(login_user_data),
@@ -78,7 +78,7 @@ class TestUserBehaviour:
         response_password_change = test_client.put(
             f"{api_prefix}/user/changePassword",
             headers={
-                "Authorization": f"Bearer {fresh_token}",
+                "Authorization": f" {fresh_token}",
                 CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
             },
             data=json.dumps(content_data),
@@ -96,7 +96,7 @@ class TestUserBehaviour:
         response_password_change = test_client.put(
             f"{api_prefix}/user/changePassword",
             headers={
-                "Authorization": f"Bearer {session[0]}",
+                "Authorization": f" {session[0]}",
                 "Content-Type": "application/json",
             },
             data=json.dumps(content_data),
@@ -125,7 +125,7 @@ class TestUserBehaviour:
         register_user = test_client.post(
             content_data["url"].format(prefix=api_prefix),
             headers={
-                "Authorization": f"Bearer {session[0]}",
+                "Authorization": f" {session[0]}",
                 "Content-Type": "application/json",
             },
             data=json.dumps(content_data["data"]),
@@ -140,7 +140,7 @@ class TestUserBehaviour:
         response_password_change = test_client.put(
             f"{api_prefix}/user/changePassword",
             headers={
-                "Authorization": f"Bearer {fresh_token}",
+                "Authorization": f" {fresh_token}",
                 CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
             },
             data=json.dumps(content_data),
@@ -154,7 +154,7 @@ class TestUserBehaviour:
         response_logout = test_client.post(
             f"{api_prefix}/user/logout",
             headers={
-                "Authorization": f"Bearer {fresh_token}",
+                "Authorization": f"{fresh_token}",
                 CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
             },
         )
@@ -196,7 +196,7 @@ class TestRepeatedCases:
         response_register_user = test_client.post(
             f"{api_prefix}/user/register",
             headers={
-                "Authorization": f"Bearer {session[0]}",
+                "Authorization": f" {session[0]}",
                 CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
             },
             data=json.dumps(content_data),
@@ -214,7 +214,7 @@ class TestRepeatedCases:
         response_login_user = test_client.post(
             f"{api_prefix}/user/login",
             headers={
-                "Authorization": f"Bearer {TestRepeatedCases.token_dict['register_token']}",
+                "Authorization": f" {TestRepeatedCases.token_dict['register_token']}",
                 CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
             },
             data=json.dumps(content_data),
