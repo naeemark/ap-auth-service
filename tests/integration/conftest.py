@@ -134,7 +134,7 @@ def register_token(api_prefix, test_client, session, data):
     response_register_user = test_client.post(
         f"{api_prefix}/user/register",
         headers={
-            "Authorization": f"Bearer {session[0]}",
+            "Authorization": f" {session[0]}",
             "Content-Type": "application/json",
         },
         data=json.dumps(mock_data_manager.get_content()["data"]),
