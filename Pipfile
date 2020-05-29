@@ -44,6 +44,7 @@ python-dotenv = "*"
 bcrypt = "*"
 psycopg2-binary = "*"
 pytest-cov = "*"
+mock = "*"
 redis = "*"
 
 [requires]

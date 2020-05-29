@@ -1,11 +1,11 @@
 # pylint: disable=unused-argument
 """
-    A file to containe all integration tests of
+    A file to contain all integration tests of
     UserResource
 """
 import json
 
-from src.constant.success_message import LOGOUT
+from ..mock_data import MockDataManager
 
 
 def test_sum(test_client, test_database):
@@ -21,189 +21,193 @@ CONTENT_TYPE_VALUE = "application/json"
 PASSWORD = "123!!@@AB"
 
 
-def test_startsession_working(api_prefix, test_client, test_database):
+class TestUserBehaviour:
     """
-       Integration test for Start_Session and Login flows
-       - Best Case Scenarios
+    common user behaviour test cases class
     """
 
-    response_start_session = test_client.post(
-        f"{api_prefix}/auth/StartSession",
-        headers={
-            "Client-App-Token": "0b0069c752ec14172c5f78208f1863d7ad6755a6fae6fe76ec2c80d13be41e42",
-            "Timestamp": "131231",
-            "Device-ID": "1321a31x121za",
-        },
-        follow_redirects=True,
-    )
-    access_token_session = json.loads(response_start_session.data)["access_token"]
+    token_dict = {}
+    content_data = {}
 
-    response_register_user = test_client.post(
-        f"{api_prefix}/user/register",
-        headers={
-            "Authorization": f"Bearer {access_token_session}",
-            CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
-        },
-        data=json.dumps({"email": "john12@gmail.com", "password": PASSWORD}),
-        follow_redirects=True,
-    )
+    def test_content_data(self, data):
+        """content data dest"""
+        mock_data_manager = MockDataManager(data)
+        data.content.return_value = "TestUserBehaviour"
+        content_data = mock_data_manager.get_content()
+        assert isinstance(content_data, dict)
+        TestUserBehaviour.content_data.update(content_data)
 
-    access_token_register = json.loads(response_register_user.data)["access_token"]
+    def test_register_generated_token(self, register_token):
+        """
+        generete token by register end point
+        """
+        assert isinstance(register_token, str)
+        TestUserBehaviour.token_dict.update({"register_token": register_token})
 
-    response_login_user = test_client.post(
-        f"{api_prefix}/user/login",
-        headers={
-            "Authorization": f"Bearer {access_token_register}",
-            CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
-        },
-        data=json.dumps({"email": "john12@gmail.com", "password": PASSWORD}),
-        follow_redirects=True,
-    )
+    def test_login_user(self, api_prefix, test_client):
+        """login user for fresh_token and check status in case of login"""
+        login_user_data = TestUserBehaviour.content_data["login"]["data"]
 
-    fresh_access_token_login = json.loads(response_login_user.data)[
-        "fresh_access_token"
-    ]
+        response_login_user = test_client.post(
+            f"{api_prefix}/user/login",
+            headers={
+                "Authorization": f"Bearer {TestUserBehaviour.token_dict['register_token']}",
+                CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
+            },
+            data=json.dumps(login_user_data),
+            follow_redirects=True,
+        )
 
-    response_password_change = test_client.put(
-        f"{api_prefix}/user/changePassword",
-        headers={
-            "Authorization": f"Bearer {fresh_access_token_login}",
-            CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
-        },
-        data=json.dumps({"new_password": "7897!!@@AB"}),
-        follow_redirects=True,
-    )
-    assert response_password_change.status_code == 200
+        fresh_access_token_login = json.loads(response_login_user.data)["access_token"]
+
+        assert isinstance(fresh_access_token_login, str)
+        assert response_login_user.status_code == 200
+        TestUserBehaviour.token_dict.update(
+            {"fresh_access_token_login": fresh_access_token_login}
+        )
+
+    def test_password_change_without_preconditions(self, api_prefix, test_client):
+        """Changing password without preconditons"""
+        content_data = TestUserBehaviour.content_data["changePassword_precondition"][
+            "data"
+        ]
+
+        fresh_token = TestUserBehaviour.token_dict["fresh_access_token_login"]
+        response_password_change = test_client.put(
+            f"{api_prefix}/user/changePassword",
+            headers={
+                "Authorization": f"Bearer {fresh_token}",
+                CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
+            },
+            data=json.dumps(content_data),
+        )
+        assert response_password_change.status_code == 412
+
+    def test_pwd_change_without_fresh_token(self, api_prefix, test_client, session):
+        """
+        Test case to change password without fresh access token
+        """
+        content_data = TestUserBehaviour.content_data["changePassword_no_fresh_token"][
+            "data"
+        ]
+
+        response_password_change = test_client.put(
+            f"{api_prefix}/user/changePassword",
+            headers={
+                "Authorization": f"Bearer {session[0]}",
+                "Content-Type": "application/json",
+            },
+            data=json.dumps(content_data),
+        )
+        assert response_password_change.status_code == 401
+        assert (
+            json.loads(response_password_change.data)["message"]
+            == "Fresh token required"
+        )
+
+    def test_register_user_without_token(self, api_prefix, test_client):
+        """
+        Test case to check user register without authentication token
+        """
+        content_data = TestUserBehaviour.content_data["register_without_token"]["data"]
+        response_register_user = test_client.post(
+            f"{api_prefix}/user/register", data=json.dumps(content_data),
+        )
+        assert response_register_user.status_code == 401
+
+    def test_register_precondition_password(self, api_prefix, test_client, session):
+        """
+        Test case to check preconditions applied on password on userregister
+        """
+        content_data = TestUserBehaviour.content_data["register_precondition_password"]
+        register_user = test_client.post(
+            content_data["url"].format(prefix=api_prefix),
+            headers={
+                "Authorization": f"Bearer {session[0]}",
+                "Content-Type": "application/json",
+            },
+            data=json.dumps(content_data["data"]),
+        )
+        assert register_user.status_code == 412
+
+    def test_password_change(self, api_prefix, test_client):
+        """password change case """
+        content_data = TestUserBehaviour.content_data["password_change"]["data"]
+
+        fresh_token = TestUserBehaviour.token_dict["fresh_access_token_login"]
+        response_password_change = test_client.put(
+            f"{api_prefix}/user/changePassword",
+            headers={
+                "Authorization": f"Bearer {fresh_token}",
+                CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
+            },
+            data=json.dumps(content_data),
+            follow_redirects=True,
+        )
+        assert response_password_change.status_code == 200
 
 
-def test_password_change_without_fresh_token(api_prefix, test_client, test_database):
+class TestRepeatedCases:
     """
-    Test case to change password without fresh access token
+    common cases for test by user
     """
-    response_start_session = test_client.post(
-        f"{api_prefix}/auth/StartSession",
-        headers={
-            "Client-App-Token": "0b0069c752ec14172c5f78208f1863d7ad6755a6fae6fe76ec2c80d13be41e42",
-            "Timestamp": "131231",
-            "Device-ID": "1321a31x121za",
-        },
-        follow_redirects=True,
-    )
-    access_token_session = json.loads(response_start_session.data)["access_token"]
 
-    response_password_change = test_client.put(
-        f"{api_prefix}/user/changePassword",
-        headers={
-            "Authorization": f"Bearer {access_token_session}",
-            "Content-Type": "application/json",
-        },
-        data=json.dumps({"new_password": "7897!!@@AB"}),
-    )
-    assert response_password_change.status_code == 401
-    assert (
-        json.loads(response_password_change.data)["message"] == "Fresh token required"
-    )
+    token_dict = {}
+    content_data = {}
 
+    def test_content_data(self, data):
+        """content data dest"""
+        mock_data_manager = MockDataManager(data)
+        data.content.return_value = "TestRepeatedCases"
+        content_data = mock_data_manager.get_content()
+        assert isinstance(content_data, dict)
+        TestRepeatedCases.content_data.update(content_data)
 
-def test_password_change_without_preconditions(api_prefix, test_client, test_database):
-    """
-    Test case to change password without preconditions
-    """
-    response_start_session = test_client.post(
-        f"{api_prefix}/auth/StartSession",
-        headers={
-            "Client-App-Token": "0b0069c752fc14172c5f78208f1863d7ad6755a6fae6fe76ec2c80d13be41e42",
-            "Timestamp": "131231",
-            "Device-ID": "1321a31x121za",
-        },
-        follow_redirects=True,
-    )
-    access_token_session = json.loads(response_start_session.data)["access_token"]
+    def test_start_session_success(self, api_prefix, test_client):
+        """session start success case"""
+        content_data = TestRepeatedCases.content_data["start_session"]["headers"]
+        response_start_session = test_client.post(
+            f"{api_prefix}/auth/startSession", headers=content_data,
+        )
 
-    response_register_user = test_client.post(
-        f"{api_prefix}/user/register",
-        headers={
-            "Authorization": f"Bearer {access_token_session}",
-            CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
-        },
-        data=json.dumps({"email": "john123@gmail.com", "password": PASSWORD}),
-        follow_redirects=True,
-    )
+        assert (
+            "access_token"
+            and "refresh_token" in json.loads(response_start_session.data).keys()
+        )
 
-    access_token_register = json.loads(response_register_user.data)["access_token"]
+    def test_register_user_success(self, api_prefix, test_client, session):
+        """register user success case"""
+        content_data = TestRepeatedCases.content_data["user_register"]["data"]
+        response_register_user = test_client.post(
+            f"{api_prefix}/user/register",
+            headers={
+                "Authorization": f"Bearer {session[0]}",
+                CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
+            },
+            data=json.dumps(content_data),
+            follow_redirects=True,
+        )
+        access_token = json.loads(response_register_user.data)["access_token"]
+        assert response_register_user.status_code == 201
+        assert "access_token" in json.loads(response_register_user.data).keys()
+        TestRepeatedCases.token_dict.update({"register_token": access_token})
 
-    response_login_user = test_client.post(
-        f"{api_prefix}/user/login",
-        headers={
-            "Authorization": f"Bearer {access_token_register}",
-            CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
-        },
-        data=json.dumps({"email": "john123@gmail.com", "password": PASSWORD}),
-        follow_redirects=True,
-    )
+    def test_login_user_success(self, api_prefix, test_client):
+        """valid login case """
+        content_data = TestRepeatedCases.content_data["login"]["data"]
 
-    fresh_access_token_login = json.loads(response_login_user.data)[
-        "fresh_access_token"
-    ]
+        response_login_user = test_client.post(
+            f"{api_prefix}/user/login",
+            headers={
+                "Authorization": f"Bearer {TestRepeatedCases.token_dict['register_token']}",
+                CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
+            },
+            data=json.dumps(content_data),
+            follow_redirects=True,
+        )
 
-    response_password_change = test_client.put(
-        f"{api_prefix}/user/changePassword",
-        headers={
-            "Authorization": f"Bearer {fresh_access_token_login}",
-            CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
-        },
-        data=json.dumps({"new_password": "1212312"}),
-    )
-    assert response_password_change.status_code == 412
+        fresh_access_token_login = json.loads(response_login_user.data)["access_token"]
 
-
-def test_user_logout(api_prefix, test_client, test_database):
-    """
-    Test case to logout user
-    """
-    response_start_session = test_client.post(
-        f"{api_prefix}/auth/StartSession",
-        headers={
-            "Client-App-Token": "0b0069c852fc14172c5f78208f1863d7ad6755a6fae6fe86ec2c80d13be41e42",
-            "Timestamp": "131231",
-            "Device-ID": "1321a31x121za",
-        },
-        follow_redirects=True,
-    )
-    access_token_session = json.loads(response_start_session.data)["access_token"]
-
-    response_register_user = test_client.post(
-        f"{api_prefix}/user/register",
-        headers={
-            "Authorization": f"Bearer {access_token_session}",
-            CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
-        },
-        data=json.dumps({"email": "john1@gmail.com", "password": PASSWORD}),
-        follow_redirects=True,
-    )
-
-    access_token_register = json.loads(response_register_user.data)["access_token"]
-
-    response_login_user = test_client.post(
-        f"{api_prefix}/user/login",
-        headers={
-            "Authorization": f"Bearer {access_token_register}",
-            CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
-        },
-        data=json.dumps({"email": "john1@gmail.com", "password": PASSWORD}),
-        follow_redirects=True,
-    )
-
-    fresh_access_token_login = json.loads(response_login_user.data)[
-        "fresh_access_token"
-    ]
-
-    response_logout = test_client.post(
-        f"{api_prefix}/user/logout",
-        headers={
-            "Authorization": f"Bearer {fresh_access_token_login}",
-            CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
-        },
-    )
-    assert response_logout.status_code == 200
-    assert json.loads(response_logout.data)["message"] == LOGOUT
+        assert isinstance(fresh_access_token_login, str)
+        assert response_login_user.status_code == 200
+        assert "access_token" in json.loads(response_login_user.data).keys()

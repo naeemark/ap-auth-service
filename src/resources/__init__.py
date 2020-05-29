@@ -35,8 +35,8 @@ def initialize_resources(app, jwt):
     api.add_resource(UserLogout, "/user/logout")
 
     # Adds resources for Auth Entity
-    api.add_resource(TokenRefresh, "/auth/refresh")
-    api.add_resource(StartSession, "/auth/StartSession")
+    api.add_resource(TokenRefresh, "/auth/refreshToken")
+    api.add_resource(StartSession, "/auth/startSession")
 
     # Adding api-prefix for logging purposes
     app.config["API_PREFIX"] = api_prefix
