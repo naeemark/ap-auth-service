@@ -1,4 +1,5 @@
 from flask_restful import Api
+from src.resources.auth import RevokeAccess
 from src.resources.auth import StartSession
 from src.resources.auth import TokenRefresh
 from src.resources.user import ChangePassword
@@ -37,6 +38,7 @@ def initialize_resources(app, jwt):
     # Adds resources for Auth Entity
     api.add_resource(TokenRefresh, "/auth/refreshToken")
     api.add_resource(StartSession, "/auth/startSession")
+    api.add_resource(RevokeAccess, "/auth/revokeAccess")
 
     # Adding api-prefix for logging purposes
     app.config["API_PREFIX"] = api_prefix
