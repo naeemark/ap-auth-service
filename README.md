@@ -75,7 +75,6 @@ _NOTE_: `pre-commit run --all-files` should always be validated before doing a c
 
 - See [`Pipfile`](/Pipfile)
 
-
 ## Distribution
 
 ### Postman Environments
