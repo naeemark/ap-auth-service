@@ -1,15 +1,19 @@
 """
     A configuration file for pytest integration testing
 """
+import json
 import os
 
 import bcrypt
 import pytest
 from flask_jwt_extended import JWTManager
+from mock import Mock
 from src import create_app
 from src import db
 from src.models.user import UserModel
 from src.resources import initialize_resources
+from tests.integration.mock_data import MockData
+from tests.integration.mock_data import MockDataManager
 
 
 @pytest.fixture(scope="module")
@@ -83,6 +87,12 @@ def test_database():
         print(exception)
 
 
+@pytest.yield_fixture()
+def data():
+    """returns the data sepicified earlier"""
+    return Mock(spec=MockData)
+
+
 @pytest.fixture(scope="module")
 def api_prefix(test_client):
     """
@@ -94,3 +104,41 @@ def api_prefix(test_client):
         if "API_PREFIX" in test_client.application.config
         else ""
     )
+
+
+@pytest.yield_fixture()
+def session(api_prefix, test_client, data):
+    """
+        Generates session response
+    """
+    # pylint: disable=redefined-outer-name
+    mock_data_manager = MockDataManager(data)
+    data.content.return_value = "base_startSession"
+    response_start_session = test_client.post(
+        f"{api_prefix}/auth/startSession",
+        headers=mock_data_manager.get_content()["headers"],
+    )
+    tokens = json.loads(response_start_session.data)
+    return tokens["access_token"], tokens["refresh_token"]
+
+
+@pytest.yield_fixture()
+def register_token(api_prefix, test_client, session, data):
+    """
+        Generates token after register
+    """
+    # pylint: disable=redefined-outer-name
+    mock_data_manager = MockDataManager(data)
+    data.content.return_value = "register_user_1"
+
+    response_register_user = test_client.post(
+        f"{api_prefix}/user/register",
+        headers={
+            "Authorization": f" {session[0]}",
+            "Content-Type": "application/json",
+        },
+        data=json.dumps(mock_data_manager.get_content()["data"]),
+        follow_redirects=True,
+    )
+
+    return json.loads(response_register_user.data)["access_token"]

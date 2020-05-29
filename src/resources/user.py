@@ -3,13 +3,13 @@
 """
 import bcrypt
 from flask_jwt_extended import create_access_token
-from flask_jwt_extended import create_refresh_token
 from flask_jwt_extended import fresh_jwt_required
 from flask_jwt_extended import get_jwt_identity
-from flask_jwt_extended import jwt_refresh_token_required
+from flask_jwt_extended import jwt_required
 from flask_restful import reqparse
 from flask_restful import Resource
 from src.constant.exception import ValidationException
+from src.constant.success_message import LOGGED_IN
 from src.constant.success_message import UPDATED_PASSWORD
 from src.constant.success_message import USER_CREATION
 from src.models.user import UserModel
@@ -30,6 +30,7 @@ class UserRegister(Resource):
         "password", type=str, required=True, help=ValidationException.FIELD_BLANK
     )
 
+    @jwt_required
     def post(self):
         """
             Creates a new User
@@ -52,7 +53,10 @@ class UserRegister(Resource):
         user = UserModel(email, hashed_password)
         user.save_to_db()
 
-        return {"message": USER_CREATION}, 201
+        current_user = get_jwt_identity()
+        access_token = create_access_token(identity=current_user)
+
+        return {"message": USER_CREATION, "access_token": access_token}, 201
 
 
 class UserLogin(Resource):
@@ -68,34 +72,18 @@ class UserLogin(Resource):
         "password", type=str, required=True, help=ValidationException.FIELD_BLANK
     )
 
-    @classmethod
-    def post(cls):
-        """
-            Returns a new Token
-        """
-        data = cls.parser.parse_args()
-        user = UserModel.find_by_email(data["email"])
-
-        if user and bcrypt.checkpw(data["password"].encode(), user.password):
-            access_token = create_access_token(identity=user.id, fresh=True)
-            refresh_token = create_refresh_token(user.id)
-            return {"access_token": access_token, "refresh_token": refresh_token}, 200
-        return {"message": ValidationException.INVALID_CREDENTIAL}, 401
-
-
-class TokenRefresh(Resource):
-    """
-        Resource TokenRefresh
-    """
-
-    @jwt_refresh_token_required
+    @jwt_required
     def post(self):
         """
             Returns a new Token
         """
-        current_user = get_jwt_identity()
-        new_token = create_access_token(identity=current_user, fresh=False)
-        return {"access_token": new_token}, 200
+        data = UserLogin.parser.parse_args()
+        user = UserModel.find_by_email(data["email"])
+
+        if user and bcrypt.checkpw(data["password"].encode(), user.password):
+            access_token = create_access_token(identity=user.id, fresh=True)
+            return {"access_token": access_token, "message": LOGGED_IN}, 200
+        return {"message": ValidationException.INVALID_CREDENTIAL}, 401
 
 
 class ChangePassword(Resource):

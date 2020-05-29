@@ -11,5 +11,3 @@ class ValidationException(Exception):
     INVALID_CREDENTIAL = "Invalid credentials"
     PASSWORD_CONDITION = "'Password' policy not followed"
     EMAIL_CONDITION = "'email' is not valid"
-    AUTH = "Authorization Required"
-    TOKEN_EXPIRED = "Token has expired"

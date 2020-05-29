@@ -1,12 +1,12 @@
 from flask_restful import Api
+from src.resources.auth import StartSession
+from src.resources.auth import TokenRefresh
 from src.resources.user import ChangePassword
-from src.resources.user import TokenRefresh
 from src.resources.user import UserLogin
 from src.resources.user import UserRegister
 
 
 def initialize_resources(app):
-
     api_prefix = "/{}/api/v1".format(app.config.get("STAGE"))
 
     # Instantiates API
@@ -18,7 +18,8 @@ def initialize_resources(app):
     api.add_resource(ChangePassword, "/user/changePassword")
 
     # Adds resources for Auth Entity
-    api.add_resource(TokenRefresh, "/auth/refresh")
+    api.add_resource(TokenRefresh, "/auth/refreshToken")
+    api.add_resource(StartSession, "/auth/startSession")
 
     # Adding api-prefix for logging purposes
     app.config["API_PREFIX"] = api_prefix
