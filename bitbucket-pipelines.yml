@@ -1,0 +1,27 @@
+image:
+  name: atlassian/default-image:2
+
+definitions:
+  steps:
+    - step: &deploy-dev
+        name: Deploy -> dev
+        deployment: Development
+        script:
+          - echo 'This will deploy to dev'
+          - export IMAGE_NAME="xxxxxxxxxxx.dkr.ecr.us-east-1.amazonaws.com/xxx-xxx-xxx-xx:latest"
+
+          - echo ${TASK_DEFINITION} > task-definition-template.json
+
+          - cat task-definition-template.json | envsubst > task-definition.json
+          - cat task-definition.json
+
+          - pipe: atlassian/aws-ecs-deploy:1.1.3
+            variables:
+              CLUSTER_NAME: "cluster-xxx-xxx-xxx-xx"
+              SERVICE_NAME: "service-xxx-xxx-xxx-xx"
+              TASK_DEFINITION: "task-definition.json"
+
+pipelines:
+  branches:
+    master:
+      - step: *deploy-dev
