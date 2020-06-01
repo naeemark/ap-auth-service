@@ -5,6 +5,7 @@ from flask_jwt_extended import JWTManager
 from src import create_app
 from src import db
 from src.resources import initialize_resources
+from src.resources import token_callback
 
 app = create_app("flask.cfg")
 
@@ -21,8 +22,8 @@ def create_tables():
 # no endpoint
 jwt = JWTManager(app)
 
-
-initialize_resources(app, jwt)
+token_callback(jwt)
+initialize_resources(app)
 
 if __name__ == "__main__":
     app.run()

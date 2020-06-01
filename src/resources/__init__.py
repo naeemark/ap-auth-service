@@ -9,7 +9,7 @@ from src.resources.user import UserRegister
 from src.utils.blacklist import BlacklistManager
 
 
-def initialize_resources(app, jwt):
+def token_callback(jwt):
     @jwt.token_in_blacklist_loader
     def check_if_token_in_blacklist(decrypted_token):
         """
@@ -21,9 +21,10 @@ def initialize_resources(app, jwt):
             decrypted_token["jti"] in BlacklistManager().get_jti_list()
         )  # Here we blacklist particular users.
 
-    if "BlacklistManager" not in check_if_token_in_blacklist.__code__.co_names:
-        raise ValueError("expected BlacklistManager list")
+    return check_if_token_in_blacklist
 
+
+def initialize_resources(app):
     api_prefix = "/{}/api/v1".format(app.config.get("STAGE"))
 
     # Instantiates API
