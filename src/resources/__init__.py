@@ -10,12 +10,12 @@ from src.utils.blacklist import BlacklistManager
 
 
 def initialize_token_in_blacklist_loader(jwt):
+    """call back for blacklist tokens"""
+
     @jwt.token_in_blacklist_loader
     def check_if_token_in_blacklist(decrypted_token):
         """
-        :param decrypted_token: token dict
-        :return: this method will check if a token is blacklisted
-        and will be called automatically when blacklist is enabled
+        this method will check if a token is blacklisted
         """
         return (
             decrypted_token["jti"] in BlacklistManager().get_jti_list()
