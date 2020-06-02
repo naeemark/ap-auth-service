@@ -79,7 +79,7 @@ class RevokeAccess(Resource):
     @jwt_required
     def post(self):
         """
-        :return: success message on logout else give error message
+        revoke access for access token
         """
         jti = get_raw_jwt()["jti"]  # jti is "JWT ID", a unique identifier for a JWT.
         identity = get_jwt_identity()
