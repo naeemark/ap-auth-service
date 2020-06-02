@@ -10,6 +10,7 @@ pytest = "*"
 pytest-cov = "*"
 pytest-flask = "*"
 mock = "*"
+fakeredis = "*"
 
 [packages]
 flask = "*"

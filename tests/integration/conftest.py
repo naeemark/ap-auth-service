@@ -5,6 +5,7 @@ import json
 import os
 
 import bcrypt
+import fakeredis
 import pytest
 from flask_jwt_extended import JWTManager
 from mock import Mock
@@ -34,7 +35,8 @@ def test_client():
     """
     flask_app = create_app("flask_test.cfg")
     jwt = JWTManager(flask_app)
-    BlacklistManager().initialize_redis(flask_app)
+    redis_instance = fakeredis.FakeStrictRedis()
+    BlacklistManager().initialize_redis(flask_app, redis_instance)
     initialize_token_in_blacklist_loader(jwt)
     initialize_resources(flask_app)
 
