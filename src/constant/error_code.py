@@ -19,3 +19,15 @@ class ErrorCode:
         1202: ValidationException.TOKEN_EXPIRED,
         1203: ValidationException.BLACKLIST,
     }
+
+
+# success case example
+success = {"success": True, "message": "User logged in successfully", "data": {}}
+
+# error case example
+fail_case = {
+    "success": False,
+    "message": "'Password' policy not followed",
+    "error_code": 1304,
+    "data": {},
+}
