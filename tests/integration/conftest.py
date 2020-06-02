@@ -13,6 +13,7 @@ from src import db
 from src.models.user import UserModel
 from src.resources import initialize_resources
 from src.resources import initialize_token_in_blacklist_loader
+from src.utils.blacklist import BlacklistManager
 from tests.integration.mock_data import MockData
 from tests.integration.mock_data import MockDataManager
 
@@ -33,7 +34,7 @@ def test_client():
     """
     flask_app = create_app("flask_test.cfg")
     jwt = JWTManager(flask_app)
-
+    BlacklistManager().initialize_redis(flask_app)
     initialize_token_in_blacklist_loader(jwt)
     initialize_resources(flask_app)
 

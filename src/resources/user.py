@@ -138,6 +138,7 @@ class UserLogout(Resource):
         identity = get_jwt_identity()
         try:
             insert_status = BlacklistManager().insert_blacklist_token_id(identity, jti)
+
             if not insert_status:
                 return {"message": ValidationException.BLACKLIST}, 400
             return {"message": LOGOUT}, 200

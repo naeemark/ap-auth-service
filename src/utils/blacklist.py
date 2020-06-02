@@ -14,6 +14,8 @@ class BlacklistManager:
      managing tokens which are revoked
     """
 
+    redis_config = {}
+
     def __init__(self):
         self.redis = None
         if not os.environ.get("REDIS_HOST") and not os.environ.get("REDIS_PORT"):
@@ -23,7 +25,7 @@ class BlacklistManager:
                 host=os.environ["REDIS_HOST"], port=os.environ["REDIS_PORT"]
             )
 
-    def insert_blacklist_token_id(self, identity, jti, expire_in_min=TOKEN_EXPIRE):
+    def insert_blacklist_token_id(self, identity, jti):
         """
         :param identity: identity
         :param jti: JWT ID
@@ -34,7 +36,7 @@ class BlacklistManager:
             self.redis.append(str(jti))
             return True
 
-        expire_time = int(expire_in_min) * 60
+        expire_time = int(BlacklistManager.redis_config.get("TOKEN_EXPIRE")) * 60
         return self.redis.set(str(jti), str(identity), str(expire_time))
 
     def get_jti_list(self):
@@ -52,3 +54,9 @@ class BlacklistManager:
         :return: decoded jti value
         """
         return encoded_jti.decode()
+
+    def initialize_redis(self, app):
+        """intialize redis config"""
+        BlacklistManager.redis_config.update(
+            {"TOKEN_EXPIRE": app.config.get("TOKEN_EXPIRE")}
+        )
