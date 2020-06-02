@@ -9,6 +9,7 @@ pre-commit = "*"
 pytest = "*"
 pytest-cov = "*"
 pytest-flask = "*"
+mock = "*"
 
 [packages]
 flask = "*"
@@ -44,7 +45,6 @@ python-dotenv = "*"
 bcrypt = "*"
 psycopg2-binary = "*"
 pytest-cov = "*"
-mock = "*"
 redis = "*"
 
 [requires]
