@@ -12,7 +12,7 @@ from src import create_app
 from src import db
 from src.models.user import UserModel
 from src.resources import initialize_resources
-from src.resources import token_callback
+from src.resources import initialize_token_in_blacklist_loader
 from tests.integration.mock_data import MockData
 from tests.integration.mock_data import MockDataManager
 
@@ -34,7 +34,7 @@ def test_client():
     flask_app = create_app("flask_test.cfg")
     jwt = JWTManager(flask_app)
 
-    token_callback(jwt)
+    initialize_token_in_blacklist_loader(jwt)
     initialize_resources(flask_app)
 
     db.init_app(flask_app)

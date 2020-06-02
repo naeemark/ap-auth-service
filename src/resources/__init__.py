@@ -9,7 +9,7 @@ from src.resources.user import UserRegister
 from src.utils.blacklist import BlacklistManager
 
 
-def token_callback(jwt):
+def initialize_token_in_blacklist_loader(jwt):
     @jwt.token_in_blacklist_loader
     def check_if_token_in_blacklist(decrypted_token):
         """
