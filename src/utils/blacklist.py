@@ -5,6 +5,7 @@ import os
 
 import redis
 
+TOKEN_EXPIRE = os.environ.get("TOKEN_EXPIRE")
 test_blacklist = []
 
 
@@ -22,7 +23,7 @@ class BlacklistManager:
                 host=os.environ["REDIS_HOST"], port=os.environ["REDIS_PORT"]
             )
 
-    def insert_blacklist_token_id(self, identity, jti, expire_in_min=15):
+    def insert_blacklist_token_id(self, identity, jti, expire_in_min=TOKEN_EXPIRE):
         """
         :param identity: identity
         :param jti: JWT ID
@@ -33,7 +34,7 @@ class BlacklistManager:
             self.redis.append(str(jti))
             return True
 
-        expire_time = expire_in_min * 60
+        expire_time = int(expire_in_min) * 60
         return self.redis.set(str(jti), str(identity), str(expire_time))
 
     def get_jti_list(self):
