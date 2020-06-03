@@ -188,8 +188,18 @@ class UserLogout(Resource):
             insert_status = BlacklistManager().insert_blacklist_token_id(identity, jti)
 
             if not insert_status:
-                return {"message": ValidationException.BLACKLIST}, 400
-            return {"message": Success.LOGOUT}, 200
+                return (
+                    {
+                        "responseMessage": "Server error",
+                        "responseCode": 500,
+                        "response": response(error_title.REDIS_INSERT, "SERVER_ERROR"),
+                    },
+                    500,
+                )
+            return (
+                {"responseMessage": Success.LOGOUT, "responseCode": 200},
+                200,
+            )
         except ImportError as error:
             return {"message": error}, 400
         except ValueError as error:
