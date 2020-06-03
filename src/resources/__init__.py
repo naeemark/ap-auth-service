@@ -1,6 +1,3 @@
-import os
-
-import redis
 from flask_restful import Api
 from src.resources.auth import RevokeAccess
 from src.resources.auth import StartSession
@@ -10,11 +7,6 @@ from src.resources.user import UserLogin
 from src.resources.user import UserLogout
 from src.resources.user import UserRegister
 from src.utils.blacklist_manager import BlacklistManager
-
-
-redis_instance = redis.Redis(
-    host=os.environ["REDIS_HOST"], port=os.environ["REDIS_PORT"]
-)
 
 
 def initialize_token_in_blacklist_loader(jwt):

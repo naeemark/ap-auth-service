@@ -7,9 +7,9 @@ import os
 from flask_jwt_extended import JWTManager
 from src import create_app
 from src import db
+from src import redis_instance
 from src.resources import initialize_resources
 from src.resources import initialize_token_in_blacklist_loader
-from src.resources import redis_instance
 from src.utils.blacklist_manager import BlacklistManager
 
 app = create_app("flask.cfg")
@@ -26,6 +26,8 @@ def create_tables():
 
 # no endpoint
 jwt = JWTManager(app)
+
+
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(
     minutes=int(os.environ["JWT_ACCESS_TOKEN_EXPIRES"])
 )
