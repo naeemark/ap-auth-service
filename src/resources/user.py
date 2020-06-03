@@ -147,10 +147,14 @@ class ChangePassword(Resource):
             hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
             user.password = hashed_password
             user.save_to_db()
+
             return (
                 {
-                    "message": Success.UPDATED_PASSWORD,
-                    "password_strength": validate[0].get("password_strength"),
+                    "responseMessage": Success.UPDATED_PASSWORD,
+                    "responseCode": 200,
+                    "response": {
+                        "passwordStrength": validate[0].get("password_strength")
+                    },
                 },
                 200,
             )
