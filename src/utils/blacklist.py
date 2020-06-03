@@ -26,8 +26,7 @@ class BlacklistManager:
         """
         :return: list of jti
         """
-        if isinstance(self.redis, list):
-            return self.redis
+
         jti_list = list(map(self.decode_jti, self.redis.keys()))
         return jti_list
 
