@@ -10,6 +10,8 @@ class ErrorCode:
     EMAIL_CONDITION = "Invalid Email"
     PASSWORD_PRECONDITION = "Password Precondition"
     TOKEN_REVOKED = "Token Revoked"
+    TOKEN_EXPIRED = "Token Expired"
+    TOKEN_INVALID = "Token Invalid"
 
     @classmethod
     def get_validation_error(cls, error_title):
@@ -27,8 +29,8 @@ class ErrorCode:
         """returns validation errors """
         auth = {
             cls.TOKEN_REVOKED: ValidationException.TOKEN_REVOKED,
-            cls.USER_ALREADY_EXISTS: ValidationException.USER_ALREADY_EXISTS,
-            cls.EMAIL_CONDITION: ValidationException.EMAIL_CONDITION,
+            cls.TOKEN_EXPIRED: ValidationException.TOKEN_EXPIRED,
+            cls.TOKEN_INVALID: ValidationException.TOKEN_INVALID,
             cls.PASSWORD_PRECONDITION: ValidationException.PASSWORD_CONDITION,
         }
         return (auth.get(error_title), "AUTH_ERROR")

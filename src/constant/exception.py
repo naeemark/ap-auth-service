@@ -15,3 +15,4 @@ class ValidationException(Exception):
     TOKEN_EXPIRED = "Token has expired"
     BLACKLIST = "Error occurred inserting token"
     TOKEN_REVOKED = "Token has been revoked"
+    TOKEN_INVALID = "Invalid token and crypto padding"
