@@ -135,7 +135,11 @@ class RevokeAccess(Resource):
             insert_status = BlacklistManager().insert_blacklist_token_id(identity, jti)
             if not insert_status:
                 return {"message": ValidationException.BLACKLIST}, 400
-            return {"message": Success.ACCESS_REVOKED}, 200
+
+            return (
+                {"responseMessage": Success.ACCESS_REVOKED, "responseCode": 200},
+                200,
+            )
         except ImportError as error:
             return {"message": error}, 400
         except ValueError as error:
