@@ -13,6 +13,7 @@ class ErrorCode:
     TOKEN_EXPIRED = "Token Expired"
     TOKEN_INVALID = "Token Invalid"
     HEADERS_INCORRECT = "Invalid Headers"
+    REDIS_INSERT = "Redis Server Error"
 
     @classmethod
     def get_validation_error(cls, error_title):
@@ -35,6 +36,12 @@ class ErrorCode:
             cls.HEADERS_INCORRECT: ValidationException.HEADERS_INCORRECT,
         }
         return (auth.get(error_title), "AUTH_ERROR")
+
+    @classmethod
+    def get_server_error(cls, error_title):
+        """returns server errors """
+        server = {cls.REDIS_INSERT: ValidationException.BLACKLIST}
+        return (server.get(error_title), "SERVER_ERROR")
 
     # 12XX Auth Errors
     AUTH_ERROR = {
