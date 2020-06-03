@@ -4,7 +4,7 @@
 """
 import json
 
-from src.constant.success_message import ACCESS_REVOKED
+from src.constant.success_message import Success
 
 
 def test_refresh_with_access_token(test_client, api_prefix, session, test_database):
@@ -34,7 +34,7 @@ def test_revoke_access(api_prefix, test_client, session):
         headers={"Authorization": f"{session[0]}", "Content-Type": "application/json"},
     )
     assert response_revoke.status_code == 200
-    assert json.loads(response_revoke.data)["message"] == ACCESS_REVOKED
+    assert json.loads(response_revoke.data)["message"] == Success.ACCESS_REVOKED
 
 
 def test_revoke_access_without_token(api_prefix, test_client):

@@ -11,10 +11,7 @@ from flask_restful import reqparse
 from flask_restful import Resource
 from src.constant.exception import ValidationException
 from src.constant.rules import get_error_response as response
-from src.constant.success_message import LOGGED_IN
-from src.constant.success_message import LOGOUT
-from src.constant.success_message import UPDATED_PASSWORD
-from src.constant.success_message import USER_CREATION
+from src.constant.success_message import Success
 from src.models.user import UserModel
 from src.utils.blacklist import BlacklistManager
 from src.validators.user import ChangePasswordValidate
@@ -69,7 +66,7 @@ class UserRegister(Resource):
 
         return (
             {
-                "responseMessage": USER_CREATION,
+                "responseMessage": Success.USER_CREATION,
                 "responseCode": 201,
                 "response": {"token": access_token},
             },
@@ -100,7 +97,7 @@ class UserLogin(Resource):
 
         if user and bcrypt.checkpw(data["password"].encode(), user.password):
             access_token = create_access_token(identity=user.id, fresh=True)
-            return {"access_token": access_token, "message": LOGGED_IN}, 200
+            return {"access_token": access_token, "message": Success.LOGGED_IN}, 200
         return {"message": ValidationException.INVALID_CREDENTIAL}, 401
 
 
@@ -131,7 +128,7 @@ class ChangePassword(Resource):
             user.save_to_db()
             return (
                 {
-                    "message": UPDATED_PASSWORD,
+                    "message": Success.UPDATED_PASSWORD,
                     "password_strength": validate[0].get("password_strength"),
                 },
                 200,
@@ -149,14 +146,14 @@ class UserLogout(Resource):
         """
         :return: success message on logout else give error message
         """
-        jti = get_raw_jwt()["jti"]  # jti is "JWT ID", a unique identifier for a JWT.
+        jti = get_raw_jwt()["jti"]
         identity = get_jwt_identity()
         try:
             insert_status = BlacklistManager().insert_blacklist_token_id(identity, jti)
 
             if not insert_status:
                 return {"message": ValidationException.BLACKLIST}, 400
-            return {"message": LOGOUT}, 200
+            return {"message": Success.LOGOUT}, 200
         except ImportError as error:
             return {"message": error}, 400
         except ValueError as error:

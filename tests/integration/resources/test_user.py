@@ -5,7 +5,7 @@
 """
 import json
 
-from src.constant.success_message import LOGOUT
+from src.constant.success_message import Success
 
 from ..mock_data import MockDataManager
 
@@ -159,7 +159,7 @@ class TestUserBehaviour:
             },
         )
         assert response_logout.status_code == 200
-        assert json.loads(response_logout.data)["message"] == LOGOUT
+        assert json.loads(response_logout.data)["message"] == Success.LOGOUT
 
     def test_user_logout_without_token(self, api_prefix, test_client):
         """logout user case without token"""
