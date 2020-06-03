@@ -43,7 +43,23 @@ class UserRegister(Resource):
         password = data["password"]
 
         if UserModel.find_by_email(email):
-            return {"message": ValidationException.USER_ALREADY_EXISTS}, 400
+            response = {
+                "errors": [
+                    {
+                        "errorCode": "VALIDATION_ERROR",
+                        "errorTitle": "We seems to have a problem!",
+                        "errorDescription": ValidationException.USER_ALREADY_EXISTS,
+                    }
+                ]
+            }
+            return (
+                {
+                    "responseMessage": "Validation error",
+                    "responseCode": 400,
+                    "response": response,
+                },
+                400,
+            )
 
         user_register_validate = UserRegisterValidate(data)
         validate_error = user_register_validate.validate_login()
