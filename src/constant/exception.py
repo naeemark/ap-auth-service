@@ -14,3 +14,4 @@ class ValidationException(Exception):
     AUTH = "Authorization Required"
     TOKEN_EXPIRED = "Token has expired"
     BLACKLIST = "Error occurred inserting token"
+    TOKEN_REVOKED = "Token has been revoked"

@@ -5,13 +5,33 @@ from .exception import ValidationException
 class ErrorCode:
     """error codes section"""
 
-    # 13XX Session Errors
-    SESSION_ERROR = {
-        1301: ValidationException.INVALID_CREDENTIAL,
-        1302: ValidationException.USER_ALREADY_EXISTS,
-        1303: ValidationException.EMAIL_CONDITION,
-        1304: ValidationException.PASSWORD_CONDITION,
-    }
+    INVALID_CREDENTIAL = "Invalid Credential"
+    USER_ALREADY_EXISTS = "User Aleardy Exist"
+    EMAIL_CONDITION = "Invalid Email"
+    PASSWORD_PRECONDITION = "Password Precondition"
+    TOKEN_REVOKED = "Token Revoked"
+
+    @classmethod
+    def get_validation_error(cls, error_title):
+        """returns validation errors """
+        validation = {
+            cls.INVALID_CREDENTIAL: ValidationException.INVALID_CREDENTIAL,
+            cls.USER_ALREADY_EXISTS: ValidationException.USER_ALREADY_EXISTS,
+            cls.EMAIL_CONDITION: ValidationException.EMAIL_CONDITION,
+            cls.PASSWORD_PRECONDITION: ValidationException.PASSWORD_CONDITION,
+        }
+        return (validation.get(error_title), "VALIDATION_ERROR")
+
+    @classmethod
+    def get_auth_error(cls, error_title):
+        """returns validation errors """
+        auth = {
+            cls.TOKEN_REVOKED: ValidationException.TOKEN_REVOKED,
+            cls.USER_ALREADY_EXISTS: ValidationException.USER_ALREADY_EXISTS,
+            cls.EMAIL_CONDITION: ValidationException.EMAIL_CONDITION,
+            cls.PASSWORD_PRECONDITION: ValidationException.PASSWORD_CONDITION,
+        }
+        return (auth.get(error_title), "AUTH_ERROR")
 
     # 12XX Auth Errors
     AUTH_ERROR = {

@@ -10,6 +10,7 @@ from flask_jwt_extended import jwt_required
 from flask_restful import reqparse
 from flask_restful import Resource
 from src.constant.exception import ValidationException
+from src.constant.rules import get_error_response as response
 from src.constant.success_message import LOGGED_IN
 from src.constant.success_message import LOGOUT
 from src.constant.success_message import UPDATED_PASSWORD
@@ -43,20 +44,11 @@ class UserRegister(Resource):
         password = data["password"]
 
         if UserModel.find_by_email(email):
-            response = {
-                "errors": [
-                    {
-                        "errorCode": "VALIDATION_ERROR",
-                        "errorTitle": "We seems to have a problem!",
-                        "errorDescription": ValidationException.USER_ALREADY_EXISTS,
-                    }
-                ]
-            }
             return (
                 {
                     "responseMessage": "Validation error",
                     "responseCode": 400,
-                    "response": response,
+                    "response": response("User Aleardy Exist", "VALIDATION_ERROR"),
                 },
                 400,
             )
