@@ -60,7 +60,9 @@ class TestUserBehaviour:
             follow_redirects=True,
         )
 
-        fresh_access_token_login = json.loads(response_login_user.data)["access_token"]
+        fresh_access_token_login = json.loads(response_login_user.data)["response"][
+            "token"
+        ]
 
         assert isinstance(fresh_access_token_login, str)
         assert response_login_user.status_code == 200
@@ -103,7 +105,9 @@ class TestUserBehaviour:
         )
         assert response_password_change.status_code == 401
         assert (
-            json.loads(response_password_change.data)["message"]
+            json.loads(response_password_change.data)["response"]["errors"][0][
+                "errorTitle"
+            ]
             == "Fresh token required"
         )
 
@@ -159,7 +163,7 @@ class TestUserBehaviour:
             },
         )
         assert response_logout.status_code == 200
-        assert json.loads(response_logout.data)["message"] == Success.LOGOUT
+        assert json.loads(response_logout.data)["responseMessage"] == Success.LOGOUT
 
     def test_user_logout_without_token(self, api_prefix, test_client):
         """logout user case without token"""
@@ -193,8 +197,9 @@ class TestRepeatedCases:
         )
 
         assert (
-            "access_token"
-            and "refresh_token" in json.loads(response_start_session.data).keys()
+            "token"
+            and "refreshToken"
+            in json.loads(response_start_session.data)["response"].keys()
         )
 
     def test_register_user_success(self, api_prefix, test_client, session):
@@ -209,9 +214,9 @@ class TestRepeatedCases:
             data=json.dumps(content_data),
             follow_redirects=True,
         )
-        access_token = json.loads(response_register_user.data)["access_token"]
+        access_token = json.loads(response_register_user.data)["response"]["token"]
         assert response_register_user.status_code == 201
-        assert "access_token" in json.loads(response_register_user.data).keys()
+        assert "token" in json.loads(response_register_user.data)["response"].keys()
         TestRepeatedCases.token_dict.update({"register_token": access_token})
 
     def test_login_user_success(self, api_prefix, test_client):
@@ -228,8 +233,10 @@ class TestRepeatedCases:
             follow_redirects=True,
         )
 
-        fresh_access_token_login = json.loads(response_login_user.data)["access_token"]
+        fresh_access_token_login = json.loads(response_login_user.data)["response"][
+            "token"
+        ]
 
         assert isinstance(fresh_access_token_login, str)
         assert response_login_user.status_code == 200
-        assert "access_token" in json.loads(response_login_user.data).keys()
+        assert "token" in json.loads(response_login_user.data)["response"].keys()

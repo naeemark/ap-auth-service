@@ -125,7 +125,7 @@ def session(api_prefix, test_client, data):
         headers=mock_data_manager.get_content()["headers"],
     )
     tokens = json.loads(response_start_session.data)
-    return tokens["access_token"], tokens["refresh_token"]
+    return tokens["response"]["token"], tokens["response"]["refreshToken"]
 
 
 @pytest.yield_fixture()
@@ -147,4 +147,4 @@ def register_token(api_prefix, test_client, session, data):
         follow_redirects=True,
     )
 
-    return json.loads(response_register_user.data)["access_token"]
+    return json.loads(response_register_user.data)["response"]["token"]

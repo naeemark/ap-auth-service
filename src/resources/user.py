@@ -188,7 +188,7 @@ class UserLogout(Resource):
             insert_status = BlacklistManager().insert_blacklist_token_id(identity, jti)
 
             if not insert_status:
-                return (
+                logout_error_response = (
                     {
                         "responseMessage": "Server error",
                         "responseCode": 500,
@@ -196,11 +196,19 @@ class UserLogout(Resource):
                     },
                     500,
                 )
+
+                return logout_error_response
             return (
                 {"responseMessage": Success.LOGOUT, "responseCode": 200},
                 200,
             )
-        except ImportError as error:
-            return {"message": error}, 400
-        except ValueError as error:
-            return {"message": error}, 400
+        except ImportError as user_error:
+            ValidationException.IMPORT_ERROR = str(user_error)
+            return (
+                {
+                    "responseMessage": "Server error",
+                    "responseCode": 500,
+                    "response": response(error_title.IMPORT_ERROR, "SERVER_ERROR"),
+                },
+                500,
+            )

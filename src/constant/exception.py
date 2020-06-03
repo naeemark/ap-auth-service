@@ -18,3 +18,4 @@ class ValidationException(Exception):
     TOKEN_INVALID = "Invalid token and crypto padding"
     HEADERS_INCORRECT = "Bad Headers Provided"
     FRESH_TOKEN = "Login required"
+    IMPORT_ERROR = "import error "

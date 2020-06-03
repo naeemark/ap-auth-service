@@ -147,7 +147,13 @@ class RevokeAccess(Resource):
                 {"responseMessage": Success.ACCESS_REVOKED, "responseCode": 200},
                 200,
             )
-        except ImportError as error:
-            return {"message": error}, 400
-        except ValueError as error:
-            return {"message": error}, 400
+        except ImportError as auth_error:
+            ValidationException.IMPORT_ERROR = str(auth_error)
+            return (
+                {
+                    "responseMessage": "Server error",
+                    "responseCode": 500,
+                    "response": response(ErrorCode.IMPORT_ERROR, "SERVER_ERROR"),
+                },
+                500,
+            )

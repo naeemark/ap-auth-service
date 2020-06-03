@@ -15,6 +15,7 @@ class ErrorCode:
     HEADERS_INCORRECT = "Invalid Headers"
     REDIS_INSERT = "Redis Server Error"
     FRESH_TOKEN = "Fresh token required"
+    IMPORT_ERROR = "Package import error"
 
     @classmethod
     def get_validation_error(cls, error_title):
@@ -42,7 +43,10 @@ class ErrorCode:
     @classmethod
     def get_server_error(cls, error_title):
         """returns server errors """
-        server = {cls.REDIS_INSERT: ValidationException.BLACKLIST}
+        server = {
+            cls.REDIS_INSERT: ValidationException.BLACKLIST,
+            cls.IMPORT_ERROR: ValidationException.IMPORT_ERROR,
+        }
         return (server.get(error_title), "SERVER_ERROR")
 
     # 12XX Auth Errors

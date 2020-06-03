@@ -22,7 +22,7 @@ def test_refresh_token(test_client, api_prefix, session, test_database):
         f"{api_prefix}/auth/refreshToken", headers={"Authorization": f" {session[1]}"},
     )
     assert response_refresh_token.status_code == 200
-    assert "access_token" in json.loads(response_refresh_token.data).keys()
+    assert "token" in json.loads(response_refresh_token.data)["response"].keys()
     assert len(test_database.metadata.sorted_tables[0].columns) == 3
 
 
@@ -34,7 +34,7 @@ def test_revoke_access(api_prefix, test_client, session):
         headers={"Authorization": f"{session[0]}", "Content-Type": "application/json"},
     )
     assert response_revoke.status_code == 200
-    assert json.loads(response_revoke.data)["message"] == Success.ACCESS_REVOKED
+    assert json.loads(response_revoke.data)["responseMessage"] == Success.ACCESS_REVOKED
 
 
 def test_revoke_access_without_token(api_prefix, test_client):
