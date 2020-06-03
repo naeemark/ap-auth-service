@@ -99,9 +99,10 @@ class RevokeAccess(Resource):
     @jwt_required
     def post(self):
         """
-        revoke access for access token
+        revoke access for access token through jti,
+        jti is "JWT ID", a unique identifier for a JWT
         """
-        jti = get_raw_jwt()["jti"]  # jti is "JWT ID", a unique identifier for a JWT.
+        jti = get_raw_jwt()["jti"]
         identity = get_jwt_identity()
         try:
             insert_status = BlacklistManager().insert_blacklist_token_id(identity, jti)
