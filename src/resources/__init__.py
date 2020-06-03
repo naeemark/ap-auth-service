@@ -25,9 +25,7 @@ def initialize_token_in_blacklist_loader(jwt):
         """
         this method will check if a token is blacklisted
         """
-        return (
-            decrypted_token["jti"] in BlacklistManager().get_jti_list()
-        )  # Here we blacklist particular users.
+        return decrypted_token["jti"] in BlacklistManager().get_jti_list()
 
     return check_if_token_in_blacklist
 
