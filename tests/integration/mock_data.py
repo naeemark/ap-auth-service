@@ -7,9 +7,9 @@ content_data = {
     },
     "base_startSession": {
         "headers": {
-            "Client-App-Token": "0b0069c752ec14172c5f78208f1863d7ad6755a6fae6fe76ec2c80d13be41e42",
-            "Timestamp": "131231",
-            "Device-ID": "1321a31x121za",
+            "Client-App-Token": "Lv4Apvf6zX3mnRRKRNid3z500JtAfYx9kIqsjuSaoCk=",
+            "Timestamp": "1591028817",
+            "Device-ID": "this is unique device id",
         }
     },
     "TestRepeatedCases": {
@@ -19,10 +19,9 @@ content_data = {
         },
         "start_session": {
             "headers": {
-                "Client-App-Token": "0b0069c752ec18172c5f782\
-                08f1863d7ad6755a6fae6fe76ec2c80d13be41e42",
-                "Timestamp": "1311231",
-                "Device-ID": "1322a31x121za",
+                "Client-App-Token": "Lv4Apvf6zX3mnRRKRNid3z500JtAfYx9kIqsjuSaoCk=",
+                "Timestamp": "1591028817",
+                "Device-ID": "this is unique device id",
             }
         },
     },
