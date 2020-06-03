@@ -107,7 +107,15 @@ class TokenRefresh(Resource):
         """
         current_user = get_jwt_identity()
         new_token = create_access_token(identity=current_user, fresh=False)
-        return {"access_token": new_token}, 200
+
+        return (
+            {
+                "responseMessage": Success.REFRESH_TOKEN,
+                "responseCode": 200,
+                "response": {"token": new_token},
+            },
+            200,
+        )
 
 
 class RevokeAccess(Resource):

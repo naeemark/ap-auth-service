@@ -27,7 +27,7 @@ class ErrorCode:
 
     @classmethod
     def get_auth_error(cls, error_title):
-        """returns validation errors """
+        """returns auth errors """
         auth = {
             cls.TOKEN_REVOKED: ValidationException.TOKEN_REVOKED,
             cls.TOKEN_EXPIRED: ValidationException.TOKEN_EXPIRED,
