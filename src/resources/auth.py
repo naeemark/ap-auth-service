@@ -13,7 +13,9 @@ from flask_jwt_extended import jwt_refresh_token_required
 from flask_jwt_extended import jwt_required
 from flask_restful import reqparse
 from flask_restful import Resource
+from src.constant.error_code import ErrorCode
 from src.constant.exception import ValidationException
+from src.constant.rules import get_error_response as response
 from src.constant.success_message import Success
 from src.utils.blacklist import BlacklistManager
 
@@ -59,7 +61,7 @@ class StartSession(Resource):
         base64_token = base64.b64encode(hash_string).decode()
         if client_app_token == base64_token:
             return True
-        raise AttributeError("Bad Headers Provided")
+        return False
 
     @classmethod
     def post(cls):
@@ -70,7 +72,16 @@ class StartSession(Resource):
         client_app_token = data["Client-App-Token"]
         timestamp = data["Timestamp"]
         device_id = data["Device-ID"]
-        cls.is_valid_token(client_app_token, timestamp)
+        validate = cls.is_valid_token(client_app_token, timestamp)
+        if not validate:
+            return (
+                {
+                    "responseMessage": "Auth error",
+                    "responseCode": 400,
+                    "response": response(ErrorCode.HEADERS_INCORRECT, "AUTH_ERROR"),
+                },
+                400,
+            )
         access_token = create_access_token(identity=device_id)
         refresh_token = create_refresh_token(identity=device_id)
 

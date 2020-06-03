@@ -16,3 +16,4 @@ class ValidationException(Exception):
     BLACKLIST = "Error occurred inserting token"
     TOKEN_REVOKED = "Token has been revoked"
     TOKEN_INVALID = "Invalid token and crypto padding"
+    HEADERS_INCORRECT = "Bad Headers Provided"

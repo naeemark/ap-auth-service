@@ -12,6 +12,7 @@ class ErrorCode:
     TOKEN_REVOKED = "Token Revoked"
     TOKEN_EXPIRED = "Token Expired"
     TOKEN_INVALID = "Token Invalid"
+    HEADERS_INCORRECT = "Invalid Headers"
 
     @classmethod
     def get_validation_error(cls, error_title):
@@ -31,7 +32,7 @@ class ErrorCode:
             cls.TOKEN_REVOKED: ValidationException.TOKEN_REVOKED,
             cls.TOKEN_EXPIRED: ValidationException.TOKEN_EXPIRED,
             cls.TOKEN_INVALID: ValidationException.TOKEN_INVALID,
-            cls.PASSWORD_PRECONDITION: ValidationException.PASSWORD_CONDITION,
+            cls.HEADERS_INCORRECT: ValidationException.HEADERS_INCORRECT,
         }
         return (auth.get(error_title), "AUTH_ERROR")
 
