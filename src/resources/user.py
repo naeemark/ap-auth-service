@@ -132,9 +132,10 @@ class UserLogout(Resource):
     @fresh_jwt_required
     def post(self):
         """
-        :return: success message on logout else give error message
+        logout the user through jti of token ,
+         jti is "JWT ID", a unique identifier for a JWT
         """
-        jti = get_raw_jwt()["jti"]  # jti is "JWT ID", a unique identifier for a JWT.
+        jti = get_raw_jwt()["jti"]
         identity = get_jwt_identity()
         try:
             insert_status = BlacklistManager().insert_blacklist_token_id(identity, jti)
