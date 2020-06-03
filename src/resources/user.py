@@ -59,7 +59,14 @@ class UserRegister(Resource):
         current_user = get_jwt_identity()
         access_token = create_access_token(identity=current_user)
 
-        return {"message": USER_CREATION, "access_token": access_token}, 201
+        return (
+            {
+                "responseMessage": USER_CREATION,
+                "responseCode": 201,
+                "response": {"token": access_token},
+            },
+            201,
+        )
 
 
 class UserLogin(Resource):
