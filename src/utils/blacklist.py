@@ -19,7 +19,7 @@ class BlacklistManager:
         :param jti: JWT ID
         :return: bool status
         """
-        expire_time = int(BlacklistManager.redis_config.get("TOKEN_EXPIRE")) * 60
+        expire_time = BlacklistManager.redis_config.get("TOKEN_EXPIRE")
         return self.redis.set(str(jti), str(identity), str(expire_time))
 
     def get_jti_list(self):
@@ -41,5 +41,8 @@ class BlacklistManager:
     def initialize_redis(cls, app, redis_instance):
         """initialize redis config"""
         cls.redis_config.update(
-            {"TOKEN_EXPIRE": app.config.get("TOKEN_EXPIRE"), "instance": redis_instance}
+            {
+                "TOKEN_EXPIRE": app.config.get("JWT_ACCESS_TOKEN_EXPIRES").seconds,
+                "instance": redis_instance,
+            }
         )
