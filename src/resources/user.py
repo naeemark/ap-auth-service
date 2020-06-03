@@ -15,7 +15,7 @@ from src.constant.success_message import LOGOUT
 from src.constant.success_message import UPDATED_PASSWORD
 from src.constant.success_message import USER_CREATION
 from src.models.user import UserModel
-from src.utils.blacklist import BlacklistManager
+from src.utils.blacklist_manager import BlacklistManager
 from src.validators.user import ChangePasswordValidate
 from src.validators.user import UserRegisterValidate
 

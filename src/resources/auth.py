@@ -15,7 +15,7 @@ from flask_restful import reqparse
 from flask_restful import Resource
 from src.constant.exception import ValidationException
 from src.constant.success_message import ACCESS_REVOKED
-from src.utils.blacklist import BlacklistManager
+from src.utils.blacklist_manager import BlacklistManager
 
 
 class StartSession(Resource):

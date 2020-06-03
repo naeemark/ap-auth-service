@@ -7,7 +7,7 @@ from src import db
 from src.resources import initialize_resources
 from src.resources import initialize_token_in_blacklist_loader
 from src.resources import redis_instance
-from src.utils.blacklist import BlacklistManager
+from src.utils.blacklist_manager import BlacklistManager
 
 app = create_app("flask.cfg")
 

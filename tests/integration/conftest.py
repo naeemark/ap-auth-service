@@ -14,7 +14,7 @@ from src import db
 from src.models.user import UserModel
 from src.resources import initialize_resources
 from src.resources import initialize_token_in_blacklist_loader
-from src.utils.blacklist import BlacklistManager
+from src.utils.blacklist_manager import BlacklistManager
 from tests.integration.mock_data import MockData
 from tests.integration.mock_data import MockDataManager
 

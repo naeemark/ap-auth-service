@@ -9,7 +9,7 @@ from src.resources.user import ChangePassword
 from src.resources.user import UserLogin
 from src.resources.user import UserLogout
 from src.resources.user import UserRegister
-from src.utils.blacklist import BlacklistManager
+from src.utils.blacklist_manager import BlacklistManager
 
 
 redis_instance = redis.Redis(
