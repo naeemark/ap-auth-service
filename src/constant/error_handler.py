@@ -2,7 +2,7 @@
 from .exception import ValidationException
 
 
-class ErrorCode:
+class ErrorHandler:
     """error codes section"""
 
     INVALID_CREDENTIAL = "Invalid Credential"
@@ -48,22 +48,3 @@ class ErrorCode:
             cls.IMPORT_ERROR: ValidationException.IMPORT_ERROR,
         }
         return (server.get(error_title), "SERVER_ERROR")
-
-    # 12XX Auth Errors
-    AUTH_ERROR = {
-        1201: ValidationException.AUTH,
-        1202: ValidationException.TOKEN_EXPIRED,
-        1203: ValidationException.BLACKLIST,
-    }
-
-
-# success case example
-success = {"success": True, "message": "User logged in successfully", "data": {}}
-
-# error case example
-fail_case = {
-    "success": False,
-    "message": "'Password' policy not followed",
-    "error_code": 1304,
-    "data": {},
-}

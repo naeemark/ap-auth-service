@@ -1,6 +1,6 @@
 from flask import jsonify
 from flask_restful import Api
-from src.constant.error_code import ErrorCode
+from src.constant.error_handler import ErrorHandler
 from src.constant.exception import ValidationException
 from src.constant.rules import get_error_response as response
 from src.resources.auth import RevokeAccess
@@ -34,7 +34,7 @@ class InitializationJWT:
                     {
                         "responseMessage": "Auth error",
                         "responseCode": 401,
-                        "response": response(ErrorCode.FRESH_TOKEN, "AUTH_ERROR"),
+                        "response": response(ErrorHandler.FRESH_TOKEN, "AUTH_ERROR"),
                     }
                 ),
                 401,
@@ -67,7 +67,7 @@ class InitializationJWT:
                     {
                         "responseMessage": "Auth error",
                         "responseCode": 401,
-                        "response": response(ErrorCode.TOKEN_REVOKED, "AUTH_ERROR"),
+                        "response": response(ErrorHandler.TOKEN_REVOKED, "AUTH_ERROR"),
                     }
                 ),
                 401,
@@ -85,7 +85,7 @@ class InitializationJWT:
                     {
                         "responseMessage": "Auth error",
                         "responseCode": 401,
-                        "response": response(ErrorCode.TOKEN_EXPIRED, "AUTH_ERROR"),
+                        "response": response(ErrorHandler.TOKEN_EXPIRED, "AUTH_ERROR"),
                     }
                 ),
                 401,
@@ -104,7 +104,7 @@ class InitializationJWT:
                     {
                         "responseMessage": "Auth error",
                         "responseCode": 422,
-                        "response": response(ErrorCode.TOKEN_INVALID, "AUTH_ERROR"),
+                        "response": response(ErrorHandler.TOKEN_INVALID, "AUTH_ERROR"),
                     }
                 ),
                 422,

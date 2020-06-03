@@ -9,7 +9,7 @@ from flask_jwt_extended import get_raw_jwt
 from flask_jwt_extended import jwt_required
 from flask_restful import reqparse
 from flask_restful import Resource
-from src.constant.error_code import ErrorCode as error_title
+from src.constant.error_handler import ErrorHandler as UserError
 from src.constant.exception import ValidationException
 from src.constant.rules import get_error_response as response
 from src.constant.success_message import Success
@@ -47,7 +47,7 @@ class UserRegister(Resource):
                     "responseMessage": "Validation error",
                     "responseCode": 400,
                     "response": response(
-                        error_title.USER_ALREADY_EXISTS, "VALIDATION_ERROR"
+                        UserError.USER_ALREADY_EXISTS, "VALIDATION_ERROR"
                     ),
                 },
                 400,
@@ -114,9 +114,7 @@ class UserLogin(Resource):
             {
                 "responseMessage": "Validation error",
                 "responseCode": 401,
-                "response": response(
-                    error_title.INVALID_CREDENTIAL, "VALIDATION_ERROR"
-                ),
+                "response": response(UserError.INVALID_CREDENTIAL, "VALIDATION_ERROR"),
             },
             401,
         )
@@ -165,7 +163,7 @@ class ChangePassword(Resource):
                 "responseMessage": validate[0]["message"],
                 "responseCode": validate[1],
                 "response": response(
-                    error_title.PASSWORD_PRECONDITION, "VALIDATION_ERROR"
+                    UserError.PASSWORD_PRECONDITION, "VALIDATION_ERROR"
                 ),
             },
             validate[1],
@@ -192,7 +190,7 @@ class UserLogout(Resource):
                     {
                         "responseMessage": "Server error",
                         "responseCode": 500,
-                        "response": response(error_title.REDIS_INSERT, "SERVER_ERROR"),
+                        "response": response(UserError.REDIS_INSERT, "SERVER_ERROR"),
                     },
                     500,
                 )
@@ -208,7 +206,7 @@ class UserLogout(Resource):
                 {
                     "responseMessage": "Server error",
                     "responseCode": 500,
-                    "response": response(error_title.IMPORT_ERROR, "SERVER_ERROR"),
+                    "response": response(UserError.IMPORT_ERROR, "SERVER_ERROR"),
                 },
                 500,
             )

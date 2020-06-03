@@ -13,7 +13,7 @@ from flask_jwt_extended import jwt_refresh_token_required
 from flask_jwt_extended import jwt_required
 from flask_restful import reqparse
 from flask_restful import Resource
-from src.constant.error_code import ErrorCode
+from src.constant.error_handler import ErrorHandler as AuthError
 from src.constant.exception import ValidationException
 from src.constant.rules import get_error_response as response
 from src.constant.success_message import Success
@@ -78,7 +78,7 @@ class StartSession(Resource):
                 {
                     "responseMessage": "Auth error",
                     "responseCode": 400,
-                    "response": response(ErrorCode.HEADERS_INCORRECT, "AUTH_ERROR"),
+                    "response": response(AuthError.HEADERS_INCORRECT, "AUTH_ERROR"),
                 },
                 400,
             )
@@ -138,7 +138,7 @@ class RevokeAccess(Resource):
                     {
                         "responseMessage": "Server error",
                         "responseCode": 500,
-                        "response": response(ErrorCode.REDIS_INSERT, "SERVER_ERROR"),
+                        "response": response(AuthError.REDIS_INSERT, "SERVER_ERROR"),
                     },
                     500,
                 )
@@ -153,7 +153,7 @@ class RevokeAccess(Resource):
                 {
                     "responseMessage": "Server error",
                     "responseCode": 500,
-                    "response": response(ErrorCode.IMPORT_ERROR, "SERVER_ERROR"),
+                    "response": response(AuthError.IMPORT_ERROR, "SERVER_ERROR"),
                 },
                 500,
             )
