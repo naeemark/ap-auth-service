@@ -15,6 +15,7 @@ from flask_restful import reqparse
 from flask_restful import Resource
 from src.constant.exception import ValidationException
 from src.constant.success_message import ACCESS_REVOKED
+from src.constant.success_message import SESSION_START
 from src.utils.blacklist import BlacklistManager
 
 
@@ -73,7 +74,15 @@ class StartSession(Resource):
         cls.is_valid_token(client_app_token, timestamp)
         access_token = create_access_token(identity=device_id)
         refresh_token = create_refresh_token(identity=device_id)
-        return {"access_token": access_token, "refresh_token": refresh_token}, 200
+
+        return (
+            {
+                "responseMessage": SESSION_START,
+                "responseCode": 200,
+                "response": {"token": access_token, "refreshToken": refresh_token},
+            },
+            200,
+        )
 
 
 class TokenRefresh(Resource):
