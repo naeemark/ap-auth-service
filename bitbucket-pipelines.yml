@@ -17,7 +17,8 @@ definitions:
           - export PROPAGATE_EXCEPTIONS=True
 
           - export DB_URL=postgresql://user:password@127.0.0.1:5432/my-db-please-update
-          - export SECRET_KEY=any-secret-key
+          - export CLIENT_SECRET_KEY=this-is-client-secret-key
+          - export JWT_SECRET_KEY=this-is-jwt-secret-key
           - export TOKEN_EXPIRE=15
 
           - pip install pipenv
