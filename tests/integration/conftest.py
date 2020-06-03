@@ -12,8 +12,8 @@ from mock import Mock
 from src import create_app
 from src import db
 from src.models.user import UserModel
+from src.resources import InitializationJWT
 from src.resources import initialize_resources
-from src.resources import initialize_token_in_blacklist_loader
 from src.utils.blacklist import BlacklistManager
 from tests.integration.mock_data import MockData
 from tests.integration.mock_data import MockDataManager
@@ -37,7 +37,7 @@ def test_client():
     jwt = JWTManager(flask_app)
     redis_instance = fakeredis.FakeStrictRedis()
     BlacklistManager().initialize_redis(flask_app, redis_instance)
-    initialize_token_in_blacklist_loader(jwt)
+    InitializationJWT.initialize(jwt)
     initialize_resources(flask_app)
 
     db.init_app(flask_app)
