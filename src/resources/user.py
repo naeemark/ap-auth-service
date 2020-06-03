@@ -9,6 +9,7 @@ from flask_jwt_extended import get_raw_jwt
 from flask_jwt_extended import jwt_required
 from flask_restful import reqparse
 from flask_restful import Resource
+from src.constant.error_code import ErrorCode as error_title
 from src.constant.exception import ValidationException
 from src.constant.rules import get_error_response as response
 from src.constant.success_message import Success
@@ -45,7 +46,9 @@ class UserRegister(Resource):
                 {
                     "responseMessage": "Validation error",
                     "responseCode": 400,
-                    "response": response("User Aleardy Exist", "VALIDATION_ERROR"),
+                    "response": response(
+                        error_title.USER_ALREADY_EXISTS, "VALIDATION_ERROR"
+                    ),
                 },
                 400,
             )
@@ -106,7 +109,17 @@ class UserLogin(Resource):
                 },
                 200,
             )
-        return {"message": ValidationException.INVALID_CREDENTIAL}, 401
+
+        return (
+            {
+                "responseMessage": "Validation error",
+                "responseCode": 401,
+                "response": response(
+                    error_title.INVALID_CREDENTIAL, "VALIDATION_ERROR"
+                ),
+            },
+            401,
+        )
 
 
 class ChangePassword(Resource):
