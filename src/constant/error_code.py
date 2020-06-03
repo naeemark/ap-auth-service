@@ -14,6 +14,7 @@ class ErrorCode:
     TOKEN_INVALID = "Token Invalid"
     HEADERS_INCORRECT = "Invalid Headers"
     REDIS_INSERT = "Redis Server Error"
+    FRESH_TOKEN = "Fresh token required"
 
     @classmethod
     def get_validation_error(cls, error_title):
@@ -34,6 +35,7 @@ class ErrorCode:
             cls.TOKEN_EXPIRED: ValidationException.TOKEN_EXPIRED,
             cls.TOKEN_INVALID: ValidationException.TOKEN_INVALID,
             cls.HEADERS_INCORRECT: ValidationException.HEADERS_INCORRECT,
+            cls.FRESH_TOKEN: ValidationException.FRESH_TOKEN,
         }
         return (auth.get(error_title), "AUTH_ERROR")
 

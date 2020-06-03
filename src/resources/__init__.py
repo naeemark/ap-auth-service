@@ -20,6 +20,27 @@ class InitializationJWT:
         cls.initialize_invalid_token(jwt_instance)
         cls.initialize_expired_token_callback(jwt_instance)
         cls.initialize_revoke_token_callback(jwt_instance)
+        cls.initialize_fresh_token_required(jwt_instance)
+
+    @classmethod
+    def initialize_fresh_token_required(cls, jwt):
+        @jwt.needs_fresh_token_loader
+        def fresh_token_required():
+            """
+            response for fresh token required
+            """
+            return (
+                jsonify(
+                    {
+                        "responseMessage": "Auth error",
+                        "responseCode": 401,
+                        "response": response(ErrorCode.FRESH_TOKEN, "AUTH_ERROR"),
+                    }
+                ),
+                401,
+            )
+
+        return fresh_token_required
 
     @classmethod
     def initialize_token_in_blacklist_loader(cls, jwt):
@@ -46,7 +67,7 @@ class InitializationJWT:
                     {
                         "responseMessage": "Auth error",
                         "responseCode": 401,
-                        "response": response("Token Revoked", "AUTH_ERROR"),
+                        "response": response(ErrorCode.TOKEN_REVOKED, "AUTH_ERROR"),
                     }
                 ),
                 401,

@@ -17,3 +17,4 @@ class ValidationException(Exception):
     TOKEN_REVOKED = "Token has been revoked"
     TOKEN_INVALID = "Invalid token and crypto padding"
     HEADERS_INCORRECT = "Bad Headers Provided"
+    FRESH_TOKEN = "Login required"
