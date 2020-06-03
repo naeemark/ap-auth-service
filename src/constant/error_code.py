@@ -8,7 +8,7 @@ class ErrorCode:
     INVALID_CREDENTIAL = "Invalid Credential"
     USER_ALREADY_EXISTS = "User Aleardy Exist"
     EMAIL_CONDITION = "Invalid Email"
-    PASSWORD_PRECONDITION = "Password Precondition"
+    PASSWORD_PRECONDITION = "Password precondition failed"
     TOKEN_REVOKED = "Token Revoked"
     TOKEN_EXPIRED = "Token Expired"
     TOKEN_INVALID = "Token Invalid"

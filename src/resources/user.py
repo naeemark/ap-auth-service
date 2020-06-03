@@ -154,7 +154,18 @@ class ChangePassword(Resource):
                 },
                 200,
             )
-        return validate
+
+        ValidationException.PASSWORD_CONDITION = validate[0]["pre_condition"]
+        return (
+            {
+                "responseMessage": validate[0]["message"],
+                "responseCode": validate[1],
+                "response": response(
+                    error_title.PASSWORD_PRECONDITION, "VALIDATION_ERROR"
+                ),
+            },
+            validate[1],
+        )
 
 
 class UserLogout(Resource):
