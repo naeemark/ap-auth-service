@@ -2,11 +2,7 @@
     A file to containe all unit tests of
     UserModel
 """
-import datetime
-import os
-
 import fakeredis
-from src import create_app
 from src.models.user import UserModel
 from src.utils.blacklist_manager import BlacklistManager
 
@@ -36,20 +32,35 @@ def test_json_user_model():
     assert isinstance(new_user().json(), dict)
 
 
-def test_blacklist_manager():
+def test_all_methods_present():
+    """test methods """
+    list_of_methods = new_user().__dir__()
+    assert "save_to_db" in list_of_methods
+    assert "find_by_email" in list_of_methods
+    assert "find_by_id" in list_of_methods
+    assert "delete_from_db" in list_of_methods
+
+
+def test_blacklist_manager(test_context):
     """fake redis test"""
-    redis_instance = fakeredis.FakeStrictRedis()
-    flask_app = create_app("flask_test.cfg")
-    flask_app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(
-        minutes=int(os.environ["JWT_ACCESS_TOKEN_EXPIRES_MINUTES"])
-    )
-    token_expire_seconds = flask_app.config["JWT_ACCESS_TOKEN_EXPIRES"].seconds
-    BlacklistManager.initialize_redis(token_expire_seconds, redis_instance)
+
+    token_expire_seconds = test_context[0].config["JWT_ACCESS_TOKEN_EXPIRES"].seconds
+    BlacklistManager.initialize_redis(token_expire_seconds, test_context[1])
     blacklist_manager = BlacklistManager()
     blacklist_manager.insert_blacklist_token_id("3", "1231231Xdfwefwe")
     black_list = blacklist_manager.get_jti_list()
 
     assert isinstance(black_list, list)
+
+
+def test_jwt_life_span(test_context):
+    """life span check"""
+
+    token_expire_seconds = test_context[0].config["JWT_ACCESS_TOKEN_EXPIRES"].seconds
+    refresh_token_expire_days = test_context[0].config["JWT_REFRESH_TOKEN_EXPIRES"].days
+
+    assert token_expire_seconds == 1800
+    assert refresh_token_expire_days == 7
 
 
 def test_redis():
