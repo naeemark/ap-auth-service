@@ -34,8 +34,8 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(
 app.config["JWT_REFRESH_TOKEN_EXPIRES"] = datetime.timedelta(
     days=int(os.environ["JWT_REFRESH_TOKEN_EXPIRES_DAYS"])
 )
-
-BlacklistManager().initialize_redis(app, redis_instance)
+token_expire_seconds = app.config["JWT_ACCESS_TOKEN_EXPIRES"].seconds
+BlacklistManager().initialize_redis(token_expire_seconds, redis_instance)
 initialize_token_in_blacklist_loader(jwt)
 initialize_resources(app)
 

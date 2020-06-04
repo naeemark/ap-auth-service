@@ -36,9 +36,10 @@ def test_blacklist_manager():
     redis_instance = fakeredis.FakeStrictRedis()
     flask_app = create_app("flask_test.cfg")
     flask_app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(
-        minutes=int(os.environ["JWT_ACCESS_TOKEN_EXPIRES"])
+        minutes=int(os.environ["JWT_ACCESS_TOKEN_EXPIRES_MINUTES"])
     )
-    BlacklistManager.initialize_redis(flask_app, redis_instance)
+    token_expire_seconds = flask_app.config["JWT_ACCESS_TOKEN_EXPIRES"].seconds
+    BlacklistManager.initialize_redis(token_expire_seconds, redis_instance)
     blacklist_manager = BlacklistManager()
     blacklist_manager.insert_blacklist_token_id("3", "1231231Xdfwefwe")
     black_list = blacklist_manager.get_jti_list()

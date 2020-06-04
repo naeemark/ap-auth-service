@@ -43,7 +43,8 @@ def test_client():
         days=int(os.environ["JWT_REFRESH_TOKEN_EXPIRES_DAYS"])
     )
     redis_instance = fakeredis.FakeStrictRedis()
-    BlacklistManager().initialize_redis(flask_app, redis_instance)
+    token_expire_seconds = flask_app.config["JWT_ACCESS_TOKEN_EXPIRES"].seconds
+    BlacklistManager().initialize_redis(token_expire_seconds, redis_instance)
     initialize_token_in_blacklist_loader(jwt)
     initialize_resources(flask_app)
 
