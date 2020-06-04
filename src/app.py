@@ -19,8 +19,6 @@ def create_tables():
     db.create_all()
 
 
-# no endpoint
-
 initialize_resources(app, redis_instance)
 
 if __name__ == "__main__":
