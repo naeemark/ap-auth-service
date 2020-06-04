@@ -8,11 +8,11 @@ class BlacklistManager:
      managing tokens which are revoked
     """
 
-    redis_instance = None
-    token_expire_seconds = None
+    __redis_instance = None
+    __token_expire_seconds = None
 
     def __init__(self):
-        self.redis = BlacklistManager.redis_instance
+        self.redis = BlacklistManager.__redis_instance
 
     def insert_blacklist_token_id(self, identity, jti):
         """
@@ -20,7 +20,7 @@ class BlacklistManager:
         :param jti: JWT ID
         :return: bool status
         """
-        expire_time = BlacklistManager.token_expire_seconds
+        expire_time = BlacklistManager.__token_expire_seconds
         return self.redis.set(str(jti), str(identity), str(expire_time))
 
     def get_jti_list(self):
@@ -42,5 +42,5 @@ class BlacklistManager:
     def initialize_redis(cls, token_expire_seconds, redis_instance):
         """initialize redis config"""
 
-        cls.redis_instance = redis_instance
-        cls.token_expire_seconds = token_expire_seconds
+        cls.__redis_instance = redis_instance
+        cls.__token_expire_seconds = token_expire_seconds
