@@ -37,10 +37,10 @@ def test_client():
     flask_app = create_app("flask_test.cfg")
     jwt = JWTManager(flask_app)
     flask_app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(
-        minutes=int(os.environ["JWT_ACCESS_TOKEN_EXPIRES"])
+        minutes=int(os.environ["JWT_ACCESS_TOKEN_EXPIRES_MINUTES"])
     )
     flask_app.config["JWT_REFRESH_TOKEN_EXPIRES"] = datetime.timedelta(
-        days=int(os.environ["JWT_REFRESH_TOKEN_EXPIRES"])
+        days=int(os.environ["JWT_REFRESH_TOKEN_EXPIRES_DAYS"])
     )
     redis_instance = fakeredis.FakeStrictRedis()
     BlacklistManager().initialize_redis(flask_app, redis_instance)

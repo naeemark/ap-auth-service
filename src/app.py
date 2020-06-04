@@ -29,10 +29,10 @@ jwt = JWTManager(app)
 
 
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(
-    minutes=int(os.environ["JWT_ACCESS_TOKEN_EXPIRES"])
+    minutes=int(os.environ["JWT_ACCESS_TOKEN_EXPIRES_MINUTES"])
 )
 app.config["JWT_REFRESH_TOKEN_EXPIRES"] = datetime.timedelta(
-    days=int(os.environ["JWT_REFRESH_TOKEN_EXPIRES"])
+    days=int(os.environ["JWT_REFRESH_TOKEN_EXPIRES_DAYS"])
 )
 
 BlacklistManager().initialize_redis(app, redis_instance)
