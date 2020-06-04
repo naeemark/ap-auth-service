@@ -1,21 +1,17 @@
 """
     A configuration file for pytest integration testing
 """
-import datetime
 import json
 import os
 
 import bcrypt
 import fakeredis
 import pytest
-from flask_jwt_extended import JWTManager
 from mock import Mock
 from src import create_app
 from src import db
 from src.models.user import UserModel
 from src.resources import initialize_resources
-from src.resources import initialize_token_in_blacklist_loader
-from src.utils.blacklist_manager import BlacklistManager
 from tests.integration.mock_data import MockData
 from tests.integration.mock_data import MockDataManager
 
@@ -35,18 +31,9 @@ def test_client():
         Configure and provides app-client instance for testing
     """
     flask_app = create_app("flask_test.cfg")
-    jwt = JWTManager(flask_app)
-    flask_app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(
-        minutes=int(os.environ["JWT_ACCESS_TOKEN_EXPIRES_MINUTES"])
-    )
-    flask_app.config["JWT_REFRESH_TOKEN_EXPIRES"] = datetime.timedelta(
-        days=int(os.environ["JWT_REFRESH_TOKEN_EXPIRES_DAYS"])
-    )
+
     redis_instance = fakeredis.FakeStrictRedis()
-    token_expire_seconds = flask_app.config["JWT_ACCESS_TOKEN_EXPIRES"].seconds
-    BlacklistManager().initialize_redis(token_expire_seconds, redis_instance)
-    initialize_token_in_blacklist_loader(jwt)
-    initialize_resources(flask_app)
+    initialize_resources(flask_app, redis_instance)
 
     db.init_app(flask_app)
 
