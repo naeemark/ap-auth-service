@@ -70,7 +70,11 @@ class StartSession(Resource):
         client_app_token = data["Client-App-Token"]
         timestamp = data["Timestamp"]
         device_id = data["Device-ID"]
-        cls.is_valid_token(client_app_token, timestamp)
+        try:
+            cls.is_valid_token(client_app_token, timestamp)
+        except AttributeError as error:
+            return {"message": str(error)}, 400
+
         access_token = create_access_token(identity=device_id)
         refresh_token = create_refresh_token(identity=device_id)
         return {"access_token": access_token, "refresh_token": refresh_token}, 200
