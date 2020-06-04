@@ -6,13 +6,11 @@ import datetime
 import os
 
 import fakeredis
-import pytest
 from src import create_app
 from src.models.user import UserModel
 from src.utils.blacklist_manager import BlacklistManager
 
 
-@pytest.fixture()
 def new_user():
     """
         Creates and return new User
@@ -21,14 +19,21 @@ def new_user():
     return user
 
 
-def test_new_user(new_user):
+def test_new_user():
     """
         Validates newly created User
     """
     # pylint: disable=redefined-outer-name
-    assert new_user is not None
-    assert new_user.email == "abc123@gmail.com"
-    assert new_user.password == "FlaskIsAwesome"
+
+    assert new_user() is not None
+    assert new_user().email == "abc123@gmail.com"
+    assert new_user().password == "FlaskIsAwesome"
+
+
+def test_json_user_model():
+    """test json function """
+
+    assert isinstance(new_user().json(), dict)
 
 
 def test_blacklist_manager():
