@@ -233,3 +233,17 @@ class TestRepeatedCases:
         assert isinstance(fresh_access_token_login, str)
         assert response_login_user.status_code == 200
         assert "access_token" in json.loads(response_login_user.data).keys()
+
+
+def test_email_fail(api_prefix, test_client, session):
+    """incorrect email format"""
+    response_register_user = test_client.post(
+        f"{api_prefix}/user/register",
+        headers={
+            "Authorization": f" {session[0]}",
+            CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
+        },
+        data=json.dumps({"email": "john1223.com", "password": "123!!@@AB"}),
+        follow_redirects=True,
+    )
+    assert response_register_user.status_code == 406
