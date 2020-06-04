@@ -35,7 +35,7 @@ def initialize_resources(app):
     api.add_resource(UserLogout, "/user/logout")
 
     # Adds resources for Auth Entity
-    api.add_resource(TokenRefresh, "/auth/refreshToken")
+    api.add_resource(TokenRefresh, "/auth/refreshSession")
     api.add_resource(StartSession, "/auth/startSession")
     api.add_resource(RevokeAccess, "/auth/revokeAccess")
 
