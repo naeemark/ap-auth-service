@@ -19,3 +19,5 @@ class ValidationException(Exception):
     HEADERS_INCORRECT = "Bad Headers Provided"
     FRESH_TOKEN = "Login required"
     IMPORT_ERROR = "import error "
+    DUPLICATE_USER = "This email has already been registered"
+    EMAIL_INCORRECT = "Provide correct email"

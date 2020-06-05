@@ -1,4 +1,6 @@
 """error pattern defined"""
+from http_status import Status
+
 from . import ErrorManager
 from ...constant.exception import ValidationException
 
@@ -14,23 +16,25 @@ class AuthError:
             ErrorManager.HEADERS_INCORRECT: ValidationException.HEADERS_INCORRECT,
             ErrorManager.FRESH_TOKEN: ValidationException.FRESH_TOKEN,
         }
-        self.error_code = "AUTH_ERROR"
 
-    def get_response(self, title, status=401, message="Auth error", **kwargs):
+    def get_response(self, title, status=401, **kwargs):
         """get response for Auth"""
+        status_info = Status(status)
+
         jsonify_response = kwargs.get("jsonify_response")
         description = kwargs.get("error_description")
+        response_message = kwargs.get("response_message") or status_info.description
 
         error_description = (
             description if description else self.error_response.get(title)
         )
 
         return ErrorManager.response(
-            self.error_code,
+            status_info.name.upper(),
             title,
             error_description,
             status,
-            message,
+            response_message,
             jsonify_response=jsonify_response,
         )
 
@@ -45,23 +49,25 @@ class ValidationError:
             ErrorManager.EMAIL_CONDITION: ValidationException.EMAIL_CONDITION,
             ErrorManager.PASSWORD_PRECONDITION: ValidationException.PASSWORD_CONDITION,
         }
-        self.error_code = "VALIDATION_ERROR"
 
-    def get_response(self, title, status=400, message="Validation error", **kwargs):
+    def get_response(self, title, status=400, **kwargs):
         """get response for validation"""
+        status_info = Status(status)
+
         jsonify_response = kwargs.get("jsonify_response")
         description = kwargs.get("error_description")
+        response_message = kwargs.get("response_message") or status_info.description
 
         error_description = (
             description if description else self.error_response.get(title)
         )
 
         return ErrorManager.response(
-            self.error_code,
+            status_info.name.upper(),
             title,
             error_description,
             status,
-            message,
+            response_message,
             jsonify_response=jsonify_response,
         )
 
@@ -74,21 +80,23 @@ class ServerError:
             ErrorManager.REDIS_INSERT: ValidationException.BLACKLIST,
             ErrorManager.IMPORT_ERROR: ValidationException.IMPORT_ERROR,
         }
-        self.error_code = "SERVER_ERROR"
 
-    def get_response(self, title, status=500, message="Server error", **kwargs):
+    def get_response(self, title, status=500, **kwargs):
         """get response for server error"""
+        status_info = Status(status)
+
         jsonify_response = kwargs.get("jsonify_response")
         description = kwargs.get("error_description")
+        response_message = kwargs.get("response_message") or status_info.description
 
         error_description = (
             description if description else self.error_response.get(title)
         )
         return ErrorManager.response(
-            self.error_code,
+            status_info.name.upper(),
             title,
             error_description,
             status,
-            message,
+            response_message,
             jsonify_response=jsonify_response,
         )

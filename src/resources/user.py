@@ -43,7 +43,11 @@ class UserRegister(Resource):
         exception = error_handler.exception_factory()
 
         if UserModel.find_by_email(email):
-            return exception.get_response(UserError.USER_ALREADY_EXISTS, status=409)
+            return exception.get_response(
+                UserError.USER_ALREADY_EXISTS,
+                status=409,
+                response_message=ValidationException.DUPLICATE_USER,
+            )
 
         user_register_validate = UserRegisterValidate(data)
         validate_error = user_register_validate.validate_login()
@@ -51,14 +55,20 @@ class UserRegister(Resource):
         if validate_error:
             description = validate_error[0]["pre_condition"]
             status_code = validate_error[1]
-            title = (
-                UserError.EMAIL_CONDITION
+            title, response_message = (
+                (UserError.EMAIL_CONDITION, ValidationException.EMAIL_INCORRECT)
                 if status_code == 406
-                else UserError.PASSWORD_PRECONDITION
+                else (
+                    UserError.PASSWORD_PRECONDITION,
+                    ValidationException.PASSWORD_CONDITION,
+                )
             )
 
             return exception.get_response(
-                title, status=status_code, error_description=description
+                title,
+                status=status_code,
+                error_description=description,
+                response_message=response_message,
             )
 
         password = password.encode()
@@ -164,6 +174,7 @@ class ChangePassword(Resource):
             UserError.PASSWORD_PRECONDITION,
             status=status_code,
             error_description=error_description,
+            response_message=ValidationException.PASSWORD_CONDITION,
         )
 
 
