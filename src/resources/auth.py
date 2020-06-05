@@ -18,6 +18,7 @@ from src.constant.exception import ValidationException
 from src.constant.rules import get_error_response as response
 from src.constant.success_message import Success
 from src.utils.blacklist import BlacklistManager
+from src.utils.errors import error_handler
 
 
 class StartSession(Resource):
@@ -74,12 +75,10 @@ class StartSession(Resource):
         device_id = data["Device-ID"]
         validate = cls.is_valid_token(client_app_token, timestamp)
         if not validate:
+            exception = error_handler.exception_factory("Auth")
+
             return (
-                {
-                    "responseMessage": "Auth error",
-                    "responseCode": 400,
-                    "response": response(AuthError.HEADERS_INCORRECT, "AUTH_ERROR"),
-                },
+                exception.get_response(AuthError.HEADERS_INCORRECT),
                 400,
             )
         access_token = create_access_token(identity=device_id)
