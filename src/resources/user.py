@@ -5,14 +5,17 @@ import bcrypt
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import fresh_jwt_required
 from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import get_raw_jwt
 from flask_jwt_extended import jwt_required
 from flask_restful import reqparse
 from flask_restful import Resource
 from src.constant.exception import ValidationException
 from src.constant.success_message import LOGGED_IN
+from src.constant.success_message import LOGOUT
 from src.constant.success_message import UPDATED_PASSWORD
 from src.constant.success_message import USER_CREATION
 from src.models.user import UserModel
+from src.utils.blacklist_manager import BlacklistManager
 from src.validators.user import ChangePasswordValidate
 from src.validators.user import UserRegisterValidate
 
@@ -119,3 +122,28 @@ class ChangePassword(Resource):
                 200,
             )
         return validate
+
+
+class UserLogout(Resource):
+    """
+    logout user
+    """
+
+    @fresh_jwt_required
+    def post(self):
+        """
+        logout the user through jti of token ,
+         jti is "JWT ID", a unique identifier for a JWT
+        """
+        jti = get_raw_jwt()["jti"]
+        identity = get_jwt_identity()
+        try:
+            insert_status = BlacklistManager().insert_blacklist_token_id(identity, jti)
+
+            if not insert_status:
+                return {"message": ValidationException.BLACKLIST}, 400
+            return {"message": LOGOUT}, 200
+        except ImportError as error:
+            return {"message": error}, 400
+        except ValueError as error:
+            return {"message": error}, 400

@@ -9,6 +9,8 @@ pre-commit = "*"
 pytest = "*"
 pytest-cov = "*"
 pytest-flask = "*"
+mock = "*"
+fakeredis = "*"
 
 [packages]
 flask = "*"
@@ -44,7 +46,7 @@ python-dotenv = "*"
 bcrypt = "*"
 psycopg2-binary = "*"
 pytest-cov = "*"
-mock = "*"
+redis = "*"
 
 [requires]
 python_version = "3.8"

@@ -5,6 +5,8 @@
 """
 import json
 
+from src.constant.success_message import LOGOUT
+
 from ..mock_data import MockDataManager
 
 
@@ -146,8 +148,28 @@ class TestUserBehaviour:
         )
         assert response_password_change.status_code == 200
 
+    def test_user_logout(self, api_prefix, test_client):
+        """logout user case"""
+        fresh_token = TestUserBehaviour.token_dict["fresh_access_token_login"]
+        response_logout = test_client.post(
+            f"{api_prefix}/user/logout",
+            headers={
+                "Authorization": f"{fresh_token}",
+                CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
+            },
+        )
+        assert response_logout.status_code == 200
+        assert json.loads(response_logout.data)["message"] == LOGOUT
 
-class TestRepeatedCases:
+    def test_user_logout_without_token(self, api_prefix, test_client):
+        """logout user case without token"""
+        response_logout = test_client.post(
+            f"{api_prefix}/user/logout", headers={CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE}
+        )
+        assert response_logout.status_code == 401
+
+
+class TestSuccessScenario:
     """
     common cases for test by user
     """
@@ -158,14 +180,14 @@ class TestRepeatedCases:
     def test_content_data(self, data):
         """content data dest"""
         mock_data_manager = MockDataManager(data)
-        data.content.return_value = "TestRepeatedCases"
+        data.content.return_value = "TestSuccessScenario"
         content_data = mock_data_manager.get_content()
         assert isinstance(content_data, dict)
-        TestRepeatedCases.content_data.update(content_data)
+        TestSuccessScenario.content_data.update(content_data)
 
     def test_start_session_success(self, api_prefix, test_client):
         """session start success case"""
-        content_data = TestRepeatedCases.content_data["start_session"]["headers"]
+        content_data = TestSuccessScenario.content_data["start_session"]["headers"]
         response_start_session = test_client.post(
             f"{api_prefix}/auth/startSession", headers=content_data,
         )
@@ -177,7 +199,7 @@ class TestRepeatedCases:
 
     def test_register_user_success(self, api_prefix, test_client, session):
         """register user success case"""
-        content_data = TestRepeatedCases.content_data["user_register"]["data"]
+        content_data = TestSuccessScenario.content_data["user_register"]["data"]
         response_register_user = test_client.post(
             f"{api_prefix}/user/register",
             headers={
@@ -190,16 +212,16 @@ class TestRepeatedCases:
         access_token = json.loads(response_register_user.data)["access_token"]
         assert response_register_user.status_code == 201
         assert "access_token" in json.loads(response_register_user.data).keys()
-        TestRepeatedCases.token_dict.update({"register_token": access_token})
+        TestSuccessScenario.token_dict.update({"register_token": access_token})
 
     def test_login_user_success(self, api_prefix, test_client):
         """valid login case """
-        content_data = TestRepeatedCases.content_data["login"]["data"]
+        content_data = TestSuccessScenario.content_data["login"]["data"]
 
         response_login_user = test_client.post(
             f"{api_prefix}/user/login",
             headers={
-                "Authorization": f" {TestRepeatedCases.token_dict['register_token']}",
+                "Authorization": f" {TestSuccessScenario.token_dict['register_token']}",
                 CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
             },
             data=json.dumps(content_data),
@@ -211,3 +233,56 @@ class TestRepeatedCases:
         assert isinstance(fresh_access_token_login, str)
         assert response_login_user.status_code == 200
         assert "access_token" in json.loads(response_login_user.data).keys()
+
+
+class TestFailureScenario:
+    """common failure cases"""
+
+    content_data = {}
+
+    def test_content_data(self, data):
+        """content data dest"""
+        mock_data_manager = MockDataManager(data)
+        data.content.return_value = "TestFailureScenario"
+        content_data = mock_data_manager.get_content()
+        assert isinstance(content_data, dict)
+        TestFailureScenario.content_data.update(content_data)
+
+    def test_register_email_fail(self, api_prefix, test_client, session):
+        """register user success case"""
+        content_data = TestFailureScenario.content_data["user_register_email"]["data"]
+        response_register_user = test_client.post(
+            f"{api_prefix}/user/register",
+            headers={
+                "Authorization": f" {session[0]}",
+                CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
+            },
+            data=json.dumps(content_data),
+            follow_redirects=True,
+        )
+        assert response_register_user.status_code == 406
+
+    def test_register_pwd_fail(self, api_prefix, test_client, session):
+        """register user success case"""
+        content_data = TestFailureScenario.content_data["user_register_password"][
+            "data"
+        ]
+        response_register_user = test_client.post(
+            f"{api_prefix}/user/register",
+            headers={
+                "Authorization": f" {session[0]}",
+                CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
+            },
+            data=json.dumps(content_data),
+            follow_redirects=True,
+        )
+        assert response_register_user.status_code == 412
+
+    def test_start_session_faliure(self, api_prefix, test_client):
+        """session start success case"""
+        content_data = TestFailureScenario.content_data["start_session"]["headers"]
+        response_start_session = test_client.post(
+            f"{api_prefix}/auth/startSession", headers=content_data,
+        )
+
+        assert response_start_session.status_code == 400

@@ -12,7 +12,7 @@ content_data = {
             "Device-ID": "this is unique device id",
         }
     },
-    "TestRepeatedCases": {
+    "TestSuccessScenario": {
         "login": {"data": {"email": "john12211a3@gmail.com", "password": "123!!@@AB"}},
         "user_register": {
             "data": {"email": "john12211a3@gmail.com", "password": "123!!@@AB"}
@@ -20,6 +20,22 @@ content_data = {
         "start_session": {
             "headers": {
                 "Client-App-Token": "Lv4Apvf6zX3mnRRKRNid3z500JtAfYx9kIqsjuSaoCk=",
+                "Timestamp": "1591028817",
+                "Device-ID": "this is unique device id",
+            }
+        },
+    },
+    "TestFailureScenario": {
+        "login": {"data": {"email": "john12211a3@gmail.com", "password": "123!!qq"}},
+        "user_register_email": {
+            "data": {"email": "john12211a3.com", "password": "123!!@@AB"}
+        },
+        "user_register_password": {
+            "data": {"email": "john525@gmail.com", "password": "123@@AB"}
+        },
+        "start_session": {
+            "headers": {
+                "Client-App-Token": "Lv4Apvf6zX3mnRRKRNid3z500JtAfYx9kIqsju",
                 "Timestamp": "1591028817",
                 "Device-ID": "this is unique device id",
             }

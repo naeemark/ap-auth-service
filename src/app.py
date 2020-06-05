@@ -1,10 +1,11 @@
 """
   Flask App
 """
-from flask_jwt_extended import JWTManager
 from src import create_app
 from src import db
+from src import redis_instance
 from src.resources import initialize_resources
+
 
 app = create_app("flask.cfg")
 
@@ -18,10 +19,7 @@ def create_tables():
     db.create_all()
 
 
-# no endpoint
-jwt = JWTManager(app)
-
-initialize_resources(app)
+initialize_resources(app, redis_instance)
 
 if __name__ == "__main__":
     app.run()
