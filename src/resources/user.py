@@ -11,10 +11,10 @@ from flask_restful import reqparse
 from flask_restful import Resource
 from src.constant.error_handler import ErrorHandler as UserError
 from src.constant.exception import ValidationException
-from src.constant.rules import get_error_response as response
 from src.constant.success_message import Success
 from src.models.user import UserModel
 from src.utils.blacklist import BlacklistManager
+from src.utils.errors import error_handler
 from src.validators.user import ChangePasswordValidate
 from src.validators.user import UserRegisterValidate
 
@@ -40,24 +40,26 @@ class UserRegister(Resource):
         data = UserRegister.parser.parse_args()
         email = data["email"]
         password = data["password"]
+        exception = error_handler.exception_factory()
 
         if UserModel.find_by_email(email):
-            return (
-                {
-                    "responseMessage": "Validation error",
-                    "responseCode": 400,
-                    "response": response(
-                        UserError.USER_ALREADY_EXISTS, "VALIDATION_ERROR"
-                    ),
-                },
-                400,
-            )
+            return exception.get_response(UserError.USER_ALREADY_EXISTS)
 
         user_register_validate = UserRegisterValidate(data)
         validate_error = user_register_validate.validate_login()
 
         if validate_error:
-            return validate_error
+            description = validate_error[0]["pre_condition"]
+            status_code = validate_error[1]
+            title = (
+                UserError.EMAIL_CONDITION
+                if status_code == 406
+                else UserError.PASSWORD_PRECONDITION
+            )
+
+            return exception.get_response(
+                title, status=status_code, error_description=description
+            )
 
         password = password.encode()
         hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
@@ -97,6 +99,7 @@ class UserLogin(Resource):
         """
         data = UserLogin.parser.parse_args()
         user = UserModel.find_by_email(data["email"])
+        exception = error_handler.exception_factory()
 
         if user and bcrypt.checkpw(data["password"].encode(), user.password):
             access_token = create_access_token(identity=user.id, fresh=True)
@@ -110,13 +113,10 @@ class UserLogin(Resource):
                 200,
             )
 
-        return (
-            {
-                "responseMessage": "Validation error",
-                "responseCode": 401,
-                "response": response(UserError.INVALID_CREDENTIAL, "VALIDATION_ERROR"),
-            },
-            401,
+        return exception.get_response(
+            UserError.INVALID_CREDENTIAL,
+            status=401,
+            error_description="Invalid email address or password",
         )
 
 
@@ -140,6 +140,8 @@ class ChangePassword(Resource):
         user = UserModel.find_by_id(current_user)
         change_password_validate = ChangePasswordValidate(data)
         validate = change_password_validate.validate_password()
+
+        exception = error_handler.exception_factory()
         if user and not validate[0].get("message"):
             password = data["new_password"].encode()
             hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
@@ -156,17 +158,12 @@ class ChangePassword(Resource):
                 },
                 200,
             )
-
-        ValidationException.PASSWORD_CONDITION = validate[0]["pre_condition"]
-        return (
-            {
-                "responseMessage": validate[0]["message"],
-                "responseCode": validate[1],
-                "response": response(
-                    UserError.PASSWORD_PRECONDITION, "VALIDATION_ERROR"
-                ),
-            },
-            validate[1],
+        status_code = validate[1]
+        error_description = validate[0]["pre_condition"]
+        return exception.get_response(
+            UserError.PASSWORD_PRECONDITION,
+            status=status_code,
+            error_description=error_description,
         )
 
 
@@ -182,31 +179,17 @@ class UserLogout(Resource):
         """
         jti = get_raw_jwt()["jti"]
         identity = get_jwt_identity()
+        exception = error_handler.exception_factory("Server")
         try:
             insert_status = BlacklistManager().insert_blacklist_token_id(identity, jti)
 
             if not insert_status:
-                logout_error_response = (
-                    {
-                        "responseMessage": "Server error",
-                        "responseCode": 500,
-                        "response": response(UserError.REDIS_INSERT, "SERVER_ERROR"),
-                    },
-                    500,
-                )
-
-                return logout_error_response
+                return exception.get_response(UserError.REDIS_INSERT)
             return (
                 {"responseMessage": Success.LOGOUT, "responseCode": 200},
                 200,
             )
         except ImportError as user_error:
-            ValidationException.IMPORT_ERROR = str(user_error)
-            return (
-                {
-                    "responseMessage": "Server error",
-                    "responseCode": 500,
-                    "response": response(UserError.IMPORT_ERROR, "SERVER_ERROR"),
-                },
-                500,
+            return exception.get_response(
+                UserError.IMPORT_ERROR, error_description=str(user_error)
             )

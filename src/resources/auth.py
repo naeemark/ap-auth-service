@@ -77,10 +77,7 @@ class StartSession(Resource):
         if not validate:
             exception = error_handler.exception_factory("Auth")
 
-            return (
-                exception.get_response(AuthError.HEADERS_INCORRECT),
-                400,
-            )
+            return exception.get_response(AuthError.HEADERS_INCORRECT)
         access_token = create_access_token(identity=device_id)
         refresh_token = create_refresh_token(identity=device_id)
 

@@ -1,4 +1,5 @@
 """initialized common properties"""
+from flask import jsonify
 
 
 class ErrorManager:
@@ -17,7 +18,7 @@ class ErrorManager:
     IMPORT_ERROR = "Package import error"
 
     @classmethod
-    def response(cls, *argv):
+    def response(cls, *argv, jsonify_response=False):
         """argv = (error code, error title ,error description, status_code, response message)"""
         error_detail = {
             "errors": [
@@ -34,4 +35,7 @@ class ErrorManager:
             "responseCode": argv[3],
             "response": error_detail,
         }
-        return response
+        if jsonify_response:
+            return jsonify(response), argv[3]
+
+        return response, argv[3]

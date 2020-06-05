@@ -16,12 +16,22 @@ class AuthError:
         }
         self.error_code = "AUTH_ERROR"
 
-    def get_response(self, error_title, status_code=401, message="Auth error"):
+    def get_response(self, title, status=401, message="Auth error", **kwargs):
         """get response for Auth"""
-        error_description = self.error_response.get(error_title)
+        jsonify_response = kwargs.get("jsonify_response")
+        description = kwargs.get("error_description")
+
+        error_description = (
+            description if description else self.error_response.get(title)
+        )
 
         return ErrorManager.response(
-            self.error_code, error_title, error_description, status_code, message
+            self.error_code,
+            title,
+            error_description,
+            status,
+            message,
+            jsonify_response=jsonify_response,
         )
 
 
@@ -37,12 +47,22 @@ class ValidationError:
         }
         self.error_code = "VALIDATION_ERROR"
 
-    def get_response(self, error_title, status_code=400, message="Validation error"):
+    def get_response(self, title, status=400, message="Validation error", **kwargs):
         """get response for validation"""
-        error_description = self.error_response.get(error_title)
+        jsonify_response = kwargs.get("jsonify_response")
+        description = kwargs.get("error_description")
+
+        error_description = (
+            description if description else self.error_response.get(title)
+        )
 
         return ErrorManager.response(
-            self.error_code, error_title, error_description, status_code, message
+            self.error_code,
+            title,
+            error_description,
+            status,
+            message,
+            jsonify_response=jsonify_response,
         )
 
 
@@ -56,10 +76,19 @@ class ServerError:
         }
         self.error_code = "SERVER_ERROR"
 
-    def get_response(self, error_title, status_code=500, message="Server error"):
+    def get_response(self, title, status=500, message="Server error", **kwargs):
         """get response for server error"""
-        error_description = self.error_response.get(error_title)
+        jsonify_response = kwargs.get("jsonify_response")
+        description = kwargs.get("error_description")
 
+        error_description = (
+            description if description else self.error_response.get(title)
+        )
         return ErrorManager.response(
-            self.error_code, error_title, error_description, status_code, message
+            self.error_code,
+            title,
+            error_description,
+            status,
+            message,
+            jsonify_response=jsonify_response,
         )

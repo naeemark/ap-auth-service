@@ -1,8 +1,6 @@
-from flask import jsonify
 from flask_restful import Api
 from src.constant.error_handler import ErrorHandler
 from src.constant.exception import ValidationException
-from src.constant.rules import get_error_response as response
 from src.resources.auth import RevokeAccess
 from src.resources.auth import StartSession
 from src.resources.auth import TokenRefresh
@@ -11,9 +9,12 @@ from src.resources.user import UserLogin
 from src.resources.user import UserLogout
 from src.resources.user import UserRegister
 from src.utils.blacklist import BlacklistManager
+from src.utils.errors import error_handler
 
 
 class InitializationJWT:
+    exception = error_handler.exception_factory("Auth")
+
     @classmethod
     def initialize(cls, jwt_instance):
         cls.initialize_token_in_blacklist_loader(jwt_instance)
@@ -29,15 +30,8 @@ class InitializationJWT:
             """
             response for fresh token required
             """
-            return (
-                jsonify(
-                    {
-                        "responseMessage": "Auth error",
-                        "responseCode": 401,
-                        "response": response(ErrorHandler.FRESH_TOKEN, "AUTH_ERROR"),
-                    }
-                ),
-                401,
+            return cls.exception.get_response(
+                ErrorHandler.FRESH_TOKEN, jsonify_response=True
             )
 
         return fresh_token_required
@@ -62,15 +56,9 @@ class InitializationJWT:
         @jwt.revoked_token_loader
         def revoke_token_callback():
             """token revoke response handled"""
-            return (
-                jsonify(
-                    {
-                        "responseMessage": "Auth error",
-                        "responseCode": 401,
-                        "response": response(ErrorHandler.TOKEN_REVOKED, "AUTH_ERROR"),
-                    }
-                ),
-                401,
+
+            return cls.exception.get_response(
+                ErrorHandler.TOKEN_REVOKED, jsonify_response=True
             )
 
         return revoke_token_callback
@@ -80,15 +68,8 @@ class InitializationJWT:
         @jwt.expired_token_loader
         def expired_token_callback():
             """token expire response handled"""
-            return (
-                jsonify(
-                    {
-                        "responseMessage": "Auth error",
-                        "responseCode": 401,
-                        "response": response(ErrorHandler.TOKEN_EXPIRED, "AUTH_ERROR"),
-                    }
-                ),
-                401,
+            return cls.exception.get_response(
+                ErrorHandler.TOKEN_EXPIRED, jsonify_response=True
             )
 
         return expired_token_callback
@@ -99,15 +80,11 @@ class InitializationJWT:
         def invalid_token_callback(error_reason):
             """invalid token response handled"""
             ValidationException.TOKEN_INVALID = error_reason
-            return (
-                jsonify(
-                    {
-                        "responseMessage": "Auth error",
-                        "responseCode": 422,
-                        "response": response(ErrorHandler.TOKEN_INVALID, "AUTH_ERROR"),
-                    }
-                ),
-                422,
+            return cls.exception.get_response(
+                ErrorHandler.TOKEN_INVALID,
+                status=422,
+                error_description=error_reason,
+                jsonify_response=True,
             )
 
         return invalid_token_callback
