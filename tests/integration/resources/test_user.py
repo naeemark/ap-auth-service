@@ -284,6 +284,7 @@ class TestFailureScenario:
             follow_redirects=True,
         )
         assert response_register_user.status_code == 412
+        assert len(json.loads(response_register_user.data)["response"]["errors"]) > 1
 
     def test_start_session_faliure(self, api_prefix, test_client):
         """session start success case"""

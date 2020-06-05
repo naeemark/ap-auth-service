@@ -31,7 +31,7 @@ content_data = {
             "data": {"email": "john12211a3.com", "password": "123!!@@AB"}
         },
         "user_register_password": {
-            "data": {"email": "john525@gmail.com", "password": "123@@AB"}
+            "data": {"email": "john525@gmail.com", "password": "1231"}
         },
         "start_session": {
             "headers": {
