@@ -12,7 +12,7 @@ from flask_restful import Resource
 from src.constant.exception import ValidationException
 from src.constant.success_message import Success as UserSuccess
 from src.models.user import UserModel
-from src.utils.blacklist import BlacklistManager
+from src.utils.blacklist_manager import BlacklistManager
 from src.utils.errors import error_handler
 from src.utils.errors import ErrorManager as UserError
 from src.validators.user import ChangePasswordValidate
@@ -186,7 +186,8 @@ class UserLogout(Resource):
     @fresh_jwt_required
     def post(self):
         """
-        :return: success message on logout else give error message
+        logout the user through jti of token ,
+         jti is "JWT ID", a unique identifier for a JWT
         """
         jti = get_raw_jwt()["jti"]
         identity = get_jwt_identity()

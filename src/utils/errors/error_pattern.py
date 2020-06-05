@@ -47,6 +47,7 @@ class ValidationError:
             ErrorManager.INVALID_CREDENTIAL: ValidationException.INVALID_CREDENTIAL,
             ErrorManager.USER_ALREADY_EXISTS: ValidationException.USER_ALREADY_EXISTS,
             ErrorManager.EMAIL_CONDITION: ValidationException.EMAIL_CONDITION,
+            ErrorManager.HEADERS_INCORRECT: ValidationException.HEADERS_INCORRECT,
             ErrorManager.PASSWORD_PRECONDITION: ValidationException.PASSWORD_CONDITION,
         }
 

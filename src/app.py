@@ -1,15 +1,11 @@
 """
   Flask App
 """
-import os
-
-import redis
-from flask_jwt_extended import JWTManager
 from src import create_app
 from src import db
-from src.resources import InitializationJWT
+from src import redis_instance
 from src.resources import initialize_resources
-from src.utils.blacklist import BlacklistManager
+
 
 app = create_app("flask.cfg")
 
@@ -23,15 +19,7 @@ def create_tables():
     db.create_all()
 
 
-# no endpoint
-jwt = JWTManager(app)
-
-redis_instance = redis.Redis(
-    host=os.environ["REDIS_HOST"], port=os.environ["REDIS_PORT"]
-)
-BlacklistManager().initialize_redis(app, redis_instance)
-InitializationJWT.initialize(jwt)
-initialize_resources(app)
+initialize_resources(app, redis_instance)
 
 if __name__ == "__main__":
     app.run()

@@ -7,14 +7,11 @@ import os
 import bcrypt
 import fakeredis
 import pytest
-from flask_jwt_extended import JWTManager
 from mock import Mock
 from src import create_app
 from src import db
 from src.models.user import UserModel
-from src.resources import InitializationJWT
 from src.resources import initialize_resources
-from src.utils.blacklist import BlacklistManager
 from tests.integration.mock_data import MockData
 from tests.integration.mock_data import MockDataManager
 
@@ -34,11 +31,9 @@ def test_client():
         Configure and provides app-client instance for testing
     """
     flask_app = create_app("flask_test.cfg")
-    jwt = JWTManager(flask_app)
+
     redis_instance = fakeredis.FakeStrictRedis()
-    BlacklistManager().initialize_redis(flask_app, redis_instance)
-    InitializationJWT.initialize(jwt)
-    initialize_resources(flask_app)
+    initialize_resources(flask_app, redis_instance)
 
     db.init_app(flask_app)
 

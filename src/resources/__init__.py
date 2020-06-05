@@ -1,3 +1,7 @@
+import datetime
+import os
+
+from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from src.constant.exception import ValidationException
 from src.resources.auth import RevokeAccess
@@ -7,7 +11,7 @@ from src.resources.user import ChangePassword
 from src.resources.user import UserLogin
 from src.resources.user import UserLogout
 from src.resources.user import UserRegister
-from src.utils.blacklist import BlacklistManager
+from src.utils.blacklist_manager import BlacklistManager
 from src.utils.errors import error_handler
 from src.utils.errors import ErrorManager
 
@@ -90,7 +94,18 @@ class InitializationJWT:
         return invalid_token_callback
 
 
-def initialize_resources(app):
+def initialize_resources(app, redis_instance):
+    jwt = JWTManager(app)
+
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(
+        minutes=int(os.environ["JWT_ACCESS_TOKEN_EXPIRES_MINUTES"])
+    )
+    app.config["JWT_REFRESH_TOKEN_EXPIRES"] = datetime.timedelta(
+        days=int(os.environ["JWT_REFRESH_TOKEN_EXPIRES_DAYS"])
+    )
+    token_expire_seconds = app.config["JWT_ACCESS_TOKEN_EXPIRES"].seconds
+    BlacklistManager().initialize_redis(token_expire_seconds, redis_instance)
+    InitializationJWT.initialize(jwt)
     api_prefix = "/{}/api/v1".format(app.config.get("STAGE"))
 
     # Instantiates API
@@ -103,7 +118,7 @@ def initialize_resources(app):
     api.add_resource(UserLogout, "/user/logout")
 
     # Adds resources for Auth Entity
-    api.add_resource(TokenRefresh, "/auth/refreshToken")
+    api.add_resource(TokenRefresh, "/auth/refreshSession")
     api.add_resource(StartSession, "/auth/startSession")
     api.add_resource(RevokeAccess, "/auth/revokeAccess")
 

@@ -15,7 +15,7 @@ from flask_restful import reqparse
 from flask_restful import Resource
 from src.constant.exception import ValidationException
 from src.constant.success_message import Success as AuthSuccess
-from src.utils.blacklist import BlacklistManager
+from src.utils.blacklist_manager import BlacklistManager
 from src.utils.errors import error_handler
 from src.utils.errors import ErrorManager as AuthError
 
@@ -74,7 +74,7 @@ class StartSession(Resource):
         device_id = data["Device-ID"]
         validate = cls.is_valid_token(client_app_token, timestamp)
         if not validate:
-            exception = error_handler.exception_factory("Auth")
+            exception = error_handler.exception_factory()
 
             return exception.get_response(AuthError.HEADERS_INCORRECT)
         access_token = create_access_token(identity=device_id)
@@ -122,7 +122,6 @@ class RevokeAccess(Resource):
     def post(self):
         """
         revoke access for access token
-        # jti is "JWT ID", a unique identifier for a JWT.
         """
         jti = get_raw_jwt()["jti"]
         identity = get_jwt_identity()

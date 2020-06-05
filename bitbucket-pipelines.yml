@@ -19,7 +19,8 @@ definitions:
           - export DB_URL=postgresql://user:password@127.0.0.1:5432/my-db-please-update
           - export CLIENT_SECRET_KEY=this-is-client-secret-key
           - export JWT_SECRET_KEY=this-is-jwt-secret-key
-          - export TOKEN_EXPIRE=15
+          - export JWT_ACCESS_TOKEN_EXPIRES_MINUTES=30
+          - export JWT_REFRESH_TOKEN_EXPIRES_DAYS=7
 
           - pip install pipenv
 
