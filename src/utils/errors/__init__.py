@@ -38,28 +38,31 @@ class ErrorManager:
     @classmethod
     def is_iterative_error(cls, **kwargs):
         """multiple errors control"""
-        error = {"errors": []}
-        error_list = error.get("errors")
+
         error_code = kwargs.get("error_code")
         error_title = kwargs.get("error_title")
         error_description = kwargs.get("error_description")
-
-        if isinstance(error_description, list) or isinstance(error_description, tuple):
-            for error_description_index in error_description:
-                error_dict = {
-                    "errorCode": error_code,
-                    "errorTitle": error_title,
-                    "errorDescription": error_description_index,
-                }
-                error_list.append(error_dict)
-            return error
-
-        else:
-            error_list.append(
+        error = {
+            "errors": [
                 {
                     "errorCode": error_code,
                     "errorTitle": error_title,
                     "errorDescription": error_description,
                 }
-            )
+            ]
+        }
+        if isinstance(error_description, list) or isinstance(error_description, tuple):
+            errors = [
+                {
+                    "errorCode": error_code,
+                    "errorTitle": error_title,
+                    "errorDescription": error_description_index,
+                }
+                for error_description_index in error_description
+            ]
+            error.update({"errors": errors})
+            return error
+
+        else:
+
             return error
