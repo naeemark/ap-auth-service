@@ -9,12 +9,12 @@ from flask_jwt_extended import get_raw_jwt
 from flask_jwt_extended import jwt_required
 from flask_restful import reqparse
 from flask_restful import Resource
-from src.constant.error_handler import ErrorHandler as UserError
 from src.constant.exception import ValidationException
-from src.constant.success_message import Success
+from src.constant.success_message import Success as UserSuccess
 from src.models.user import UserModel
 from src.utils.blacklist import BlacklistManager
 from src.utils.errors import error_handler
+from src.utils.errors import ErrorManager as UserError
 from src.validators.user import ChangePasswordValidate
 from src.validators.user import UserRegisterValidate
 
@@ -71,7 +71,7 @@ class UserRegister(Resource):
 
         return (
             {
-                "responseMessage": Success.USER_CREATION,
+                "responseMessage": UserSuccess.USER_CREATION,
                 "responseCode": 201,
                 "response": {"token": access_token},
             },
@@ -106,7 +106,7 @@ class UserLogin(Resource):
 
             return (
                 {
-                    "responseMessage": Success.LOGGED_IN,
+                    "responseMessage": UserSuccess.LOGGED_IN,
                     "responseCode": 200,
                     "response": {"token": access_token},
                 },
@@ -150,7 +150,7 @@ class ChangePassword(Resource):
 
             return (
                 {
-                    "responseMessage": Success.UPDATED_PASSWORD,
+                    "responseMessage": UserSuccess.UPDATED_PASSWORD,
                     "responseCode": 200,
                     "response": {
                         "passwordStrength": validate[0].get("password_strength")
@@ -186,7 +186,7 @@ class UserLogout(Resource):
             if not insert_status:
                 return exception.get_response(UserError.REDIS_INSERT)
             return (
-                {"responseMessage": Success.LOGOUT, "responseCode": 200},
+                {"responseMessage": UserSuccess.LOGOUT, "responseCode": 200},
                 200,
             )
         except ImportError as user_error:

@@ -1,5 +1,4 @@
 from flask_restful import Api
-from src.constant.error_handler import ErrorHandler
 from src.constant.exception import ValidationException
 from src.resources.auth import RevokeAccess
 from src.resources.auth import StartSession
@@ -10,6 +9,7 @@ from src.resources.user import UserLogout
 from src.resources.user import UserRegister
 from src.utils.blacklist import BlacklistManager
 from src.utils.errors import error_handler
+from src.utils.errors import ErrorManager
 
 
 class InitializationJWT:
@@ -31,7 +31,7 @@ class InitializationJWT:
             response for fresh token required
             """
             return cls.exception.get_response(
-                ErrorHandler.FRESH_TOKEN, jsonify_response=True
+                ErrorManager.FRESH_TOKEN, jsonify_response=True
             )
 
         return fresh_token_required
@@ -58,7 +58,7 @@ class InitializationJWT:
             """token revoke response handled"""
 
             return cls.exception.get_response(
-                ErrorHandler.TOKEN_REVOKED, jsonify_response=True
+                ErrorManager.TOKEN_REVOKED, jsonify_response=True
             )
 
         return revoke_token_callback
@@ -69,7 +69,7 @@ class InitializationJWT:
         def expired_token_callback():
             """token expire response handled"""
             return cls.exception.get_response(
-                ErrorHandler.TOKEN_EXPIRED, jsonify_response=True
+                ErrorManager.TOKEN_EXPIRED, jsonify_response=True
             )
 
         return expired_token_callback
@@ -81,7 +81,7 @@ class InitializationJWT:
             """invalid token response handled"""
             ValidationException.TOKEN_INVALID = error_reason
             return cls.exception.get_response(
-                ErrorHandler.TOKEN_INVALID,
+                ErrorManager.TOKEN_INVALID,
                 status=422,
                 error_description=error_reason,
                 jsonify_response=True,

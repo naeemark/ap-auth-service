@@ -13,12 +13,11 @@ from flask_jwt_extended import jwt_refresh_token_required
 from flask_jwt_extended import jwt_required
 from flask_restful import reqparse
 from flask_restful import Resource
-from src.constant.error_handler import ErrorHandler as AuthError
 from src.constant.exception import ValidationException
-from src.constant.rules import get_error_response as response
-from src.constant.success_message import Success
+from src.constant.success_message import Success as AuthSuccess
 from src.utils.blacklist import BlacklistManager
 from src.utils.errors import error_handler
+from src.utils.errors import ErrorManager as AuthError
 
 
 class StartSession(Resource):
@@ -83,7 +82,7 @@ class StartSession(Resource):
 
         return (
             {
-                "responseMessage": Success.SESSION_START,
+                "responseMessage": AuthSuccess.SESSION_START,
                 "responseCode": 200,
                 "response": {"token": access_token, "refreshToken": refresh_token},
             },
@@ -106,7 +105,7 @@ class TokenRefresh(Resource):
 
         return (
             {
-                "responseMessage": Success.REFRESH_TOKEN,
+                "responseMessage": AuthSuccess.REFRESH_TOKEN,
                 "responseCode": 200,
                 "response": {"token": new_token},
             },
@@ -127,29 +126,19 @@ class RevokeAccess(Resource):
         """
         jti = get_raw_jwt()["jti"]
         identity = get_jwt_identity()
+        exception = error_handler.exception_factory("Server")
+
         try:
             insert_status = BlacklistManager().insert_blacklist_token_id(identity, jti)
             if not insert_status:
-                return (
-                    {
-                        "responseMessage": "Server error",
-                        "responseCode": 500,
-                        "response": response(AuthError.REDIS_INSERT, "SERVER_ERROR"),
-                    },
-                    500,
-                )
+                return exception.get_response(AuthError.REDIS_INSERT)
 
             return (
-                {"responseMessage": Success.ACCESS_REVOKED, "responseCode": 200},
+                {"responseMessage": AuthSuccess.ACCESS_REVOKED, "responseCode": 200},
                 200,
             )
         except ImportError as auth_error:
             ValidationException.IMPORT_ERROR = str(auth_error)
-            return (
-                {
-                    "responseMessage": "Server error",
-                    "responseCode": 500,
-                    "response": response(AuthError.IMPORT_ERROR, "SERVER_ERROR"),
-                },
-                500,
+            return exception.get_response(
+                AuthError.IMPORT_ERROR, error_description=str(auth_error)
             )
