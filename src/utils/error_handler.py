@@ -4,26 +4,20 @@ from src.constant.rules import ServerError
 from src.constant.rules import ValidationError
 
 
-def factory(language="English"):
-    """Factory Method"""
-    localizers = {
-        "French": AuthError,
-        "English": ServerError,
-        "Spanish": ValidationError,
+def factory(error_category="Validate"):
+    """build error """
+    localize = {
+        "Auth": AuthError,
+        "Server": ServerError,
+        "Validate": ValidationError,
     }
 
-    return localizers[language]()
+    return localize[error_category]()
 
 
 if __name__ == "__main__":
+    f1 = factory()
+    f2 = factory("Auth")
 
-    f = factory("French")
-    e = factory("English")
-    s = factory("Spanish")
-
-    message = ["car", "bike", "cycle"]
-
-    for msg in message:
-        print(f.localize(msg))
-        print(e.localize(msg))
-        print(s.localize(msg))
+    f1.get_response("Invalid Credential")
+    f2.get_response("Token Revoked", status_code=422)
