@@ -43,7 +43,7 @@ class UserRegister(Resource):
         exception = error_handler.exception_factory()
 
         if UserModel.find_by_email(email):
-            return exception.get_response(UserError.USER_ALREADY_EXISTS)
+            return exception.get_response(UserError.USER_ALREADY_EXISTS, status=409)
 
         user_register_validate = UserRegisterValidate(data)
         validate_error = user_register_validate.validate_login()
