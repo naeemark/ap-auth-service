@@ -61,11 +61,11 @@ class StartSession(Resource):
         client_app_token = data["Client-App-Token"]
         timestamp = data["Timestamp"]
         device_id = data["Device-ID"]
-        header_check_validate = start_session_headers(data)
+        headers_validate = start_session_headers(data)
         exception = error_handler.exception_factory()
         validate = cls.is_valid_token(client_app_token, timestamp)
-        if header_check_validate:
-            return exception.get_response(error_description=header_check_validate)
+        if headers_validate:
+            return exception.get_response(error_description=headers_validate)
         if not validate:
             return exception.get_response(AuthError.HEADERS_INCORRECT)
         access_token = create_access_token(identity=device_id)

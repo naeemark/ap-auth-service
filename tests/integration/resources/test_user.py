@@ -294,3 +294,34 @@ class TestFailureScenario:
         )
 
         assert response_start_session.status_code == 400
+
+    def test_register_bad_req(self, api_prefix, test_client, session):
+        """register user success case"""
+        content_data = TestFailureScenario.content_data["user_register_bad_req"]["data"]
+        response_register_user = test_client.post(
+            f"{api_prefix}/user/register",
+            headers={
+                "Authorization": f" {session[0]}",
+                CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
+            },
+            data=json.dumps(content_data),
+            follow_redirects=True,
+        )
+        assert response_register_user.status_code == 400
+
+    def test_start_session_faliure_headers(self, api_prefix, test_client):
+        """session start success case"""
+        content_data = TestFailureScenario.content_data["start_session"][
+            "incomplete_headers"
+        ]
+        response_start_session = test_client.post(
+            f"{api_prefix}/auth/startSession", headers=content_data,
+        )
+
+        assert response_start_session.status_code == 400
+        assert (
+            json.loads(response_start_session.data)["response"]["errors"][0][
+                "errorTitle"
+            ]
+            == "Invalid Request"
+        )

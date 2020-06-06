@@ -33,12 +33,17 @@ content_data = {
         "user_register_password": {
             "data": {"email": "john525@gmail.com", "password": "1231"}
         },
+        "user_register_bad_req": {"data": {"email": "john525@gmail.com"}},
         "start_session": {
             "headers": {
                 "Client-App-Token": "Lv4Apvf6zX3mnRRKRNid3z500JtAfYx9kIqsju",
                 "Timestamp": "1591028817",
                 "Device-ID": "this is unique device id",
-            }
+            },
+            "incomplete_headers": {
+                "Client-App-Token": "Lv4Apvf6zX3mnRRKRNid3z500JtAfYx9kIqsju",
+                "Timestamp": "1591028817",
+            },
         },
     },
     "TestUserBehaviour": {

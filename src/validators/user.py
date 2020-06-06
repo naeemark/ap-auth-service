@@ -4,7 +4,9 @@
 from email_validator import EmailNotValidError
 from email_validator import validate_email
 from src.constant.exception import ValidationException
+from src.constant.request_properties import request_body_properties
 from src.constant.rules import password_policy
+from src.validators.common import check_none
 
 
 class UserRegisterValidate:
@@ -91,3 +93,14 @@ class ChangePasswordValidate:
             )
             return respone, 412
         return respone, 200
+
+
+def request_body_register(request_body):
+    """validate req body properties"""
+    start_session_required = request_body_properties.get("register")
+    req_body_value_required = tuple(filter(check_none, request_body.values()))
+    if req_body_value_required:
+        return ValidationException.BODY_PROPERTIES_REQUIRED.format(
+            properties=str(start_session_required)
+        )
+    return False

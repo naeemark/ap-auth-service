@@ -22,3 +22,4 @@ class ValidationException(Exception):
     DUPLICATE_USER = "This email has already been registered"
     EMAIL_INCORRECT = "Provide correct email"
     HEADERS_REQUIRED = "Headers must consist of {properties}"
+    BODY_PROPERTIES_REQUIRED = "Provide {properties}"

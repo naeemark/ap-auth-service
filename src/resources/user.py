@@ -16,7 +16,9 @@ from src.utils.blacklist_manager import BlacklistManager
 from src.utils.errors import error_handler
 from src.utils.errors import ErrorManager as UserError
 from src.validators.user import ChangePasswordValidate
+from src.validators.user import request_body_register
 from src.validators.user import UserRegisterValidate
+from werkzeug.exceptions import BadRequest
 
 
 class UserRegister(Resource):
@@ -26,29 +28,37 @@ class UserRegister(Resource):
 
     parser = reqparse.RequestParser()
     parser.add_argument(
-        "email", type=str, required=True, help=ValidationException.FIELD_BLANK
+        "email", type=str,
     )
     parser.add_argument(
-        "password", type=str, required=True, help=ValidationException.FIELD_BLANK
+        "password", type=str,
     )
+    exception = error_handler.exception_factory()
 
-    @jwt_required
-    def post(self):
-        """
-            Creates a new User
-        """
-        data = UserRegister.parser.parse_args()
+    @classmethod
+    def get_data(cls):
+        """gets data from req body"""
+        try:
+            data = UserRegister.parser.parse_args()
+        except BadRequest as error:
+            return UserRegister.exception.get_response(error_description=str(error))
+        return data
+
+    @classmethod
+    def apply_validation(cls):
+        """validates before processing data"""
+        data = cls.get_data()
         email = data["email"]
-        password = data["password"]
-        exception = error_handler.exception_factory()
+        req_body_validate = request_body_register(data)
 
+        if req_body_validate:
+            return cls.exception.get_response(error_description=req_body_validate)
         if UserModel.find_by_email(email):
-            return exception.get_response(
+            return cls.exception.get_response(
                 UserError.USER_ALREADY_EXISTS,
                 status=409,
                 response_message=ValidationException.DUPLICATE_USER,
             )
-
         user_register_validate = UserRegisterValidate(data)
         validate_error = user_register_validate.validate_login()
 
@@ -64,13 +74,34 @@ class UserRegister(Resource):
                 )
             )
 
-            return exception.get_response(
+            return cls.exception.get_response(
                 title,
                 status=status_code,
                 error_description=description,
                 response_message=response_message,
             )
+        return True
 
+    @classmethod
+    def exception_response(cls):
+        """checks for possible exceptions """
+        data = cls.get_data()
+        if isinstance(data, tuple):
+            return data
+        validate = cls.apply_validation()
+
+        if isinstance(validate, tuple):
+            return validate
+        return False
+
+    @jwt_required
+    def post(self):
+        """create user"""
+        if UserRegister.exception_response():
+            return UserRegister.exception_response()
+        data = UserRegister.get_data()
+        email = data["email"]
+        password = data["password"]
         password = password.encode()
         hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
         user = UserModel(email, hashed_password)

@@ -1,13 +1,8 @@
 """validate auth"""
 from src.constant.exception import ValidationException
-from src.constant.headers_properties import header_properties
+from src.constant.request_properties import header_properties
 
-
-def check_none(element):
-    """filter method"""
-    if not element:
-        return True
-    return False
+from .common import check_none
 
 
 def start_session_headers(headers):
