@@ -17,7 +17,7 @@ class AuthError:
             ErrorManager.FRESH_TOKEN: ValidationException.FRESH_TOKEN,
         }
 
-    def get_response(self, title, status=401, **kwargs):
+    def get_response(self, title="Invalid Request", status=401, **kwargs):
         """get response for Auth"""
         status_info = Status(status)
 
@@ -51,7 +51,7 @@ class ValidationError:
             ErrorManager.PASSWORD_PRECONDITION: ValidationException.PASSWORD_CONDITION,
         }
 
-    def get_response(self, title, status=400, **kwargs):
+    def get_response(self, title="Invalid Request", status=400, **kwargs):
         """get response for validation"""
         status_info = Status(status)
 
@@ -82,7 +82,7 @@ class ServerError:
             ErrorManager.IMPORT_ERROR: ValidationException.IMPORT_ERROR,
         }
 
-    def get_response(self, title, status=500, **kwargs):
+    def get_response(self, title="Invalid Request", status=500, **kwargs):
         """get response for server error"""
         status_info = Status(status)
 

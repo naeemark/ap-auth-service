@@ -18,6 +18,7 @@ from src.constant.success_message import Success as AuthSuccess
 from src.utils.blacklist_manager import BlacklistManager
 from src.utils.errors import error_handler
 from src.utils.errors import ErrorManager as AuthError
+from src.validators.auth import start_session_headers
 
 
 class StartSession(Resource):
@@ -27,27 +28,15 @@ class StartSession(Resource):
 
     parser = reqparse.RequestParser()
     parser.add_argument(
-        "Client-App-Token",
-        type=str,
-        required=True,
-        help=ValidationException.FIELD_BLANK,
-        location="headers",
+        "Client-App-Token", type=str, location="headers",
     )
 
     parser.add_argument(
-        "Timestamp",
-        type=str,
-        required=True,
-        help=ValidationException.FIELD_BLANK,
-        location="headers",
+        "Timestamp", type=str, location="headers",
     )
 
     parser.add_argument(
-        "Device-ID",
-        type=str,
-        required=True,
-        help=ValidationException.FIELD_BLANK,
-        location="headers",
+        "Device-ID", type=str, location="headers",
     )
 
     @classmethod
@@ -72,10 +61,12 @@ class StartSession(Resource):
         client_app_token = data["Client-App-Token"]
         timestamp = data["Timestamp"]
         device_id = data["Device-ID"]
+        header_check_validate = start_session_headers(data)
+        exception = error_handler.exception_factory()
         validate = cls.is_valid_token(client_app_token, timestamp)
+        if header_check_validate:
+            return exception.get_response(error_description=header_check_validate)
         if not validate:
-            exception = error_handler.exception_factory()
-
             return exception.get_response(AuthError.HEADERS_INCORRECT)
         access_token = create_access_token(identity=device_id)
         refresh_token = create_refresh_token(identity=device_id)
