@@ -5,6 +5,8 @@
 import fakeredis
 from src.models.user import UserModel
 from src.utils.blacklist_manager import BlacklistManager
+from src.utils.errors import error_handler as error_test
+from src.utils.errors import ErrorManager as ErrorManagerTest
 
 
 def new_user():
@@ -71,3 +73,66 @@ def test_redis():
 
     assert redis_instance.get("test").decode() == "12"
     assert redis_instance.get("1").decode() == "abc"
+
+
+class TestErrorFormat:
+    """format testing for errors """
+
+    __error_validate_instance = error_test.exception_factory()
+    __error_auth_instance = error_test.exception_factory("Auth")
+    __error_server_instance = error_test.exception_factory("Server")
+
+    def keys_requirement_satisfied(self, response_dict):
+        """checks for keys in response"""
+        primary_response_keys = (
+            "responseMessage" and "responseCode" and "response" in response_dict.keys()
+        )
+
+        if not primary_response_keys:
+            return False
+        errors_response = response_dict.get("response")["errors"]
+        is_list = isinstance(errors_response, list)
+        errors_keys_satisfied = (
+            "errorCode" and "errorTitle" and "errorDescription" in errors_response[0]
+        )
+        requirement_clear = is_list and errors_keys_satisfied
+        return requirement_clear
+
+    def test_validate_format(self):
+        """validation errors format test"""
+        validate_response = self.__error_validate_instance.get_response(
+            ErrorManagerTest.PASSWORD_PRECONDITION
+        )
+        keys_check = self.keys_requirement_satisfied(validate_response[0])
+        assert isinstance(validate_response, tuple), "error response should be tuple "
+        assert isinstance(
+            validate_response[1], int
+        ), "error response invalid ,it should have status code along it"
+        assert keys_check, "error response keys are not satisfied"
+        assert validate_response[0]["responseCode"] == 400
+
+    def test_auth_format(self):
+        """auth errors format test"""
+        validate_response = self.__error_auth_instance.get_response(
+            ErrorManagerTest.PASSWORD_PRECONDITION
+        )
+        keys_check = self.keys_requirement_satisfied(validate_response[0])
+        assert isinstance(validate_response, tuple), "error response should be tuple "
+        assert isinstance(
+            validate_response[1], int
+        ), "error response invalid ,it should have status code along it"
+        assert keys_check, "error response keys are not satisfied"
+        assert validate_response[0]["responseCode"] == 401
+
+    def test_server_format(self):
+        """server errors format test"""
+        validate_response = self.__error_server_instance.get_response(
+            ErrorManagerTest.PASSWORD_PRECONDITION
+        )
+        keys_check = self.keys_requirement_satisfied(validate_response[0])
+        assert isinstance(validate_response, tuple), "error response should be tuple "
+        assert isinstance(
+            validate_response[1], int
+        ), "error response invalid ,it should have status code along it"
+        assert keys_check, "error response keys are not satisfied"
+        assert validate_response[0]["responseCode"] == 500
