@@ -325,3 +325,20 @@ class TestFailureScenario:
             ]
             == "Invalid Request"
         )
+
+    def test_missing_jwt(self, api_prefix, test_client, session):
+        """register user success case"""
+        content_data = TestFailureScenario.content_data["user_register_bad_req"]["data"]
+        response_register_user = test_client.post(
+            f"{api_prefix}/user/register",
+            headers={CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE},
+            data=json.dumps(content_data),
+            follow_redirects=True,
+        )
+        assert response_register_user.status_code == 401
+        assert (
+            json.loads(response_register_user.data)["response"]["errors"][0][
+                "errorTitle"
+            ]
+            == "Missing Auth"
+        )
