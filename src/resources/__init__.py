@@ -26,6 +26,7 @@ class InitializationJWT:
         cls.initialize_expired_token_callback(jwt_instance)
         cls.initialize_revoke_token_callback(jwt_instance)
         cls.initialize_fresh_token_required(jwt_instance)
+        cls.initialize_unauthorized_loader_callback(jwt_instance)
 
     @classmethod
     def initialize_fresh_token_required(cls, jwt):
@@ -77,6 +78,19 @@ class InitializationJWT:
             )
 
         return expired_token_callback
+
+    @classmethod
+    def initialize_unauthorized_loader_callback(cls, jwt):
+        @jwt.unauthorized_loader
+        def unauthorized_loader_callback(reason):
+            """missing token response handled"""
+            return cls.exception.get_response(
+                jsonify_response=True,
+                error_description=reason,
+                title=ValidationException.MISING_AUTH,
+            )
+
+        return unauthorized_loader_callback
 
     @classmethod
     def initialize_invalid_token(cls, jwt):

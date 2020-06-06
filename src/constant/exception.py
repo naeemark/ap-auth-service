@@ -23,3 +23,4 @@ class ValidationException(Exception):
     EMAIL_INCORRECT = "Provide correct email"
     HEADERS_REQUIRED = "Headers must consist of '{properties}'"
     BODY_PROPERTIES_REQUIRED = "Provide '{properties}'"
+    MISING_AUTH = "Missing Auth"
