@@ -170,6 +170,50 @@ class ChangePassword(Resource):
     parser.add_argument(
         "new_password", type=str,
     )
+    exception = error_handler.exception_factory()
+
+    @classmethod
+    def get_data(cls):
+        """gets data from req body"""
+        try:
+            data = ChangePassword.parser.parse_args()
+        except BadRequest as error:
+            return ChangePassword.exception.get_response(error_description=str(error))
+        return data
+
+    @classmethod
+    def apply_validation(cls):
+        """validates before processing data"""
+        data = cls.get_data()
+        req_body_validate = request_body_register(data)
+        if req_body_validate:
+            return cls.exception.get_response(error_description=req_body_validate)
+        data = ChangePassword.parser.parse_args()
+        change_password_validate = ChangePasswordValidate(data)
+        validate = change_password_validate.validate_password()
+        status_code = validate[1]
+        error_description = validate[0].get("pre_condition")
+        if validate[0].get("message"):
+            return cls.exception.get_response(
+                UserError.PASSWORD_PRECONDITION,
+                status=status_code,
+                error_description=error_description,
+                response_message=ValidationException.PASSWORD_CONDITION,
+            )
+
+        return validate[0].get("password_strength")
+
+    @classmethod
+    def exception_response(cls):
+        """checks for possible exceptions """
+        data = cls.get_data()
+        if isinstance(data, tuple):
+            return data
+        validate = cls.apply_validation()
+
+        if isinstance(validate, tuple):
+            return validate
+        return validate
 
     @fresh_jwt_required
     def put(self):
@@ -177,13 +221,10 @@ class ChangePassword(Resource):
             Updates the Model
         """
         current_user = get_jwt_identity()
-        data = ChangePassword.parser.parse_args()
+        validate_pwd = ChangePassword.exception_response()
+        data = ChangePassword.get_data()
         user = UserModel.find_by_id(current_user)
-        change_password_validate = ChangePasswordValidate(data)
-        validate = change_password_validate.validate_password()
-
-        exception = error_handler.exception_factory()
-        if user and not validate[0].get("message"):
+        if not isinstance(validate_pwd, tuple):
             password = data["new_password"].encode()
             hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
             user.password = hashed_password
@@ -194,21 +235,14 @@ class ChangePassword(Resource):
                     "responseMessage": UserSuccess.UPDATED_PASSWORD,
                     "responseCode": 200,
                     "response": {
-                        "passwordStrength": validate[0].get("password_strength"),
+                        "passwordStrength": validate_pwd,
                         "accessToken": None,
                         "refreshToken": None,
                     },
                 },
                 200,
             )
-        status_code = validate[1]
-        error_description = validate[0]["pre_condition"]
-        return exception.get_response(
-            UserError.PASSWORD_PRECONDITION,
-            status=status_code,
-            error_description=error_description,
-            response_message=ValidationException.PASSWORD_CONDITION,
-        )
+        return validate_pwd
 
 
 class UserLogout(Resource):

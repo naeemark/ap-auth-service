@@ -266,7 +266,7 @@ class TestFailureScenario:
         TestFailureScenario.content_data.update(content_data)
 
     def test_register_email_fail(self, api_prefix, test_client, session):
-        """register user success case"""
+        """register user failure case"""
         content_data = TestFailureScenario.content_data["user_register_email"]["data"]
         response_register_user = test_client.post(
             f"{api_prefix}/user/register",
@@ -280,7 +280,7 @@ class TestFailureScenario:
         assert response_register_user.status_code == 406
 
     def test_register_pwd_fail(self, api_prefix, test_client, session):
-        """register user success case"""
+        """register user failure case"""
         content_data = TestFailureScenario.content_data["user_register_password"][
             "data"
         ]
@@ -297,7 +297,7 @@ class TestFailureScenario:
         assert len(json.loads(response_register_user.data)["response"]["errors"]) > 1
 
     def test_start_session_faliure(self, api_prefix, test_client):
-        """session start success case"""
+        """session start failure case"""
         content_data = TestFailureScenario.content_data["start_session"]["headers"]
         response_start_session = test_client.post(
             f"{api_prefix}/auth/startSession", headers=content_data,
@@ -306,7 +306,7 @@ class TestFailureScenario:
         assert response_start_session.status_code == 400
 
     def test_register_bad_req(self, api_prefix, test_client, session):
-        """register user success case"""
+        """register user failure case"""
         content_data = TestFailureScenario.content_data["user_register_bad_req"]["data"]
         response_register_user = test_client.post(
             f"{api_prefix}/user/register",
@@ -320,7 +320,7 @@ class TestFailureScenario:
         assert response_register_user.status_code == 400
 
     def test_start_session_faliure_headers(self, api_prefix, test_client):
-        """session start success case"""
+        """session start faliure case"""
         content_data = TestFailureScenario.content_data["start_session"][
             "incomplete_headers"
         ]
@@ -337,7 +337,7 @@ class TestFailureScenario:
         )
 
     def test_missing_jwt(self, api_prefix, test_client, session):
-        """register user success case"""
+        """missing auth case"""
         content_data = TestFailureScenario.content_data["user_register_bad_req"]["data"]
         response_register_user = test_client.post(
             f"{api_prefix}/user/register",
