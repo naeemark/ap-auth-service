@@ -168,7 +168,7 @@ class ChangePassword(Resource):
 
     parser = reqparse.RequestParser()
     parser.add_argument(
-        "new_password", type=str, required=True, help=ValidationException.FIELD_BLANK
+        "new_password", type=str,
     )
 
     @fresh_jwt_required
@@ -194,7 +194,9 @@ class ChangePassword(Resource):
                     "responseMessage": UserSuccess.UPDATED_PASSWORD,
                     "responseCode": 200,
                     "response": {
-                        "passwordStrength": validate[0].get("password_strength")
+                        "passwordStrength": validate[0].get("password_strength"),
+                        "accessToken": None,
+                        "refreshToken": None,
                     },
                 },
                 200,
