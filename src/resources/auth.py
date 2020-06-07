@@ -75,7 +75,10 @@ class StartSession(Resource):
             {
                 "responseMessage": AuthSuccess.SESSION_START,
                 "responseCode": 200,
-                "response": {"token": access_token, "refreshToken": refresh_token},
+                "response": {
+                    "accessToken": access_token,
+                    "refreshToken": refresh_token,
+                },
             },
             200,
         )
@@ -98,7 +101,7 @@ class TokenRefresh(Resource):
             {
                 "responseMessage": AuthSuccess.REFRESH_TOKEN,
                 "responseCode": 200,
-                "response": {"token": new_token},
+                "response": {"accessToken": new_token, "refreshToken": None},
             },
             200,
         )

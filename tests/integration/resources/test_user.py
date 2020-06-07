@@ -61,7 +61,7 @@ class TestUserBehaviour:
         )
 
         fresh_access_token_login = json.loads(response_login_user.data)["response"][
-            "token"
+            "accessToken"
         ]
 
         assert isinstance(fresh_access_token_login, str)
@@ -197,7 +197,7 @@ class TestSuccessScenario:
         )
 
         assert (
-            "token"
+            "accessToken"
             and "refreshToken"
             in json.loads(response_start_session.data)["response"].keys()
         )
@@ -214,9 +214,13 @@ class TestSuccessScenario:
             data=json.dumps(content_data),
             follow_redirects=True,
         )
-        access_token = json.loads(response_register_user.data)["response"]["token"]
+        access_token = json.loads(response_register_user.data)["response"][
+            "accessToken"
+        ]
         assert response_register_user.status_code == 201
-        assert "token" in json.loads(response_register_user.data)["response"].keys()
+        assert (
+            "accessToken" in json.loads(response_register_user.data)["response"].keys()
+        )
         TestSuccessScenario.token_dict.update({"register_token": access_token})
 
     def test_login_user_success(self, api_prefix, test_client):
@@ -234,12 +238,12 @@ class TestSuccessScenario:
         )
 
         fresh_access_token_login = json.loads(response_login_user.data)["response"][
-            "token"
+            "accessToken"
         ]
 
         assert isinstance(fresh_access_token_login, str)
         assert response_login_user.status_code == 200
-        assert "token" in json.loads(response_login_user.data)["response"].keys()
+        assert "accessToken" in json.loads(response_login_user.data)["response"].keys()
 
 
 class TestFailureScenario:

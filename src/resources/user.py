@@ -114,7 +114,7 @@ class UserRegister(Resource):
             {
                 "responseMessage": UserSuccess.USER_CREATION,
                 "responseCode": 201,
-                "response": {"token": access_token},
+                "response": {"accessToken": access_token, "refreshToken": None},
             },
             201,
         )
@@ -149,7 +149,7 @@ class UserLogin(Resource):
                 {
                     "responseMessage": UserSuccess.LOGGED_IN,
                     "responseCode": 200,
-                    "response": {"token": access_token},
+                    "response": {"accessToken": access_token, "refreshToken": None},
                 },
                 200,
             )

@@ -24,7 +24,7 @@ def test_refresh_token(test_client, api_prefix, session, test_database):
         headers={"Authorization": f" {session[1]}"},
     )
     assert response_refresh_token.status_code == 200
-    assert "token" in json.loads(response_refresh_token.data)["response"].keys()
+    assert "accessToken" in json.loads(response_refresh_token.data)["response"].keys()
     assert len(test_database.metadata.sorted_tables[0].columns) == 3
 
 

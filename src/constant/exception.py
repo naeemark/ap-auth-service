@@ -21,6 +21,6 @@ class ValidationException(Exception):
     IMPORT_ERROR = "import error "
     DUPLICATE_USER = "This email has already been registered"
     EMAIL_INCORRECT = "Provide correct email"
-    HEADERS_REQUIRED = "Headers must consist of '{properties}'"
+    HEADERS_REQUIRED = "'{properties}' is required"
     BODY_PROPERTIES_REQUIRED = "Provide '{properties}'"
     MISING_AUTH = "Missing Auth"
