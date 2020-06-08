@@ -127,7 +127,11 @@ class RevokeAccess(Resource):
                 return exception.get_response(AuthError.REDIS_INSERT)
 
             return (
-                {"responseMessage": AuthSuccess.ACCESS_REVOKED, "responseCode": 200},
+                {
+                    "responseMessage": AuthSuccess.ACCESS_REVOKED,
+                    "responseCode": 200,
+                    "response": {"accessToken": None, "refreshToken": None},
+                },
                 200,
             )
         except ImportError as auth_error:
