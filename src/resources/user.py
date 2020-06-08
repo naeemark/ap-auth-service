@@ -127,37 +127,68 @@ class UserLogin(Resource):
 
     parser = reqparse.RequestParser()
     parser.add_argument(
-        "email", type=str, required=True, help=ValidationException.FIELD_BLANK
+        "email", type=str,
     )
     parser.add_argument(
-        "password", type=str, required=True, help=ValidationException.FIELD_BLANK
+        "password", type=str,
     )
+    exception = error_handler.exception_factory()
+
+    @classmethod
+    def get_data(cls):
+        """gets data from req body"""
+        try:
+            data = UserLogin.parser.parse_args()
+        except BadRequest as error:
+            return UserLogin.exception.get_response(error_description=str(error))
+        return data
+
+    @classmethod
+    def apply_validation(cls):
+        """validates before processing data"""
+        data = cls.get_data()
+        user = UserModel.find_by_email(data["email"])
+        req_body_validate = request_body_register(data)
+        if req_body_validate:
+            return cls.exception.get_response(error_description=req_body_validate)
+        if not user or not bcrypt.checkpw(data["password"].encode(), user.password):
+            return cls.exception.get_response(
+                UserError.INVALID_CREDENTIAL,
+                status=401,
+                error_description="Invalid email address or password",
+            )
+        return True
+
+    @classmethod
+    def exception_response(cls):
+        """checks for possible exceptions """
+        data = cls.get_data()
+        if isinstance(data, tuple):
+            return data
+        validate = cls.apply_validation()
+        if isinstance(validate, tuple):
+            return validate
+        return False
 
     @jwt_required
     def post(self):
         """
             Returns a new Token
         """
-        data = UserLogin.parser.parse_args()
+        if UserLogin.exception_response():
+            return UserLogin.exception_response()
+        data = UserLogin.get_data()
         user = UserModel.find_by_email(data["email"])
-        exception = error_handler.exception_factory()
 
-        if user and bcrypt.checkpw(data["password"].encode(), user.password):
-            access_token = create_access_token(identity=user.id, fresh=True)
+        access_token = create_access_token(identity=user.id, fresh=True)
 
-            return (
-                {
-                    "responseMessage": UserSuccess.LOGGED_IN,
-                    "responseCode": 200,
-                    "response": {"accessToken": access_token, "refreshToken": None},
-                },
-                200,
-            )
-
-        return exception.get_response(
-            UserError.INVALID_CREDENTIAL,
-            status=401,
-            error_description="Invalid email address or password",
+        return (
+            {
+                "responseMessage": UserSuccess.LOGGED_IN,
+                "responseCode": 200,
+                "response": {"accessToken": access_token, "refreshToken": None},
+            },
+            200,
         )
 
 
