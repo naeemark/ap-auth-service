@@ -186,12 +186,16 @@ class UserLogin(Resource):
         user = UserModel.find_by_email(data["email"])
 
         access_token = create_access_token(identity=user.id, fresh=True)
+        refresh_token = create_refresh_token(identity=user.id)
 
         return (
             {
                 "responseMessage": UserSuccess.LOGGED_IN,
                 "responseCode": 200,
-                "response": {"accessToken": access_token, "refreshToken": None},
+                "response": {
+                    "accessToken": access_token,
+                    "refreshToken": refresh_token,
+                },
             },
             200,
         )
