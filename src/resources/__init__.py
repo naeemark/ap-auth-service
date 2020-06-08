@@ -97,12 +97,11 @@ class InitializationJWT:
         @jwt.invalid_token_loader
         def invalid_token_callback(error_reason):
             """invalid token response handled"""
-            ValidationException.TOKEN_INVALID = error_reason
             return cls.exception.get_response(
                 ErrorManager.TOKEN_INVALID,
                 status=422,
-                error_description=error_reason,
                 jsonify_response=True,
+                response_message=error_reason,
             )
 
         return invalid_token_callback
