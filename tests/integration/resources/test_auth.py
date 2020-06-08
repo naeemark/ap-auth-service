@@ -37,6 +37,10 @@ def test_revoke_access(api_prefix, test_client, session):
     )
     assert response_revoke.status_code == 200
     assert json.loads(response_revoke.data)["responseMessage"] == Success.ACCESS_REVOKED
+    assert (
+        "accessToken"
+        and "refreshToken" in json.loads(response_revoke.data)["response"].keys()
+    )
 
 
 def test_revoke_access_without_token(api_prefix, test_client):
