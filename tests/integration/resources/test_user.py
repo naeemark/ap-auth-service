@@ -221,12 +221,11 @@ class TestSuccessScenario:
         access_token = json.loads(response_register_user.data)["response"][
             "accessToken"
         ]
+        json_data = json.loads(response_register_user.data)
         assert response_register_user.status_code == 201
-        assert (
-            "accessToken"
-            and "refreshToken"
-            in json.loads(response_register_user.data)["response"].keys()
-        )
+        assert "accessToken" and "refreshToken" in json_data["response"].keys()
+        assert isinstance(json_data["response"]["accessToken"], str)
+        assert isinstance(json_data["response"]["refreshToken"], str)
         TestSuccessScenario.token_dict.update({"register_token": access_token})
 
     def test_login_user_success(self, api_prefix, test_client):
