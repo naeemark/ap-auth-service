@@ -2,8 +2,6 @@
   User Resource
 """
 import bcrypt
-from flask_jwt_extended import create_access_token
-from flask_jwt_extended import create_refresh_token
 from flask_jwt_extended import fresh_jwt_required
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import get_raw_jwt
@@ -16,6 +14,8 @@ from src.models.user import UserModel
 from src.utils.blacklist_manager import BlacklistManager
 from src.utils.errors import error_handler
 from src.utils.errors import ErrorManager as UserError
+from src.utils.success_response_manager import get_success_response_login
+from src.utils.success_response_manager import get_success_response_register
 from src.validators.user import ChangePasswordValidate
 from src.validators.user import request_body_register
 from src.validators.user import UserRegisterValidate
@@ -109,20 +109,7 @@ class UserRegister(Resource):
         user.save_to_db()
 
         current_user = get_jwt_identity()
-        access_token = create_access_token(identity=current_user)
-        refresh_token = create_refresh_token(identity=current_user)
-
-        return (
-            {
-                "responseMessage": UserSuccess.USER_CREATION,
-                "responseCode": 201,
-                "response": {
-                    "accessToken": access_token,
-                    "refreshToken": refresh_token,
-                },
-            },
-            201,
-        )
+        return get_success_response_register(identity=current_user)
 
 
 class UserLogin(Resource):
@@ -185,20 +172,7 @@ class UserLogin(Resource):
         data = UserLogin.get_data()
         user = UserModel.find_by_email(data["email"])
 
-        access_token = create_access_token(identity=user.id, fresh=True)
-        refresh_token = create_refresh_token(identity=user.id)
-
-        return (
-            {
-                "responseMessage": UserSuccess.LOGGED_IN,
-                "responseCode": 200,
-                "response": {
-                    "accessToken": access_token,
-                    "refreshToken": refresh_token,
-                },
-            },
-            200,
-        )
+        return get_success_response_login(identity=user.id)
 
 
 class ChangePassword(Resource):
@@ -304,11 +278,13 @@ class UserLogout(Resource):
 
             if not insert_status:
                 return exception.get_response(UserError.REDIS_INSERT)
+            response_logout = {"accessToken": None, "refreshToken": None}
+
             return (
                 {
                     "responseMessage": UserSuccess.LOGOUT,
                     "responseCode": 200,
-                    "response": {"accessToken": None, "refreshToken": None},
+                    "response": response_logout,
                 },
                 200,
             )

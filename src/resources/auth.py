@@ -6,7 +6,6 @@ import hashlib
 import os
 
 from flask_jwt_extended import create_access_token
-from flask_jwt_extended import create_refresh_token
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import get_raw_jwt
 from flask_jwt_extended import jwt_refresh_token_required
@@ -18,6 +17,7 @@ from src.constant.success_message import Success as AuthSuccess
 from src.utils.blacklist_manager import BlacklistManager
 from src.utils.errors import error_handler
 from src.utils.errors import ErrorManager as AuthError
+from src.utils.success_response_manager import get_success_response_session
 from src.validators.auth import start_session_headers
 
 
@@ -68,20 +68,7 @@ class StartSession(Resource):
             return exception.get_response(error_description=headers_validate)
         if not validate:
             return exception.get_response(AuthError.HEADERS_INCORRECT)
-        access_token = create_access_token(identity=device_id)
-        refresh_token = create_refresh_token(identity=device_id)
-
-        return (
-            {
-                "responseMessage": AuthSuccess.SESSION_START,
-                "responseCode": 200,
-                "response": {
-                    "accessToken": access_token,
-                    "refreshToken": refresh_token,
-                },
-            },
-            200,
-        )
+        return get_success_response_session(identity=device_id)
 
 
 class TokenRefresh(Resource):
@@ -125,12 +112,13 @@ class RevokeAccess(Resource):
             insert_status = BlacklistManager().insert_blacklist_token_id(identity, jti)
             if not insert_status:
                 return exception.get_response(AuthError.REDIS_INSERT)
+            response_revoke = {"accessToken": None, "refreshToken": None}
 
             return (
                 {
                     "responseMessage": AuthSuccess.ACCESS_REVOKED,
                     "responseCode": 200,
-                    "response": {"accessToken": None, "refreshToken": None},
+                    "response": response_revoke,
                 },
                 200,
             )
