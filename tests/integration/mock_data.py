@@ -30,6 +30,7 @@ content_data = {
         "user_register_email": {
             "data": {"email": "john12211a3.com", "password": "123!!@@AB"}
         },
+        "login_missing_email": {"data": {"password": "123!!@@AB"}},
         "user_register_password": {
             "data": {"email": "john525@gmail.com", "password": "1231"}
         },
