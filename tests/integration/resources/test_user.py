@@ -246,14 +246,12 @@ class TestSuccessScenario:
         fresh_access_token_login = json.loads(response_login_user.data)["response"][
             "accessToken"
         ]
-
+        json_data = json.loads(response_login_user.data)
         assert isinstance(fresh_access_token_login, str)
         assert response_login_user.status_code == 200
-        assert (
-            "accessToken"
-            and "refreshToken"
-            in json.loads(response_login_user.data)["response"].keys()
-        )
+        assert "accessToken" and "refreshToken" in json_data["response"].keys()
+        assert isinstance(json_data["response"]["accessToken"], str)
+        assert isinstance(json_data["response"]["refreshToken"], str)
 
 
 class TestFailureScenario:
