@@ -155,7 +155,7 @@ class UserLogin(Resource):
             return cls.exception.get_response(
                 UserError.INVALID_CREDENTIAL,
                 status=401,
-                error_description="Invalid email address or password",
+                error_description=ValidationException.CREDENTIAL_REQUIRED,
             )
         return True
 

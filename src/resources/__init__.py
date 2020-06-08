@@ -87,7 +87,7 @@ class InitializationJWT:
             return cls.exception.get_response(
                 jsonify_response=True,
                 error_description=reason,
-                title=ValidationException.MISING_AUTH,
+                title=ValidationException.MISSING_AUTH,
             )
 
         return unauthorized_loader_callback
