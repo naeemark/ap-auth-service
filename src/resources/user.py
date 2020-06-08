@@ -265,7 +265,11 @@ class UserLogout(Resource):
             if not insert_status:
                 return exception.get_response(UserError.REDIS_INSERT)
             return (
-                {"responseMessage": UserSuccess.LOGOUT, "responseCode": 200},
+                {
+                    "responseMessage": UserSuccess.LOGOUT,
+                    "responseCode": 200,
+                    "response": {"accessToken": None, "refreshToken": None},
+                },
                 200,
             )
         except ImportError as user_error:
