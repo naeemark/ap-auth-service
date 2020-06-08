@@ -78,11 +78,11 @@ class ServerError:
 
     def __init__(self):
         self.error_response = {
-            ErrorManager.REDIS_INSERT: ValidationException.BLACKLIST,
+            ErrorManager.REDIS_CONNECTION: ValidationException.BLACKLIST,
             ErrorManager.IMPORT_ERROR: ValidationException.IMPORT_ERROR,
         }
 
-    def get_response(self, title="Invalid Request", status=500, **kwargs):
+    def get_response(self, title="Server Error", status=500, **kwargs):
         """get response for server error"""
         status_info = Status(status)
 

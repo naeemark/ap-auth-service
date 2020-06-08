@@ -13,7 +13,7 @@ class ValidationException(Exception):
     EMAIL_CONDITION = "'email' is not valid"
     AUTH = "Authorization Required"
     TOKEN_EXPIRED = "Token has expired"
-    BLACKLIST = "Error occurred inserting token"
+    BLACKLIST = "Error connecting redis"
     TOKEN_REVOKED = "Token has been revoked"
     TOKEN_INVALID = (
         "Request was well-formed but was unable to be followed due to semantic errors"

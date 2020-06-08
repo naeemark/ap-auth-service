@@ -12,6 +12,7 @@ from flask_jwt_extended import jwt_refresh_token_required
 from flask_jwt_extended import jwt_required
 from flask_restful import reqparse
 from flask_restful import Resource
+from redis.exceptions import ConnectionError as RedisConnectionAuth
 from src.constant.exception import ValidationException
 from src.constant.success_message import Success as AuthSuccess
 from src.utils.blacklist_manager import BlacklistManager
@@ -109,9 +110,8 @@ class RevokeAccess(Resource):
         exception = error_handler.exception_factory("Server")
 
         try:
-            insert_status = BlacklistManager().insert_blacklist_token_id(identity, jti)
-            if not insert_status:
-                return exception.get_response(AuthError.REDIS_INSERT)
+            BlacklistManager().insert_blacklist_token_id(identity, jti)
+
             response_revoke = {"accessToken": None, "refreshToken": None}
 
             return (
@@ -127,3 +127,5 @@ class RevokeAccess(Resource):
             return exception.get_response(
                 AuthError.IMPORT_ERROR, error_description=str(auth_error)
             )
+        except RedisConnectionAuth:
+            return exception.get_response(AuthError.REDIS_CONNECTION)

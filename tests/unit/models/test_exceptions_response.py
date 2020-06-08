@@ -56,7 +56,7 @@ class TestException:
     def test_server_format(self):
         """server errors format test"""
         validate_response = self.__error_server_instance.get_response(
-            ErrorManagerTest.REDIS_INSERT
+            ErrorManagerTest.REDIS_CONNECTION
         )
         keys_check = self.keys_requirement_satisfied(validate_response[0])
         assert isinstance(validate_response, tuple), "error response should be tuple "

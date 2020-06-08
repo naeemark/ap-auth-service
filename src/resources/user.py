@@ -8,6 +8,7 @@ from flask_jwt_extended import get_raw_jwt
 from flask_jwt_extended import jwt_required
 from flask_restful import reqparse
 from flask_restful import Resource
+from redis.exceptions import ConnectionError as RedisConnectionUser
 from src.constant.exception import ValidationException
 from src.constant.success_message import Success as UserSuccess
 from src.models.user import UserModel
@@ -274,10 +275,8 @@ class UserLogout(Resource):
         identity = get_jwt_identity()
         exception = error_handler.exception_factory("Server")
         try:
-            insert_status = BlacklistManager().insert_blacklist_token_id(identity, jti)
+            BlacklistManager().insert_blacklist_token_id(identity, jti)
 
-            if not insert_status:
-                return exception.get_response(UserError.REDIS_INSERT)
             response_logout = {"accessToken": None, "refreshToken": None}
 
             return (
@@ -292,3 +291,5 @@ class UserLogout(Resource):
             return exception.get_response(
                 UserError.IMPORT_ERROR, error_description=str(user_error)
             )
+        except RedisConnectionUser:
+            return exception.get_response(UserError.REDIS_CONNECTION)

@@ -1,6 +1,7 @@
 """
 blacklist file to handle logout
 """
+from redis.exceptions import ConnectionError as RedisConnection
 
 
 class BlacklistManager:
@@ -27,8 +28,12 @@ class BlacklistManager:
         """
         :return: list of jti
         """
+        try:
 
-        jti_list = list(map(self.decode_jti, self.redis.keys()))
+            jti_list = list(map(self.decode_jti, self.redis.keys()))
+        except RedisConnection:
+            return []
+
         return jti_list
 
     def decode_jti(self, encoded_jti):
