@@ -119,7 +119,7 @@ def initialize_resources(app, redis_instance):
     token_expire_seconds = app.config["JWT_ACCESS_TOKEN_EXPIRES"].seconds
     BlacklistManager().initialize_redis(token_expire_seconds, redis_instance)
     InitializationJWT.initialize(jwt)
-    api_prefix = "/{}/api/v1".format(app.config.get("STAGE"))
+    api_prefix = "/api/v1"
 
     # Instantiates API
     api = Api(app=app, prefix=api_prefix)
