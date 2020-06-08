@@ -7,6 +7,7 @@ import os
 import bcrypt
 import fakeredis
 import pytest
+import redis
 from mock import Mock
 from src import create_app
 from src import db
@@ -51,6 +52,30 @@ def test_client():
 
     # Delete test database file after execution
     os.remove(flask_app.config["SQLALCHEMY_DATABASE_URI"].split("///")[-1])
+
+
+@pytest.yield_fixture()
+def test_redis():
+    """
+        Generates redis
+    """
+    flask_app = create_app("flask_test.cfg")
+    redis_instance = redis.Redis(host="127.0.0.1", port=6319)
+    initialize_resources(flask_app, redis_instance)
+
+    db.init_app(flask_app)
+
+    # Flask provides a way to test your application by exposing the Werkzeug test Client
+    # and handling the context locals for you.
+    testing_client = flask_app.test_client()
+
+    # # Establish an application context before running the tests.
+    context = flask_app.app_context()
+    context.push()
+
+    yield testing_client  # this is where the testing happens!
+
+    context.pop()
 
 
 @pytest.fixture(scope="module")

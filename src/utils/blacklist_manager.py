@@ -21,8 +21,11 @@ class BlacklistManager:
         :param jti: JWT ID
         :return: bool status
         """
-        expire_time = BlacklistManager.__token_expire_seconds
-        return self.redis.set(str(jti), str(identity), str(expire_time))
+        try:
+            expire_time = BlacklistManager.__token_expire_seconds
+            return self.redis.set(str(jti), str(identity), str(expire_time))
+        except RedisConnection as error:
+            raise error
 
     def get_jti_list(self):
         """

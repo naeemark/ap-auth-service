@@ -373,3 +373,15 @@ class TestFailureScenario:
             ]
             == "Provide 'email'"
         )
+
+    def test_redis_faliure(self, api_prefix, test_redis, session):
+        """redis failure"""
+        response_logout = test_redis.post(
+            f"{api_prefix}/auth/revokeAccess",
+            headers={
+                "Authorization": f"{session[0]}",
+                CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
+            },
+        )
+
+        assert response_logout.status_code == 500

@@ -1,5 +1,8 @@
 """error handling test"""
 import pytest
+import redis
+from redis.exceptions import ConnectionError as RedisConnection
+from src.utils.blacklist_manager import BlacklistManager
 from src.utils.errors import error_handler as error_test
 from src.utils.errors import ErrorManager as ErrorManagerTest
 
@@ -144,3 +147,12 @@ class TestException:
         assert validate_response[1] == status_code
         assert validate_response[0]["responseMessage"] == response_message
         assert keys_check
+
+    def test_redis_fail(self):
+        """test redis in failure case"""
+        redis_instance = redis.Redis(host="127.0.0.1", port=6319)
+        try:
+            BlacklistManager.initialize_redis(1800, redis_instance)
+            BlacklistManager().insert_blacklist_token_id("1312131", "1231")
+        except RedisConnection as error:
+            assert isinstance(error, RedisConnection)
