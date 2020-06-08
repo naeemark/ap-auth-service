@@ -376,7 +376,7 @@ class TestFailureScenario:
 
     def test_redis_faliure(self, api_prefix, test_redis, session):
         """redis failure"""
-        response_logout = test_redis.post(
+        response_revoke = test_redis.post(
             f"{api_prefix}/auth/revokeAccess",
             headers={
                 "Authorization": f"{session[0]}",
@@ -384,4 +384,10 @@ class TestFailureScenario:
             },
         )
 
-        assert response_logout.status_code == 500
+        assert response_revoke.status_code == 500
+        assert (
+            json.loads(response_revoke.data)["response"]["errors"][0][
+                "errorDescription"
+            ]
+            == "Error connecting redis"
+        )
