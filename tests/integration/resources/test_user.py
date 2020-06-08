@@ -164,6 +164,10 @@ class TestUserBehaviour:
         )
         assert response_logout.status_code == 200
         assert json.loads(response_logout.data)["responseMessage"] == Success.LOGOUT
+        assert (
+            "accessToken"
+            and "refreshToken" in json.loads(response_logout.data)["response"].keys()
+        )
 
     def test_user_logout_without_token(self, api_prefix, test_client):
         """logout user case without token"""
