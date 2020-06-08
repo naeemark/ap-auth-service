@@ -3,6 +3,7 @@
 """
 import bcrypt
 from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_refresh_token
 from flask_jwt_extended import fresh_jwt_required
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import get_raw_jwt
@@ -109,12 +110,16 @@ class UserRegister(Resource):
 
         current_user = get_jwt_identity()
         access_token = create_access_token(identity=current_user)
+        refresh_token = create_refresh_token(identity=current_user)
 
         return (
             {
                 "responseMessage": UserSuccess.USER_CREATION,
                 "responseCode": 201,
-                "response": {"accessToken": access_token, "refreshToken": None},
+                "response": {
+                    "accessToken": access_token,
+                    "refreshToken": refresh_token,
+                },
             },
             201,
         )
