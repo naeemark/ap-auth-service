@@ -80,6 +80,7 @@ class ServerError:
         self.error_response = {
             ErrorManager.REDIS_CONNECTION: ValidationException.BLACKLIST,
             ErrorManager.IMPORT_ERROR: ValidationException.IMPORT_ERROR,
+            ErrorManager.DATABASE_CONNECTION: ValidationException.DATABASE,
         }
 
     def get_response(self, title="Server Error", status=500, **kwargs):

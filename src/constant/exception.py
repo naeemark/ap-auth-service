@@ -28,3 +28,4 @@ class ValidationException(Exception):
     BODY_PROPERTIES_REQUIRED = "Provide '{properties}'"
     MISSING_AUTH = "Missing Auth"
     CREDENTIAL_REQUIRED = "Invalid email address or password"
+    DATABASE = "Error connecting database"

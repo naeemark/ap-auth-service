@@ -16,6 +16,7 @@ class ErrorManager:
     REDIS_CONNECTION = "Redis Server Error"
     FRESH_TOKEN = "Fresh token required"
     IMPORT_ERROR = "Package import error"
+    DATABASE_CONNECTION = "Database Server Error"
 
     @classmethod
     def response(cls, *argv, jsonify_response=False):

@@ -1,6 +1,7 @@
 """
   Flask App
 """
+from sqlalchemy.exc import OperationalError
 from src import create_app
 from src import db
 from src import redis_instance
@@ -15,8 +16,11 @@ def create_tables():
     """
        Initialize Database
     """
-    db.init_app(app)
-    db.create_all()
+    try:
+        db.init_app(app)
+        db.create_all()
+    except OperationalError:
+        pass
 
 
 initialize_resources(app, redis_instance)

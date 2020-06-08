@@ -9,6 +9,7 @@ from flask_jwt_extended import jwt_required
 from flask_restful import reqparse
 from flask_restful import Resource
 from redis.exceptions import ConnectionError as RedisConnectionUser
+from sqlalchemy.exc import OperationalError
 from src.constant.exception import ValidationException
 from src.constant.success_message import Success as UserSuccess
 from src.models.user import UserModel
@@ -36,6 +37,7 @@ class UserRegister(Resource):
         "password", type=str,
     )
     exception = error_handler.exception_factory()
+    server_exception = error_handler.exception_factory("Server")
 
     @classmethod
     def get_data(cls):
@@ -55,12 +57,16 @@ class UserRegister(Resource):
 
         if req_body_validate:
             return cls.exception.get_response(error_description=req_body_validate)
-        if UserModel.find_by_email(email):
-            return cls.exception.get_response(
-                UserError.USER_ALREADY_EXISTS,
-                status=409,
-                response_message=ValidationException.DUPLICATE_USER,
-            )
+        try:
+            if UserModel.find_by_email(email):
+                return cls.exception.get_response(
+                    UserError.USER_ALREADY_EXISTS,
+                    status=409,
+                    response_message=ValidationException.DUPLICATE_USER,
+                )
+        except OperationalError:
+            return cls.server_exception.get_response(UserError.DATABASE_CONNECTION)
+
         user_register_validate = UserRegisterValidate(data)
         validate_error = user_register_validate.validate_login()
 
@@ -106,8 +112,13 @@ class UserRegister(Resource):
         password = data["password"]
         password = password.encode()
         hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
-        user = UserModel(email, hashed_password)
-        user.save_to_db()
+        try:
+            user = UserModel(email, hashed_password)
+            user.save_to_db()
+        except OperationalError:
+            return UserRegister.server_exception.get_response(
+                UserError.DATABASE_CONNECTION
+            )
 
         current_user = get_jwt_identity()
         return get_success_response_register(identity=current_user)
@@ -126,6 +137,7 @@ class UserLogin(Resource):
         "password", type=str,
     )
     exception = error_handler.exception_factory()
+    server_exception = error_handler.exception_factory("Server")
 
     @classmethod
     def get_data(cls):
@@ -140,7 +152,11 @@ class UserLogin(Resource):
     def apply_validation(cls):
         """validates before processing data"""
         data = cls.get_data()
-        user = UserModel.find_by_email(data["email"])
+        try:
+            user = UserModel.find_by_email(data["email"])
+        except OperationalError:
+            return cls.server_exception.get_response(UserError.DATABASE_CONNECTION)
+
         req_body_validate = request_body_register(data)
         if req_body_validate:
             return cls.exception.get_response(error_description=req_body_validate)
@@ -171,7 +187,12 @@ class UserLogin(Resource):
         if UserLogin.exception_response():
             return UserLogin.exception_response()
         data = UserLogin.get_data()
-        user = UserModel.find_by_email(data["email"])
+        try:
+            user = UserModel.find_by_email(data["email"])
+        except OperationalError:
+            return UserLogin.server_exception.get_response(
+                UserError.DATABASE_CONNECTION
+            )
 
         return get_success_response_login(identity=user.id)
 
@@ -186,6 +207,7 @@ class ChangePassword(Resource):
         "new_password", type=str,
     )
     exception = error_handler.exception_factory()
+    server_exception = error_handler.exception_factory("Server")
 
     @classmethod
     def get_data(cls):
@@ -238,7 +260,12 @@ class ChangePassword(Resource):
         current_user = get_jwt_identity()
         validate_pwd = ChangePassword.exception_response()
         data = ChangePassword.get_data()
-        user = UserModel.find_by_id(current_user)
+        try:
+            user = UserModel.find_by_id(current_user)
+        except OperationalError:
+            return ChangePassword.server_exception.get_response(
+                UserError.DATABASE_CONNECTION
+            )
         if not isinstance(validate_pwd, tuple):
             password = data["new_password"].encode()
             hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
