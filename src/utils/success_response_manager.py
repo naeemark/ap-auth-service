@@ -34,4 +34,4 @@ def get_success_response_register(identity):
 def get_success_response_session(identity):
     """generate session response"""
 
-    return response_format(identity=identity, response_message=Success.REFRESH_TOKEN)
+    return response_format(identity=identity, response_message=Success.SESSION_START)
