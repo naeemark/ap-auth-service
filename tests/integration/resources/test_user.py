@@ -10,14 +10,6 @@ from src.constant.success_message import Success
 from ..mock_data import MockDataManager
 
 
-def test_sum(test_client, test_database):
-    """
-        A sample test to demostrate the availability of test_client and test_dataabase
-    """
-    # for mock purpose
-    assert 1 + 1 == 2
-
-
 CONTENT_TYPE_KEY = "Content-Type"
 CONTENT_TYPE_VALUE = "application/json"
 PASSWORD = "123!!@@AB"
@@ -39,7 +31,7 @@ class TestUserBehaviour:
         assert isinstance(content_data, dict)
         TestUserBehaviour.content_data.update(content_data)
 
-    def test_register_generated_token(self, register_token):
+    def test_register_generated_token(self, test_client, test_database, register_token):
         """
         generete token by register end point
         """
