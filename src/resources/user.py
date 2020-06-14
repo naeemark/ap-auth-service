@@ -26,12 +26,8 @@ class UserRegister(Resource):
     """
 
     parser = reqparse.RequestParser()
-    parser.add_argument(
-        "email", type=str, required=True, help=ValidationException.FIELD_BLANK
-    )
-    parser.add_argument(
-        "password", type=str, required=True, help=ValidationException.FIELD_BLANK
-    )
+    parser.add_argument("email", type=str, required=True, help=ValidationException.FIELD_BLANK)
+    parser.add_argument("password", type=str, required=True, help=ValidationException.FIELD_BLANK)
 
     @jwt_required
     def post(self):
@@ -68,12 +64,8 @@ class UserLogin(Resource):
     """
 
     parser = reqparse.RequestParser()
-    parser.add_argument(
-        "email", type=str, required=True, help=ValidationException.FIELD_BLANK
-    )
-    parser.add_argument(
-        "password", type=str, required=True, help=ValidationException.FIELD_BLANK
-    )
+    parser.add_argument("email", type=str, required=True, help=ValidationException.FIELD_BLANK)
+    parser.add_argument("password", type=str, required=True, help=ValidationException.FIELD_BLANK)
 
     @jwt_required
     def post(self):
@@ -95,9 +87,7 @@ class ChangePassword(Resource):
     """
 
     parser = reqparse.RequestParser()
-    parser.add_argument(
-        "new_password", type=str, required=True, help=ValidationException.FIELD_BLANK
-    )
+    parser.add_argument("new_password", type=str, required=True, help=ValidationException.FIELD_BLANK)
 
     @fresh_jwt_required
     def put(self):
@@ -115,10 +105,7 @@ class ChangePassword(Resource):
             user.password = hashed_password
             user.save_to_db()
             return (
-                {
-                    "message": UPDATED_PASSWORD,
-                    "password_strength": validate[0].get("password_strength"),
-                },
+                {"message": UPDATED_PASSWORD, "password_strength": validate[0].get("password_strength")},
                 200,
             )
         return validate

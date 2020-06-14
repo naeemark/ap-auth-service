@@ -25,27 +25,15 @@ class StartSession(Resource):
 
     parser = reqparse.RequestParser()
     parser.add_argument(
-        "Client-App-Token",
-        type=str,
-        required=True,
-        help=ValidationException.FIELD_BLANK,
-        location="headers",
+        "Client-App-Token", type=str, required=True, help=ValidationException.FIELD_BLANK, location="headers",
     )
 
     parser.add_argument(
-        "Timestamp",
-        type=str,
-        required=True,
-        help=ValidationException.FIELD_BLANK,
-        location="headers",
+        "Timestamp", type=str, required=True, help=ValidationException.FIELD_BLANK, location="headers",
     )
 
     parser.add_argument(
-        "Device-ID",
-        type=str,
-        required=True,
-        help=ValidationException.FIELD_BLANK,
-        location="headers",
+        "Device-ID", type=str, required=True, help=ValidationException.FIELD_BLANK, location="headers",
     )
 
     @classmethod
@@ -80,7 +68,7 @@ class StartSession(Resource):
         return {"access_token": access_token, "refresh_token": refresh_token}, 200
 
 
-class TokenRefresh(Resource):
+class RefreshSession(Resource):
     """
         Resource TokenRefresh
     """
@@ -95,7 +83,7 @@ class TokenRefresh(Resource):
         return {"access_token": new_token}, 200
 
 
-class RevokeAccess(Resource):
+class RevokeSession(Resource):
     """
     logout user
     """

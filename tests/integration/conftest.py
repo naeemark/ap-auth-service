@@ -64,13 +64,8 @@ def test_database():
         db.create_all()
 
         # create user data objects
-        user1 = UserModel(
-            email="abc@gmail.com", password=bcrypt.hashpw(b"123abc@", bcrypt.gensalt())
-        )
-        user2 = UserModel(
-            email="abcd@gmail.com",
-            password=bcrypt.hashpw(b"PaSsWoRd", bcrypt.gensalt()),
-        )
+        user1 = UserModel(email="abc@gmail.com", password=bcrypt.hashpw(b"123abc@", bcrypt.gensalt()))
+        user2 = UserModel(email="abcd@gmail.com", password=bcrypt.hashpw(b"PaSsWoRd", bcrypt.gensalt()),)
 
         # Add users to database
         db.session.add(user1)
@@ -100,11 +95,7 @@ def api_prefix(test_client):
         Find and returns API_PREFIX for all integration tests
     """
     # pylint: disable=redefined-outer-name
-    return (
-        test_client.application.config["API_PREFIX"]
-        if "API_PREFIX" in test_client.application.config
-        else ""
-    )
+    return test_client.application.config["API_PREFIX"] if "API_PREFIX" in test_client.application.config else ""
 
 
 @pytest.yield_fixture()
@@ -116,8 +107,7 @@ def session(api_prefix, test_client, data):
     mock_data_manager = MockDataManager(data)
     data.content.return_value = "base_startSession"
     response_start_session = test_client.post(
-        f"{api_prefix}/auth/startSession",
-        headers=mock_data_manager.get_content()["headers"],
+        f"{api_prefix}/session/start", headers=mock_data_manager.get_content()["headers"],
     )
     tokens = json.loads(response_start_session.data)
     return tokens["access_token"], tokens["refresh_token"]
@@ -134,10 +124,7 @@ def register_token(api_prefix, test_client, session, data):
 
     response_register_user = test_client.post(
         f"{api_prefix}/user/register",
-        headers={
-            "Authorization": f" {session[0]}",
-            "Content-Type": "application/json",
-        },
+        headers={"Authorization": f" {session[0]}", "Content-Type": "application/json"},
         data=json.dumps(mock_data_manager.get_content()["data"]),
         follow_redirects=True,
     )
