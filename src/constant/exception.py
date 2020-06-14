@@ -15,10 +15,7 @@ class ValidationException(Exception):
     TOKEN_EXPIRED = "Token has expired"
     BLACKLIST = "Error connecting redis"
     TOKEN_REVOKED = "Token has been revoked"
-    TOKEN_INVALID = (
-        "Request was well-formed but was unable to be followed due to semantic errors"
-        ",specify correct token"
-    )
+    TOKEN_INVALID = "Request was well-formed but was unable to be followed due to semantic errors specify correct token"
     HEADERS_INCORRECT = "Bad Headers Provided"
     FRESH_TOKEN = "Login required"
     IMPORT_ERROR = "import error "

@@ -28,16 +28,17 @@ class StartSession(Resource):
     """
 
     parser = reqparse.RequestParser()
+
     parser.add_argument(
-        "Client-App-Token", type=str, location="headers",
+        "Client-App-Token", type=str, required=True, help=ValidationException.FIELD_BLANK, location="headers",
     )
 
     parser.add_argument(
-        "Timestamp", type=str, location="headers",
+        "Timestamp", type=str, required=True, help=ValidationException.FIELD_BLANK, location="headers",
     )
 
     parser.add_argument(
-        "Device-ID", type=str, location="headers",
+        "Device-ID", type=str, required=True, help=ValidationException.FIELD_BLANK, location="headers",
     )
 
     @classmethod
@@ -72,7 +73,7 @@ class StartSession(Resource):
         return get_success_response_session(identity=device_id)
 
 
-class TokenRefresh(Resource):
+class RefreshSession(Resource):
     """
         Resource TokenRefresh
     """
@@ -95,7 +96,7 @@ class TokenRefresh(Resource):
         )
 
 
-class RevokeAccess(Resource):
+class RevokeSession(Resource):
     """
     logout user
     """
@@ -115,17 +116,11 @@ class RevokeAccess(Resource):
             response_revoke = {"accessToken": None, "refreshToken": None}
 
             return (
-                {
-                    "responseMessage": AuthSuccess.ACCESS_REVOKED,
-                    "responseCode": 200,
-                    "response": response_revoke,
-                },
+                {"responseMessage": AuthSuccess.ACCESS_REVOKED, "responseCode": 200, "response": response_revoke},
                 200,
             )
         except ImportError as auth_error:
             ValidationException.IMPORT_ERROR = str(auth_error)
-            return exception.get_response(
-                AuthError.IMPORT_ERROR, error_description=str(auth_error)
-            )
+            return exception.get_response(AuthError.IMPORT_ERROR, error_description=str(auth_error))
         except RedisConnectionAuth:
             return exception.get_response(AuthError.REDIS_CONNECTION)

@@ -22,9 +22,7 @@ class ErrorManager:
     def response(cls, *argv, jsonify_response=False):
         """argv = (error code, error title ,error description, status_code, response message)"""
 
-        error_detail = cls.is_iterative_error(
-            error_code=argv[0], error_title=argv[1], error_description=argv[2]
-        )
+        error_detail = cls.is_iterative_error(error_code=argv[0], error_title=argv[1], error_description=argv[2])
 
         response = {
             "responseMessage": argv[4],
@@ -44,21 +42,11 @@ class ErrorManager:
         error_title = kwargs.get("error_title")
         error_description = kwargs.get("error_description")
         error = {
-            "errors": [
-                {
-                    "errorCode": error_code,
-                    "errorTitle": error_title,
-                    "errorDescription": error_description,
-                }
-            ]
+            "errors": [{"errorCode": error_code, "errorTitle": error_title, "errorDescription": error_description}]
         }
         if isinstance(error_description, list) or isinstance(error_description, tuple):
             errors = [
-                {
-                    "errorCode": error_code,
-                    "errorTitle": error_title,
-                    "errorDescription": error_description_index,
-                }
+                {"errorCode": error_code, "errorTitle": error_title, "errorDescription": error_description_index}
                 for error_description_index in error_description
             ]
             error.update({"errors": errors})

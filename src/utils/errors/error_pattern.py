@@ -25,9 +25,7 @@ class AuthError:
         description = kwargs.get("error_description")
         response_message = kwargs.get("response_message") or status_info.description
 
-        error_description = (
-            description if description else self.error_response.get(title)
-        )
+        error_description = description if description else self.error_response.get(title)
 
         return ErrorManager.response(
             status_info.name.upper(),
@@ -59,9 +57,7 @@ class ValidationError:
         description = kwargs.get("error_description")
         response_message = kwargs.get("response_message") or status_info.description
 
-        error_description = (
-            description if description else self.error_response.get(title)
-        )
+        error_description = description if description else self.error_response.get(title)
 
         return ErrorManager.response(
             status_info.name.upper(),
@@ -91,9 +87,7 @@ class ServerError:
         description = kwargs.get("error_description")
         response_message = kwargs.get("response_message") or status_info.description
 
-        error_description = (
-            description if description else self.error_response.get(title)
-        )
+        error_description = description if description else self.error_response.get(title)
         return ErrorManager.response(
             status_info.name.upper(),
             title,

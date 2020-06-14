@@ -22,17 +22,13 @@ def response_format(identity, **kwargs):
 def get_success_response_login(identity):
     """generate login response"""
 
-    return response_format(
-        identity=identity, response_message=Success.LOGGED_IN, fresh_token=True
-    )
+    return response_format(identity=identity, response_message=Success.LOGGED_IN, fresh_token=True)
 
 
 def get_success_response_register(identity):
     """generate register response"""
 
-    return response_format(
-        identity=identity, status_code=201, response_message=Success.USER_CREATION
-    )
+    return response_format(identity=identity, status_code=201, response_message=Success.USER_CREATION)
 
 
 def get_success_response_session(identity):

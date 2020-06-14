@@ -47,18 +47,12 @@ class UserRegisterValidate:
         return_dict = None
         if password_check:
             return_dict = (
-                {
-                    "message": ValidationException.PASSWORD_CONDITION,
-                    "pre_condition": password_check,
-                },
+                {"message": ValidationException.PASSWORD_CONDITION, "pre_condition": password_check},
                 412,
             )
         elif email_check:
             return_dict = (
-                {
-                    "message": ValidationException.EMAIL_CONDITION,
-                    "pre_condition": email_check,
-                },
+                {"message": ValidationException.EMAIL_CONDITION, "pre_condition": email_check},
                 406,
             )
         return return_dict
@@ -84,12 +78,7 @@ class ChangePasswordValidate:
         rules_ignored = [str(rule) for rule in password_rules.test()]
         respone.update({"password_strength": password_strength})
         if rules_ignored:
-            respone.update(
-                {
-                    "message": ValidationException.PASSWORD_CONDITION,
-                    "pre_condition": rules_ignored,
-                }
-            )
+            respone.update({"message": ValidationException.PASSWORD_CONDITION, "pre_condition": rules_ignored})
             return respone, 412
         return respone, 200
 
@@ -98,7 +87,5 @@ def request_body_register(request_body):
     """validate req body properties"""
     req_body_value_required = tuple(filter(check_none, request_body.items()))
     if req_body_value_required:
-        return ValidationException.BODY_PROPERTIES_REQUIRED.format(
-            properties=req_body_value_required[0][0]
-        )
+        return ValidationException.BODY_PROPERTIES_REQUIRED.format(properties=req_body_value_required[0][0])
     return False

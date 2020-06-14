@@ -60,9 +60,7 @@ class UserRegister(Resource):
         try:
             if UserModel.find_by_email(email):
                 return cls.exception.get_response(
-                    UserError.USER_ALREADY_EXISTS,
-                    status=409,
-                    response_message=ValidationException.DUPLICATE_USER,
+                    UserError.USER_ALREADY_EXISTS, status=409, response_message=ValidationException.DUPLICATE_USER,
                 )
         except OperationalError:
             return cls.server_exception.get_response(UserError.DATABASE_CONNECTION)
@@ -76,17 +74,11 @@ class UserRegister(Resource):
             title, response_message = (
                 (UserError.EMAIL_CONDITION, ValidationException.EMAIL_INCORRECT)
                 if status_code == 406
-                else (
-                    UserError.PASSWORD_PRECONDITION,
-                    ValidationException.PASSWORD_CONDITION,
-                )
+                else (UserError.PASSWORD_PRECONDITION, ValidationException.PASSWORD_CONDITION,)
             )
 
             return cls.exception.get_response(
-                title,
-                status=status_code,
-                error_description=description,
-                response_message=response_message,
+                title, status=status_code, error_description=description, response_message=response_message,
             )
         return True
 
@@ -116,9 +108,7 @@ class UserRegister(Resource):
             user = UserModel(email, hashed_password)
             user.save_to_db()
         except OperationalError:
-            return UserRegister.server_exception.get_response(
-                UserError.DATABASE_CONNECTION
-            )
+            return UserRegister.server_exception.get_response(UserError.DATABASE_CONNECTION)
 
         current_user = get_jwt_identity()
         return get_success_response_register(identity=current_user)
@@ -162,9 +152,7 @@ class UserLogin(Resource):
             return cls.exception.get_response(error_description=req_body_validate)
         if not user or not bcrypt.checkpw(data["password"].encode(), user.password):
             return cls.exception.get_response(
-                UserError.INVALID_CREDENTIAL,
-                status=401,
-                error_description=ValidationException.CREDENTIAL_REQUIRED,
+                UserError.INVALID_CREDENTIAL, status=401, error_description=ValidationException.CREDENTIAL_REQUIRED,
             )
         return True
 
@@ -190,9 +178,7 @@ class UserLogin(Resource):
         try:
             user = UserModel.find_by_email(data["email"])
         except OperationalError:
-            return UserLogin.server_exception.get_response(
-                UserError.DATABASE_CONNECTION
-            )
+            return UserLogin.server_exception.get_response(UserError.DATABASE_CONNECTION)
 
         return get_success_response_login(identity=user.id)
 
@@ -263,9 +249,7 @@ class ChangePassword(Resource):
         try:
             user = UserModel.find_by_id(current_user)
         except OperationalError:
-            return ChangePassword.server_exception.get_response(
-                UserError.DATABASE_CONNECTION
-            )
+            return ChangePassword.server_exception.get_response(UserError.DATABASE_CONNECTION)
         if not isinstance(validate_pwd, tuple):
             password = data["new_password"].encode()
             hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
@@ -276,11 +260,7 @@ class ChangePassword(Resource):
                 {
                     "responseMessage": UserSuccess.UPDATED_PASSWORD,
                     "responseCode": 200,
-                    "response": {
-                        "passwordStrength": validate_pwd,
-                        "accessToken": None,
-                        "refreshToken": None,
-                    },
+                    "response": {"passwordStrength": validate_pwd, "accessToken": None, "refreshToken": None},
                 },
                 200,
             )
@@ -307,16 +287,10 @@ class UserLogout(Resource):
             response_logout = {"accessToken": None, "refreshToken": None}
 
             return (
-                {
-                    "responseMessage": UserSuccess.LOGOUT,
-                    "responseCode": 200,
-                    "response": response_logout,
-                },
+                {"responseMessage": UserSuccess.LOGOUT, "responseCode": 200, "response": response_logout},
                 200,
             )
         except ImportError as user_error:
-            return exception.get_response(
-                UserError.IMPORT_ERROR, error_description=str(user_error)
-            )
+            return exception.get_response(UserError.IMPORT_ERROR, error_description=str(user_error))
         except RedisConnectionUser:
             return exception.get_response(UserError.REDIS_CONNECTION)
