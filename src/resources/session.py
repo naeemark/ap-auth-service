@@ -19,6 +19,7 @@ from src.utils.blacklist_manager import BlacklistManager
 from src.utils.errors import error_handler
 from src.utils.errors import ErrorManager as AuthError
 from src.utils.success_response_manager import get_success_response_session
+from src.utils.utils import add_parser_header_argument
 from src.validators.auth import start_session_headers
 
 
@@ -28,18 +29,9 @@ class StartSession(Resource):
     """
 
     parser = reqparse.RequestParser()
-
-    parser.add_argument(
-        "Client-App-Token", type=str, required=True, help=ValidationException.FIELD_BLANK, location="headers",
-    )
-
-    parser.add_argument(
-        "Timestamp", type=str, required=True, help=ValidationException.FIELD_BLANK, location="headers",
-    )
-
-    parser.add_argument(
-        "Device-ID", type=str, required=True, help=ValidationException.FIELD_BLANK, location="headers",
-    )
+    add_parser_header_argument(parser=parser, arg_name="Client-App-Token")
+    add_parser_header_argument(parser=parser, arg_name="Timestamp", arg_type=int)
+    add_parser_header_argument(parser=parser, arg_name="Device-ID")
 
     @classmethod
     def is_valid_token(cls, client_app_token, timestamp):

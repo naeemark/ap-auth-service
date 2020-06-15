@@ -11,5 +11,5 @@ class Success:
     LOGGED_IN = "successfully logged in"
     ACCESS_REVOKED = "Access token revoked successfully"
     LOGOUT = "Successfully logged out"
-    SESSION_START = "Session Authorized"
-    REFRESH_TOKEN = "Refresh Token Authorized"
+    SESSION_START = "Start Session"
+    REFRESH_TOKEN = "Refresh Session"

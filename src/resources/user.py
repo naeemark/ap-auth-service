@@ -18,6 +18,7 @@ from src.utils.errors import error_handler
 from src.utils.errors import ErrorManager as UserError
 from src.utils.success_response_manager import get_success_response_login
 from src.utils.success_response_manager import get_success_response_register
+from src.utils.utils import add_parser_argument
 from src.validators.user import ChangePasswordValidate
 from src.validators.user import request_body_register
 from src.validators.user import UserRegisterValidate
@@ -29,13 +30,10 @@ class UserRegister(Resource):
         Resource: User Register
     """
 
-    parser = reqparse.RequestParser()
-    parser.add_argument(
-        "email", type=str,
-    )
-    parser.add_argument(
-        "password", type=str,
-    )
+    request_parser = reqparse.RequestParser()
+    add_parser_argument(parser=request_parser, arg_name="email")
+    add_parser_argument(parser=request_parser, arg_name="password")
+
     exception = error_handler.exception_factory()
     server_exception = error_handler.exception_factory("Server")
 
@@ -43,7 +41,7 @@ class UserRegister(Resource):
     def get_data(cls):
         """gets data from req body"""
         try:
-            data = UserRegister.parser.parse_args()
+            data = cls.request_parser.parse_args()
         except BadRequest as error:
             return UserRegister.exception.get_response(error_description=str(error))
         return data
@@ -119,13 +117,10 @@ class UserLogin(Resource):
       Resource UserLogin
     """
 
-    parser = reqparse.RequestParser()
-    parser.add_argument(
-        "email", type=str,
-    )
-    parser.add_argument(
-        "password", type=str,
-    )
+    request_parser = reqparse.RequestParser()
+    add_parser_argument(parser=request_parser, arg_name="email")
+    add_parser_argument(parser=request_parser, arg_name="password")
+
     exception = error_handler.exception_factory()
     server_exception = error_handler.exception_factory("Server")
 
@@ -133,7 +128,7 @@ class UserLogin(Resource):
     def get_data(cls):
         """gets data from req body"""
         try:
-            data = UserLogin.parser.parse_args()
+            data = cls.request_parser.parse_args()
         except BadRequest as error:
             return UserLogin.exception.get_response(error_description=str(error))
         return data
@@ -188,10 +183,9 @@ class ChangePassword(Resource):
         Resource ChangePassword
     """
 
-    parser = reqparse.RequestParser()
-    parser.add_argument(
-        "new_password", type=str,
-    )
+    request_parser = reqparse.RequestParser()
+    add_parser_argument(parser=request_parser, arg_name="new_password")
+
     exception = error_handler.exception_factory()
     server_exception = error_handler.exception_factory("Server")
 
@@ -199,9 +193,9 @@ class ChangePassword(Resource):
     def get_data(cls):
         """gets data from req body"""
         try:
-            data = ChangePassword.parser.parse_args()
+            data = cls.request_parser.parse_args()
         except BadRequest as error:
-            return ChangePassword.exception.get_response(error_description=str(error))
+            return cls.exception.get_response(error_description=str(error))
         return data
 
     @classmethod
@@ -211,7 +205,7 @@ class ChangePassword(Resource):
         req_body_validate = request_body_register(data)
         if req_body_validate:
             return cls.exception.get_response(error_description=req_body_validate)
-        data = ChangePassword.parser.parse_args()
+        data = ChangePassword.request_parser.parse_args()
         change_password_validate = ChangePasswordValidate(data)
         validate = change_password_validate.validate_password()
         status_code = validate[1]

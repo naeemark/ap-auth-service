@@ -283,9 +283,12 @@ class TestFailureScenario:
             follow_redirects=True,
         )
         assert response_login_user.status_code == 400
-        assert json.loads(response_login_user.data)["response"]["errors"][0]["errorDescription"] == "Provide 'email'"
+        assert (
+            json.loads(response_login_user.data)["response"]["errors"][0]["errorDescription"]
+            == "Please provide 'email'"
+        )
 
-    def test_redis_faliure(self, api_prefix, test_redis, session):
+    def test_redis_failure(self, api_prefix, test_redis, session):
         """redis failure"""
         response_revoke = test_redis.post(
             f"{api_prefix}/session/revoke",
