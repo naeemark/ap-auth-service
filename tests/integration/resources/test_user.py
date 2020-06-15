@@ -235,7 +235,7 @@ class TestFailureScenario:
         assert response_register_user.status_code == 412
         assert len(json.loads(response_register_user.data)["response"]["errors"]) > 1
 
-    def test_start_session_faliure(self, api_prefix, test_client):
+    def test_start_session_failure(self, api_prefix, test_client):
         """session start failure case"""
         content_data = TestFailureScenario.content_data["start_session"]["headers"]
         response_start_session = test_client.post(f"{api_prefix}/session/start", headers=content_data,)

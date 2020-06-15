@@ -20,7 +20,6 @@ from src.utils.errors import error_handler
 from src.utils.errors import ErrorManager as AuthError
 from src.utils.success_response_manager import get_success_response_session
 from src.utils.utils import add_parser_header_argument
-from src.validators.auth import start_session_headers
 
 
 class StartSession(Resource):
@@ -42,9 +41,8 @@ class StartSession(Resource):
         matcher_string = "{}{}".format(timestamp, client_secret_key)
         hash_string = hashlib.sha256(matcher_string.encode()).digest()
         base64_token = base64.b64encode(hash_string).decode()
-        if client_app_token == base64_token:
-            return True
-        return False
+        if client_app_token != base64_token:
+            raise AttributeError("Bad Headers Provided")
 
     @classmethod
     def post(cls):
@@ -55,14 +53,13 @@ class StartSession(Resource):
         client_app_token = data["Client-App-Token"]
         timestamp = data["Timestamp"]
         device_id = data["Device-ID"]
-        headers_validate = start_session_headers(data)
         exception = error_handler.exception_factory()
-        validate = cls.is_valid_token(client_app_token, timestamp)
-        if headers_validate:
-            return exception.get_response(error_description=headers_validate)
-        if not validate:
+        try:
+            cls.is_valid_token(client_app_token, timestamp)
+            return get_success_response_session(identity=device_id)
+        except AttributeError as attribute_error:
+            print(attribute_error)
             return exception.get_response(AuthError.HEADERS_INCORRECT)
-        return get_success_response_session(identity=device_id)
 
 
 class RefreshSession(Resource):
