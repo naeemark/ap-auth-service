@@ -1,13 +1,12 @@
 """
     A misc utility file
 """
-from src.utils.constant.exception import ValidationException as ve
 from src.utils.constant.response_messages import PROPERTY_REQUIRED
 
 
 def add_parser_headers_argument(parser=None, arg_name=None, arg_type=str, location="headers"):
     """Adds argument for header validations"""
-    parser.add_argument(arg_name, type=arg_type, help=ve.FIELD_BLANK, location=location)
+    parser.add_argument(arg_name, type=arg_type, location=location)
 
 
 def add_parser_argument(parser=None, arg_name=None, arg_type=str):
