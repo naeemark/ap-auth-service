@@ -4,7 +4,6 @@
 from sqlalchemy.exc import OperationalError
 from src import create_app
 from src import db
-from src import redis_instance
 from src.resources import initialize_resources
 
 
@@ -23,7 +22,7 @@ def create_tables():
         pass
 
 
-initialize_resources(app, redis_instance)
+initialize_resources(app)
 
 if __name__ == "__main__":
     app.run()

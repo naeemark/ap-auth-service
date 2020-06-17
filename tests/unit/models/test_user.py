@@ -2,6 +2,8 @@
     A file to containe all unit tests of
     UserModel
 """
+import os
+
 import fakeredis
 from src.models.user import UserModel
 from src.utils.blacklist_manager import BlacklistManager
@@ -59,8 +61,8 @@ def test_jwt_life_span(test_context):
     token_expire_seconds = test_context[0].config["JWT_ACCESS_TOKEN_EXPIRES"].seconds
     refresh_token_expire_days = test_context[0].config["JWT_REFRESH_TOKEN_EXPIRES"].days
 
-    assert token_expire_seconds == 1800
-    assert refresh_token_expire_days == 7
+    assert token_expire_seconds / 60 == int(os.environ["JWT_ACCESS_TOKEN_EXPIRES_MINUTES"])
+    assert refresh_token_expire_days == int(os.environ["JWT_REFRESH_TOKEN_EXPIRES_DAYS"])
 
 
 def test_redis():

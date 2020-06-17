@@ -44,9 +44,8 @@ class RegisterUser(Resource):
     def apply_validation(cls):
         """validates before processing data"""
         data = cls.request_parser.parse_args()
-        properties_required = check_missing_properties(data.items())
-        if properties_required:
-            raise KeyError(properties_required)
+        check_missing_properties(data.items())
+
         email = data["email"]
 
         try:
@@ -81,7 +80,6 @@ class RegisterUser(Resource):
             user = UserModel(email, hashed_password)
             user.save_to_db()
             payload = create_payload(get_jwt_identity(), user)
-            print(payload)
             response_data = get_jwt_tokens(payload=payload)
             response_data["user"] = {"email": user.email}
             return get_success_response(status_code=201, message=USER_CREATION, data=response_data)
@@ -110,9 +108,7 @@ class LoginUser(Resource):
     def apply_validation(cls):
         """validates before processing data"""
         data = cls.request_parser.parse_args()
-        properties_required = check_missing_properties(data.items())
-        if properties_required:
-            raise KeyError(properties_required)
+        check_missing_properties(data.items())
 
     @jwt_required
     def post(self):
@@ -149,9 +145,7 @@ class ChangePassword(Resource):
     def apply_validation(cls):
         """validates before processing data"""
         data = cls.request_parser.parse_args()
-        properties_required = check_missing_properties(data.items())
-        if properties_required:
-            raise KeyError(properties_required)
+        check_missing_properties(data.items())
 
         change_password_validate = ChangePasswordValidate(data)
         validate = change_password_validate.validate_password()
@@ -203,8 +197,8 @@ class LogoutUser(Resource):
         try:
             BlacklistManager().insert_blacklist_token_id(identity, jti)
             return get_success_response(message=LOGOUT)
-        except RedisConnectionUser as redis_service_error:
-            print(redis_service_error)
+        except (RedisConnectionUser, AttributeError) as error:
+            print(error)
             return get_error_response(status_code=503, message=REDIS_CONNECTION)
 
 

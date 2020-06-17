@@ -1,6 +1,10 @@
 """
 blacklist file to handle logout
 """
+import os
+
+from redis import exceptions
+from redis import Redis
 from redis.exceptions import ConnectionError as RedisConnection
 
 
@@ -22,6 +26,7 @@ class BlacklistManager:
         :return: bool status
         """
         try:
+            # To-do: need to discuss the logic
             expire_time = BlacklistManager.__token_expire_seconds
             return self.redis.set(str(jti), str(identity), str(expire_time))
         except RedisConnection as error:
@@ -32,12 +37,10 @@ class BlacklistManager:
         :return: list of jti
         """
         try:
-
-            jti_list = list(map(self.decode_jti, self.redis.keys()))
-        except RedisConnection:
+            return list(map(self.decode_jti, self.redis.keys()))
+        except (AttributeError, RedisConnection):
+            # To-do discuss the exception and return
             return []
-
-        return jti_list
 
     def decode_jti(self, encoded_jti):
         """
@@ -47,8 +50,17 @@ class BlacklistManager:
         return encoded_jti.decode()
 
     @classmethod
-    def initialize_redis(cls, token_expire_seconds, redis_instance):
+    def initialize_redis(cls, token_expire_seconds, redis_instance=None):
         """initialize redis config"""
 
-        cls.__redis_instance = redis_instance
         cls.__token_expire_seconds = token_expire_seconds
+        cls.__redis_instance = redis_instance
+        if not cls.__redis_instance:
+            try:
+                host, port = os.environ.get("REDIS_HOST"), os.environ.get("REDIS_PORT")
+                redis_instance = Redis(host=host, port=port)
+                redis_instance.ping()
+                cls.__redis_instance = redis_instance
+                print("Connected to redis at {}:{}".format(host, port))
+            except exceptions.ConnectionError as redis_connection_error:
+                print("Redis:", redis_connection_error)
