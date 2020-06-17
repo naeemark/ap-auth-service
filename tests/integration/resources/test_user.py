@@ -272,17 +272,17 @@ class TestFailureScenario:
         assert response_register_user.status_code == 401
         # assert json.loads(response_register_user.data)["response"]["errors"][0]["errorTitle"] == "Missing Auth"
 
-    # def test_missing_keys_login(self, api_prefix, test_client, session):
-    #     """missing keys in login case"""
-    #     content_data = TestFailureScenario.content_data["login_missing_email"]["data"]
-    #     response_login_user = test_client.post(
-    #         f"{api_prefix}/user/register",
-    #         headers={"Authorization": f" {session[0]}", CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE},
-    #         data=json.dumps(content_data),
-    #         follow_redirects=True,
-    #     )
-    #     assert response_login_user.status_code == 400
-    #     assert (json.loads(response_login_user.data)["response"]["error"] in not None)
+    def test_missing_keys_login(self, api_prefix, test_client, session):
+        """missing keys in login case"""
+        content_data = TestFailureScenario.content_data["login_missing_email"]["data"]
+        response_login_user = test_client.post(
+            f"{api_prefix}/user/register",
+            headers={"Authorization": f" {session[0]}", CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE},
+            data=json.dumps(content_data),
+            follow_redirects=True,
+        )
+        assert response_login_user.status_code == 400
+        assert json.loads(response_login_user.data)["response"]["error"]["errorTitle"] == "Invalid Parameters provided"
 
     def test_redis_failure(self, api_prefix, test_redis, session):
         """redis failure"""
