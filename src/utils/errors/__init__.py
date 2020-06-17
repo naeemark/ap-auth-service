@@ -13,9 +13,7 @@ class ErrorManager:
     TOKEN_EXPIRED = "Token Expired"
     TOKEN_INVALID = "Token Invalid"
     HEADERS_INCORRECT = "Invalid Headers"
-    REDIS_CONNECTION = "Redis Server Error"
     FRESH_TOKEN = "Fresh token required"
-    IMPORT_ERROR = "Package import error"
     DATABASE_CONNECTION = "Database Server Error"
 
     @classmethod

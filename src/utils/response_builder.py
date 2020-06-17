@@ -4,7 +4,7 @@ from src.utils.errors_collection import errors_collection
 
 def get_success_response(status_code=200, message="Success", data=None):
     """Returns Success Response stub"""
-    return {"responseCode": status_code, "responseMessage": message, "response": data}
+    return {"responseCode": status_code, "responseMessage": message, "response": data}, status_code
 
 
 def get_error_response(status_code=500, message="Something bad happened!"):

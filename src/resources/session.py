@@ -56,7 +56,7 @@ class StartSession(Resource):
         device_id = data["Device-ID"]
         try:
             cls.is_valid_token(client_app_token, timestamp)
-            response_data = get_jwt_tokens(payload=device_id)
+            response_data = get_jwt_tokens(payload={"deviceId": device_id})
             return response_builder.get_success_response(message=SESSION_START, data=response_data)
         except AttributeError as attribute_error:
             # TO-DO: need to log the error

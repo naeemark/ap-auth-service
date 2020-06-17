@@ -74,8 +74,6 @@ class ServerError:
 
     def __init__(self):
         self.error_response = {
-            ErrorManager.REDIS_CONNECTION: ValidationException.BLACKLIST,
-            ErrorManager.IMPORT_ERROR: ValidationException.IMPORT_ERROR,
             ErrorManager.DATABASE_CONNECTION: ValidationException.DATABASE,
         }
 

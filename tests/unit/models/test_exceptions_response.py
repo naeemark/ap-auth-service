@@ -44,14 +44,14 @@ class TestException:
         assert keys_check, "error response keys are not satisfied"
         assert validate_response[0]["responseCode"] == 401
 
-    def test_server_format(self):
-        """server errors format test"""
-        validate_response = self.__error_server_instance.get_response(ErrorManagerTest.REDIS_CONNECTION)
-        keys_check = self.keys_requirement_satisfied(validate_response[0])
-        assert isinstance(validate_response, tuple), "error response should be tuple "
-        assert isinstance(validate_response[1], int), "error response invalid ,it should have status code along it"
-        assert keys_check, "error response keys are not satisfied"
-        assert validate_response[0]["responseCode"] == 500
+    # def test_server_format(self):
+    #     """server errors format test"""
+    #     validate_response = self.__error_server_instance.get_response(ErrorManagerTest.REDIS_CONNECTION)
+    #     keys_check = self.keys_requirement_satisfied(validate_response[0])
+    #     assert isinstance(validate_response, tuple), "error response should be tuple "
+    #     assert isinstance(validate_response[1], int), "error response invalid ,it should have status code along it"
+    #     assert keys_check, "error response keys are not satisfied"
+    #     assert validate_response[0]["responseCode"] == 500
 
     @pytest.mark.parametrize(
         "status_code,error_description ,response_message",
