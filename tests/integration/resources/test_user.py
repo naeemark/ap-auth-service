@@ -212,28 +212,27 @@ class TestFailureScenario:
         assert isinstance(content_data, dict)
         TestFailureScenario.content_data.update(content_data)
 
-    # def test_register_email_fail(self, api_prefix, test_client, session):
-    #     """register user failure case"""
-    #     content_data = TestFailureScenario.content_data["user_register_email"]["data"]
-    #     response_register_user = test_client.post(
-    #         f"{api_prefix}/user/register",
-    #         headers={"Authorization": f" {session[0]}", CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE},
-    #         data=json.dumps(content_data),
-    #         follow_redirects=True,
-    #     )
-    #     assert response_register_user.status_code == 406
+    def test_register_email_fail(self, api_prefix, test_client, session):
+        """register user failure case"""
+        content_data = TestFailureScenario.content_data["user_register_email"]["data"]
+        response_register_user = test_client.post(
+            f"{api_prefix}/user/register",
+            headers={"Authorization": f" {session[0]}", CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE},
+            data=json.dumps(content_data),
+            follow_redirects=True,
+        )
+        assert response_register_user.status_code == 406
 
-    # def test_register_pwd_fail(self, api_prefix, test_client, session):
-    #     """register user failure case"""
-    #     content_data = TestFailureScenario.content_data["user_register_password"]["data"]
-    #     response_register_user = test_client.post(
-    #         f"{api_prefix}/user/register",
-    #         headers={"Authorization": f" {session[0]}", CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE},
-    #         data=json.dumps(content_data),
-    #         follow_redirects=True,
-    #     )
-    #     assert response_register_user.status_code == 412
-    # assert len(json.loads(response_register_user.data)["response"]["errors"]) > 1
+    def test_register_pwd_fail(self, api_prefix, test_client, session):
+        """register user failure case"""
+        content_data = TestFailureScenario.content_data["user_register_password"]["data"]
+        response_register_user = test_client.post(
+            f"{api_prefix}/user/register",
+            headers={"Authorization": f" {session[0]}", CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE},
+            data=json.dumps(content_data),
+            follow_redirects=True,
+        )
+        assert response_register_user.status_code == 412
 
     def test_start_session_failure(self, api_prefix, test_client):
         """session start failure case"""
