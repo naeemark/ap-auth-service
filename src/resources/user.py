@@ -26,7 +26,7 @@ from src.utils.response_builder import get_success_response
 from src.utils.token_manager import get_jwt_tokens
 from src.utils.utils import add_parser_argument
 from src.utils.utils import check_missing_properties
-from src.validators.user import UserRegisterValidate
+from src.validators.user import ValidateRegisterUser
 
 
 class RegisterUser(Resource):
@@ -53,7 +53,7 @@ class RegisterUser(Resource):
         except OperationalError:
             pass
 
-        user_register_validate = UserRegisterValidate(data)
+        user_register_validate = ValidateRegisterUser(data)
         validate_error = user_register_validate.validate_login()
 
         if validate_error:
