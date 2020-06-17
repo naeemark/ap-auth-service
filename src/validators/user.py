@@ -5,7 +5,6 @@ from email_validator import EmailNotValidError
 from email_validator import validate_email
 from src.utils.constant.exception import ValidationException
 from src.utils.constant.rules import password_policy
-from src.utils.utils import check_none
 
 
 class ValidateRegisterUser:
@@ -81,11 +80,3 @@ class ChangePasswordValidate:
             respone.update({"message": ValidationException.PASSWORD_CONDITION, "pre_condition": rules_ignored})
             return respone, 412
         return respone, 200
-
-
-def request_body_register(request_body):
-    """validate req body properties"""
-    req_body_value_required = tuple(filter(check_none, request_body.items()))
-    if req_body_value_required:
-        return ValidationException.BODY_PROPERTIES_REQUIRED.format(properties=req_body_value_required[0][0])
-    return False
