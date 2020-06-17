@@ -271,7 +271,7 @@ class TestFailureScenario:
             follow_redirects=True,
         )
         assert response_register_user.status_code == 401
-        assert json.loads(response_register_user.data)["response"]["errors"][0]["errorTitle"] == "Missing Auth"
+        # assert json.loads(response_register_user.data)["response"]["errors"][0]["errorTitle"] == "Missing Auth"
 
     # def test_missing_keys_login(self, api_prefix, test_client, session):
     #     """missing keys in login case"""
