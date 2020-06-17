@@ -176,27 +176,27 @@ class TestSuccessScenario:
         assert isinstance(json_data["response"]["refreshToken"], str)
         TestSuccessScenario.token_dict.update({"register_token": access_token})
 
-    # def test_login_user_success(self, api_prefix, test_client):
-    #     """valid login case """
-    #     content_data = TestSuccessScenario.content_data["login"]["data"]
+    def test_login_user_success(self, api_prefix, test_client):
+        """valid login case """
+        content_data = TestSuccessScenario.content_data["login"]["data"]
 
-    #     response_login_user = test_client.post(
-    #         f"{api_prefix}/user/login",
-    #         headers={
-    #             "Authorization": f" {TestSuccessScenario.token_dict['register_token']}",
-    #             CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
-    #         },
-    #         data=json.dumps(content_data),
-    #         follow_redirects=True,
-    #     )
+        response_login_user = test_client.post(
+            f"{api_prefix}/user/login",
+            headers={
+                "Authorization": f" {TestSuccessScenario.token_dict['register_token']}",
+                CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
+            },
+            data=json.dumps(content_data),
+            follow_redirects=True,
+        )
 
-    #     fresh_access_token_login = json.loads(response_login_user.data)["response"]["accessToken"]
-    #     json_data = json.loads(response_login_user.data)
-    #     assert isinstance(fresh_access_token_login, str)
-    #     assert response_login_user.status_code == 200
-    #     assert "accessToken" and "refreshToken" in json_data["response"].keys()
-    #     assert isinstance(json_data["response"]["accessToken"], str)
-    #     assert isinstance(json_data["response"]["refreshToken"], str)
+        fresh_access_token_login = json.loads(response_login_user.data)["response"]["accessToken"]
+        json_data = json.loads(response_login_user.data)
+        assert isinstance(fresh_access_token_login, str)
+        assert response_login_user.status_code == 200
+        assert "accessToken" and "refreshToken" in json_data["response"].keys()
+        assert isinstance(json_data["response"]["accessToken"], str)
+        assert isinstance(json_data["response"]["refreshToken"], str)
 
 
 class TestFailureScenario:
