@@ -27,7 +27,7 @@ from src.utils.token_manager import get_jwt_tokens
 from src.utils.utils import add_parser_argument
 
 
-class UserRegister(Resource):
+class RegisterUser(Resource):
     """
         Resource: User Register
     """
@@ -58,9 +58,9 @@ class UserRegister(Resource):
             return get_error_response(status_code=503, message=DATABASE_CONNECTION)
 
 
-class UserLogin(Resource):
+class LoginUser(Resource):
     """
-      Resource UserLogin
+      Resource LoginUser
     """
 
     request_parser = reqparse.RequestParser(bundle_errors=True)
@@ -113,7 +113,7 @@ class ChangePassword(Resource):
             return get_error_response(status_code=503, message=DATABASE_CONNECTION)
 
 
-class UserLogout(Resource):
+class LogoutUser(Resource):
     """
     logout user
     """
