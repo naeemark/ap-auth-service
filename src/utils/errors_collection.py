@@ -12,7 +12,6 @@ invalid_credentials_401 = {
     "errorDescription": "Seems the provided input is not validated by the system",
 }
 
-
 bad_request_400 = {
     "errorCode": "VALIDATION_ERROR",
     "errorTitle": "Invalid Parameters provided",
@@ -37,6 +36,14 @@ service_unavailable_503 = {
     "errorDescription": "One or more services are not available at the moment.",
 }
 
+unprocessable_entity_422 = {
+    "errorCode": "UNPROCESSABLE_ENTITY",
+    "errorTitle": "Token Invalid",
+    "errorDescription": (
+        "Request was well-formed but was unable to be followed due to semantic errors specify correct token"
+    ),
+}
+
 errors_collection = {
     500: uncaught,
     400: bad_request_400,
@@ -44,4 +51,5 @@ errors_collection = {
     404: not_found_404,
     409: user_conflict_409,
     503: service_unavailable_503,
+    422: unprocessable_entity_422,
 }

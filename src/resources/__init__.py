@@ -15,7 +15,6 @@ from src.utils.constant.response_messages import FRESH_TOKEN
 from src.utils.constant.response_messages import TOKEN_EXPIRED
 from src.utils.constant.response_messages import TOKEN_REVOKED
 from src.utils.errors import error_handler
-from src.utils.errors import ErrorManager
 from src.utils.response_builder import get_error_response
 
 
@@ -88,9 +87,8 @@ class InitializationJWT:
         @jwt.invalid_token_loader
         def invalid_token_callback(error_reason):
             """invalid token response handled"""
-            return cls.exception.get_response(
-                ErrorManager.TOKEN_INVALID, status=422, jsonify_response=True, response_message=error_reason,
-            )
+
+            return get_error_response(status_code=422, message=error_reason)
 
         return invalid_token_callback
 
