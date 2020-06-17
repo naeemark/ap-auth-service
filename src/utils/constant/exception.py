@@ -3,7 +3,7 @@ Exceptions
 """
 
 
-class ValidationException(Exception):
+class ValidationException:
     """A Custom Validation Exception"""
 
     USER_ALREADY_EXISTS = "A user with that email already exists"
