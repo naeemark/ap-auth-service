@@ -70,23 +70,6 @@ class TestUserBehaviour:
         )
         assert response_password_change.status_code == 412
 
-    # def test_pwd_change_without_fresh_token(self, api_prefix, test_client, session):
-    #     """
-    #     Test case to change password without fresh access token
-    #     """
-    #     content_data = TestUserBehaviour.content_data["changePassword_no_fresh_token"]["data"]
-
-    #     response_password_change = test_client.put(
-    #         f"{api_prefix}/user/changePassword",
-    #         headers={"Authorization": f" {session[0]}", "Content-Type": "application/json"},
-    #         data=json.dumps(content_data),
-    #     )
-    #     assert response_password_change.status_code == 401
-
-    #     assert (
-    #         json.loads(response_password_change.data)["response"]["errors"][0]["errorTitle"] == "Fresh token required"
-    #     )
-
     def test_register_user_without_token(self, api_prefix, test_client):
         """
         Test case to check user register without authentication token
@@ -95,17 +78,17 @@ class TestUserBehaviour:
         response_register_user = test_client.post(f"{api_prefix}/user/register", data=json.dumps(content_data),)
         assert response_register_user.status_code == 401
 
-    # def test_register_precondition_password(self, api_prefix, test_client, session):
-    #     """
-    #     Test case to check preconditions applied on password on userregister
-    #     """
-    #     content_data = TestUserBehaviour.content_data["register_precondition_password"]
-    #     register_user = test_client.post(
-    #         content_data["url"].format(prefix=api_prefix),
-    #         headers={"Authorization": f" {session[0]}", "Content-Type": "application/json"},
-    #         data=json.dumps(content_data["data"]),
-    #     )
-    #     assert register_user.status_code == 412
+    def test_register_precondition_password(self, api_prefix, test_client, session):
+        """
+        Test case to check preconditions applied on password on userregister
+        """
+        content_data = TestUserBehaviour.content_data["register_precondition_password"]
+        register_user = test_client.post(
+            content_data["url"].format(prefix=api_prefix),
+            headers={"Authorization": f" {session[0]}", "Content-Type": "application/json"},
+            data=json.dumps(content_data["data"]),
+        )
+        assert register_user.status_code == 412
 
     def test_password_change(self, api_prefix, test_client):
         """password change case """
