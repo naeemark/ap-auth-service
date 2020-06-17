@@ -8,7 +8,7 @@ from src.utils.constant.rules import password_policy
 from src.utils.utils import check_none
 
 
-class UserRegisterValidate:
+class ValidateRegisterUser:
     """
         Validator Class
     """
