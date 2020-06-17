@@ -12,8 +12,10 @@ from src.resources.user import UserLogout
 from src.resources.user import UserRegister
 from src.utils.blacklist_manager import BlacklistManager
 from src.utils.constant.exception import ValidationException
+from src.utils.constant.response_messages import TOKEN_EXPIRED
 from src.utils.errors import error_handler
 from src.utils.errors import ErrorManager
+from src.utils.response_builder import get_error_response
 
 
 class InitializationJWT:
@@ -67,7 +69,7 @@ class InitializationJWT:
         @jwt.expired_token_loader
         def expired_token_callback():
             """token expire response handled"""
-            return cls.exception.get_response(ErrorManager.TOKEN_EXPIRED, jsonify_response=True)
+            return get_error_response(status_code=401, message=TOKEN_EXPIRED)
 
         return expired_token_callback
 
