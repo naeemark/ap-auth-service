@@ -13,6 +13,7 @@ from sqlalchemy.exc import ObjectNotExecutableError
 from sqlalchemy.exc import OperationalError
 from src.models.user import UserModel
 from src.utils.blacklist_manager import BlacklistManager
+from src.utils.constant.response_messages import CREDENTIAL_REQUIRED
 from src.utils.constant.response_messages import DATABASE_CONNECTION
 from src.utils.constant.response_messages import DUPLICATE_USER
 from src.utils.constant.response_messages import INVALID_CREDENTIAL
@@ -167,7 +168,7 @@ class ChangePassword(Resource):
         """
         payload = get_jwt_identity()
         if "user" not in payload:
-            return get_error_response(status_code=401, message=INVALID_CREDENTIAL)
+            return get_error_response(status_code=400, message=CREDENTIAL_REQUIRED)
         email = payload["user"]["email"]
         try:
             self.apply_validation()
