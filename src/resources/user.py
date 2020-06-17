@@ -26,6 +26,7 @@ from src.utils.response_builder import get_success_response
 from src.utils.token_manager import get_jwt_tokens
 from src.utils.utils import add_parser_argument
 from src.utils.utils import check_missing_properties
+from src.validators.user import ChangePasswordValidate
 from src.validators.user import ValidateRegisterUser
 
 
@@ -142,6 +143,20 @@ class ChangePassword(Resource):
     request_parser = reqparse.RequestParser()
     add_parser_argument(parser=request_parser, arg_name="new_password")
 
+    @classmethod
+    def apply_validation(cls):
+        """validates before processing data"""
+        data = cls.request_parser.parse_args()
+        properties_required = check_missing_properties(data.items())
+        if properties_required:
+            raise KeyError(properties_required)
+
+        change_password_validate = ChangePasswordValidate(data)
+        validate = change_password_validate.validate_password()
+        error_description = validate[0].get("pre_condition")
+        if validate[0].get("message"):
+            raise ValueError(error_description)
+
     @fresh_jwt_required
     def put(self):
         """
@@ -152,6 +167,7 @@ class ChangePassword(Resource):
             return get_error_response(status_code=401, message=INVALID_CREDENTIAL)
         email = payload["user"]["email"]
         try:
+            self.apply_validation()
             user = UserModel.find_by_email(email)
 
             data = self.request_parser.parse_args()
@@ -161,6 +177,10 @@ class ChangePassword(Resource):
             return get_success_response(message=UPDATED_PASSWORD)
         except OperationalError:
             return get_error_response(status_code=503, message=DATABASE_CONNECTION)
+        except LookupError as lookup_error:
+            return get_error_response(status_code=400, message=str(lookup_error))
+        except ValueError as error:
+            return get_error_response(status_code=412, message=str(error))
 
 
 class LogoutUser(Resource):
