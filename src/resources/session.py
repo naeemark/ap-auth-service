@@ -21,7 +21,7 @@ from src.utils.constant.response_messages import REFRESH_TOKEN
 from src.utils.constant.response_messages import SESSION_START
 from src.utils.token_manager import get_jwt_tokens
 from src.utils.utils import add_parser_headers_argument
-from src.utils.utils import check_missing_properties
+from src.validators.common import check_missing_properties
 
 
 class StartSession(Resource):
