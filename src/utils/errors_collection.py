@@ -44,6 +44,13 @@ unprocessable_entity_422 = {
     ),
 }
 
+not_acceptable_406 = {
+    "errorCode": "NOT_ACCEPTABLE",
+    "errorTitle": "Invalid Email",
+    "errorDescription": "email is not correct",
+}
+
+
 errors_collection = {
     500: uncaught,
     400: bad_request_400,
@@ -52,4 +59,5 @@ errors_collection = {
     409: user_conflict_409,
     503: service_unavailable_503,
     422: unprocessable_entity_422,
+    406: not_acceptable_406,
 }

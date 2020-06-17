@@ -10,9 +10,9 @@ def add_parser_headers_argument(parser=None, arg_name=None, arg_type=str, locati
     parser.add_argument(arg_name, type=arg_type, help=ve.FIELD_BLANK, location=location)
 
 
-def add_parser_argument(parser=None, arg_name=None, arg_type=str, is_required=True):
+def add_parser_argument(parser=None, arg_name=None, arg_type=str):
     """Adds argument for param validations"""
-    parser.add_argument(arg_name, type=arg_type, required=is_required)
+    parser.add_argument(arg_name, type=arg_type)
 
 
 def check_none(element):

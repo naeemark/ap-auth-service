@@ -9,7 +9,7 @@ from flask_jwt_extended import jwt_required
 from flask_restful import reqparse
 from flask_restful import Resource
 from redis.exceptions import ConnectionError as RedisConnectionUser
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import ObjectNotExecutableError
 from sqlalchemy.exc import OperationalError
 from src.models.user import UserModel
 from src.utils.blacklist_manager import BlacklistManager
@@ -17,6 +17,7 @@ from src.utils.constant.response_messages import DATABASE_CONNECTION
 from src.utils.constant.response_messages import DUPLICATE_USER
 from src.utils.constant.response_messages import INVALID_CREDENTIAL
 from src.utils.constant.response_messages import LOGOUT
+from src.utils.constant.response_messages import PASSWORD_CONDITION
 from src.utils.constant.response_messages import REDIS_CONNECTION
 from src.utils.constant.response_messages import SESSION_START
 from src.utils.constant.response_messages import UPDATED_PASSWORD
@@ -25,6 +26,8 @@ from src.utils.response_builder import get_error_response
 from src.utils.response_builder import get_success_response
 from src.utils.token_manager import get_jwt_tokens
 from src.utils.utils import add_parser_argument
+from src.utils.utils import check_missing_properties
+from src.validators.user import UserRegisterValidate
 
 
 class UserRegister(Resource):
@@ -36,15 +39,44 @@ class UserRegister(Resource):
     add_parser_argument(parser=request_parser, arg_name="email")
     add_parser_argument(parser=request_parser, arg_name="password")
 
+    @classmethod
+    def apply_validation(cls):
+        """validates before processing data"""
+        data = cls.request_parser.parse_args()
+        properties_required = check_missing_properties(data.items())
+        if properties_required:
+            raise KeyError(properties_required)
+        email = data["email"]
+
+        try:
+            if UserModel.find_by_email(email):
+                raise ObjectNotExecutableError(DUPLICATE_USER)
+        except OperationalError:
+            pass
+
+        user_register_validate = UserRegisterValidate(data)
+        validate_error = user_register_validate.validate_login()
+
+        if validate_error:
+            description = validate_error[0]["pre_condition"]
+            status_code = validate_error[1]
+
+            if status_code == 406:
+                raise NameError(description)
+
+            raise ValueError(PASSWORD_CONDITION, description)
+
     @jwt_required
     def post(self):
         """create new user"""
-        data = self.request_parser.parse_args()
-        email, password = data["email"], data["password"]
-        password = password.encode()
-        # To-Do need to write the details of the salt
-        hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
         try:
+            self.apply_validation()
+            data = self.request_parser.parse_args()
+            email, password = data["email"], data["password"]
+            password = password.encode()
+            # To-Do need to write the details of the salt
+            hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
+
             user = UserModel(email, hashed_password)
             user.save_to_db()
             payload = create_payload(get_jwt_identity(), user)
@@ -52,10 +84,16 @@ class UserRegister(Resource):
             response_data = get_jwt_tokens(payload=payload)
             response_data["user"] = {"email": user.email}
             return get_success_response(status_code=201, message=USER_CREATION, data=response_data)
-        except IntegrityError:
+        except ObjectNotExecutableError:
             return get_error_response(status_code=409, message=DUPLICATE_USER)
         except OperationalError:
             return get_error_response(status_code=503, message=DATABASE_CONNECTION)
+        except LookupError as lookup_error:
+            return get_error_response(status_code=400, message=str(lookup_error))
+        except NameError as error:
+            return get_error_response(status_code=406, message=str(error))
+        except ValueError as error:
+            return get_error_response(status_code=412, message=str(error))
 
 
 class UserLogin(Resource):
