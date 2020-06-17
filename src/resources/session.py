@@ -21,6 +21,7 @@ from src.utils.constant.response_messages import REFRESH_TOKEN
 from src.utils.constant.response_messages import SESSION_START
 from src.utils.token_manager import get_jwt_tokens
 from src.utils.utils import add_parser_headers_argument
+from src.utils.utils import check_missing_properties
 
 
 class StartSession(Resource):
@@ -38,12 +39,15 @@ class StartSession(Resource):
         """
             Validates the token and provided parameters
         """
+        properties_required = check_missing_properties(cls.parser.parse_args().items())
+        if properties_required:
+            raise KeyError(properties_required)
         client_secret_key = os.environ["CLIENT_SECRET_KEY"]
         matcher_string = "{}{}".format(timestamp, client_secret_key)
         hash_string = hashlib.sha256(matcher_string.encode()).digest()
         base64_token = base64.b64encode(hash_string).decode()
         if client_app_token != base64_token:
-            raise AttributeError("Bad headers values provided")
+            raise AttributeError(HEADERS_INCORRECT)
 
     @classmethod
     def post(cls):
@@ -60,8 +64,9 @@ class StartSession(Resource):
             return response_builder.get_success_response(message=SESSION_START, data=response_data)
         except AttributeError as attribute_error:
             # TO-DO: need to log the error
-            print(attribute_error)
-            return response_builder.get_error_response(status_code=400, message=HEADERS_INCORRECT)
+            return response_builder.get_error_response(status_code=400, message=str(attribute_error))
+        except LookupError as lookup_error:
+            return response_builder.get_error_response(status_code=400, message=str(lookup_error))
 
 
 class RefreshSession(Resource):
