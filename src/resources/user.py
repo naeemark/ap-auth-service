@@ -104,12 +104,21 @@ class UserLogin(Resource):
     add_parser_argument(parser=request_parser, arg_name="email")
     add_parser_argument(parser=request_parser, arg_name="password")
 
+    @classmethod
+    def apply_validation(cls):
+        """validates before processing data"""
+        data = cls.request_parser.parse_args()
+        properties_required = check_missing_properties(data.items())
+        if properties_required:
+            raise KeyError(properties_required)
+
     @jwt_required
     def post(self):
         """
             Returns a new Token
         """
         try:
+            self.apply_validation()
             data = self.request_parser.parse_args()
             user = UserModel.find_by_email(data["email"])
 
@@ -121,6 +130,8 @@ class UserLogin(Resource):
             return get_error_response(status_code=401, message=INVALID_CREDENTIAL)
         except OperationalError:
             return get_error_response(status_code=503, message=DATABASE_CONNECTION)
+        except LookupError as lookup_error:
+            return get_error_response(status_code=400, message=str(lookup_error))
 
 
 class ChangePassword(Resource):
