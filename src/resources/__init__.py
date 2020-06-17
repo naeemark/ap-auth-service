@@ -7,9 +7,9 @@ from src.resources.session import RefreshSession
 from src.resources.session import RevokeSession
 from src.resources.session import StartSession
 from src.resources.user import ChangePassword
-from src.resources.user import UserLogin
-from src.resources.user import UserLogout
-from src.resources.user import UserRegister
+from src.resources.user import LoginUser
+from src.resources.user import LogoutUser
+from src.resources.user import RegisterUser
 from src.utils.blacklist_manager import BlacklistManager
 from src.utils.constant.response_messages import FRESH_TOKEN
 from src.utils.constant.response_messages import TOKEN_EXPIRED
@@ -109,10 +109,10 @@ def initialize_resources(app, redis_instance):
     api = Api(app=app, prefix=api_prefix)
 
     # Adds resources for User Entity
-    api.add_resource(UserRegister, "/user/register")
-    api.add_resource(UserLogin, "/user/login")
+    api.add_resource(RegisterUser, "/user/register")
+    api.add_resource(LoginUser, "/user/login")
     api.add_resource(ChangePassword, "/user/changePassword")
-    api.add_resource(UserLogout, "/user/logout")
+    api.add_resource(LogoutUser, "/user/logout")
 
     # Adds resources for Auth Entity
     api.add_resource(StartSession, "/session/start")

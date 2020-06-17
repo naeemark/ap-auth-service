@@ -29,7 +29,7 @@ from src.utils.utils import check_missing_properties
 from src.validators.user import UserRegisterValidate
 
 
-class UserRegister(Resource):
+class RegisterUser(Resource):
     """
         Resource: User Register
     """
@@ -95,9 +95,9 @@ class UserRegister(Resource):
             return get_error_response(status_code=412, message=str(error))
 
 
-class UserLogin(Resource):
+class LoginUser(Resource):
     """
-      Resource UserLogin
+      Resource LoginUser
     """
 
     request_parser = reqparse.RequestParser(bundle_errors=True)
@@ -163,7 +163,7 @@ class ChangePassword(Resource):
             return get_error_response(status_code=503, message=DATABASE_CONNECTION)
 
 
-class UserLogout(Resource):
+class LogoutUser(Resource):
     """
     logout user
     """
