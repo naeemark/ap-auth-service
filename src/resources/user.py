@@ -142,6 +142,7 @@ class ChangePassword(Resource):
 
     request_parser = reqparse.RequestParser()
     add_parser_argument(parser=request_parser, arg_name="new_password")
+    __password_strength = None
 
     @classmethod
     def apply_validation(cls):
@@ -156,6 +157,8 @@ class ChangePassword(Resource):
         error_description = validate[0].get("pre_condition")
         if validate[0].get("message"):
             raise ValueError(error_description)
+
+        cls.__password_strength = validate[0].get("password_strength")
 
     @fresh_jwt_required
     def put(self):
@@ -174,7 +177,7 @@ class ChangePassword(Resource):
             password = data["new_password"].encode()
             user.password = bcrypt.hashpw(password, bcrypt.gensalt())
             user.save_to_db()
-            return get_success_response(message=UPDATED_PASSWORD)
+            return get_success_response(message=UPDATED_PASSWORD, data={"passwordStrength": self.__password_strength})
         except OperationalError:
             return get_error_response(status_code=503, message=DATABASE_CONNECTION)
         except LookupError as lookup_error:
