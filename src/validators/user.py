@@ -3,9 +3,9 @@
 """
 from email_validator import EmailNotValidError
 from email_validator import validate_email
-from src.constant.exception import ValidationException
-from src.constant.rules import password_policy
-from src.validators.common import check_none
+from src.utils.constant.exception import ValidationException
+from src.utils.constant.rules import password_policy
+from src.utils.utils import check_none
 
 
 class UserRegisterValidate:

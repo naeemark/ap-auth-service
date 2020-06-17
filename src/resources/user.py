@@ -10,10 +10,11 @@ from flask_restful import reqparse
 from flask_restful import Resource
 from redis.exceptions import ConnectionError as RedisConnectionUser
 from sqlalchemy.exc import OperationalError
-from src.constant.exception import ValidationException
-from src.constant.success_message import Success as UserSuccess
 from src.models.user import UserModel
 from src.utils.blacklist_manager import BlacklistManager
+from src.utils.constant.exception import ValidationException
+from src.utils.constant.response_messages import LOGOUT
+from src.utils.constant.response_messages import UPDATED_PASSWORD
 from src.utils.errors import error_handler
 from src.utils.errors import ErrorManager as UserError
 from src.utils.success_response_manager import get_success_response_login
@@ -249,10 +250,9 @@ class ChangePassword(Resource):
             hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
             user.password = hashed_password
             user.save_to_db()
-
             return (
                 {
-                    "responseMessage": UserSuccess.UPDATED_PASSWORD,
+                    "responseMessage": UPDATED_PASSWORD,
                     "responseCode": 200,
                     "response": {"passwordStrength": validate_pwd, "accessToken": None, "refreshToken": None},
                 },
@@ -281,7 +281,7 @@ class UserLogout(Resource):
             response_logout = {"accessToken": None, "refreshToken": None}
 
             return (
-                {"responseMessage": UserSuccess.LOGOUT, "responseCode": 200, "response": response_logout},
+                {"responseMessage": LOGOUT, "responseCode": 200, "response": response_logout},
                 200,
             )
         except ImportError as user_error:

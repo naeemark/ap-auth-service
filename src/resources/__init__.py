@@ -3,7 +3,6 @@ import os
 
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
-from src.constant.exception import ValidationException
 from src.resources.session import RefreshSession
 from src.resources.session import RevokeSession
 from src.resources.session import StartSession
@@ -12,6 +11,7 @@ from src.resources.user import UserLogin
 from src.resources.user import UserLogout
 from src.resources.user import UserRegister
 from src.utils.blacklist_manager import BlacklistManager
+from src.utils.constant.exception import ValidationException
 from src.utils.errors import error_handler
 from src.utils.errors import ErrorManager
 

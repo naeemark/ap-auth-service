@@ -1,8 +1,8 @@
 """error pattern defined"""
 from http_status import Status
+from src.utils.constant.exception import ValidationException
 
 from . import ErrorManager
-from ...constant.exception import ValidationException
 
 
 class AuthError:
