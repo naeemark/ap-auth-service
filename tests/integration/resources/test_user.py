@@ -241,7 +241,7 @@ class TestFailureScenario:
         response_start_session = test_client.post(f"{api_prefix}/session/start", headers=content_data)
         print(json.loads(response_start_session.data))
         assert response_start_session.status_code == 400
-        # assert json.loads(response_start_session.data)["response"]["errors"][0]["errorTitle"] == "Invalid Request"
+        assert json.loads(response_start_session.data)["responseMessage"] == "\"'Device-ID' required\""
 
     def test_missing_jwt(self, api_prefix, test_client):
         """missing auth case"""
