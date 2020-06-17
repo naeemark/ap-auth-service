@@ -14,13 +14,10 @@ from src.utils.blacklist_manager import BlacklistManager
 from src.utils.constant.response_messages import FRESH_TOKEN
 from src.utils.constant.response_messages import TOKEN_EXPIRED
 from src.utils.constant.response_messages import TOKEN_REVOKED
-from src.utils.errors import error_handler
 from src.utils.response_builder import get_error_response
 
 
 class InitializationJWT:
-    exception = error_handler.exception_factory("Auth")
-
     @classmethod
     def initialize(cls, jwt_instance):
         cls.initialize_token_in_blacklist_loader(jwt_instance)
