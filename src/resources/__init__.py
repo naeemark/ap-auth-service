@@ -11,7 +11,6 @@ from src.resources.user import UserLogin
 from src.resources.user import UserLogout
 from src.resources.user import UserRegister
 from src.utils.blacklist_manager import BlacklistManager
-from src.utils.constant.exception import ValidationException
 from src.utils.constant.response_messages import TOKEN_EXPIRED
 from src.utils.errors import error_handler
 from src.utils.errors import ErrorManager
@@ -78,9 +77,8 @@ class InitializationJWT:
         @jwt.unauthorized_loader
         def unauthorized_loader_callback(reason):
             """missing token response handled"""
-            return cls.exception.get_response(
-                jsonify_response=True, error_description=reason, title=ValidationException.MISSING_AUTH,
-            )
+
+            return get_error_response(status_code=401, message=reason)
 
         return unauthorized_loader_callback
 
