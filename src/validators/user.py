@@ -3,7 +3,8 @@
 """
 from email_validator import EmailNotValidError
 from email_validator import validate_email
-from src.utils.constant.exception import ValidationException
+from src.utils.constant.response_messages import EMAIL_CONDITION
+from src.utils.constant.response_messages import PASSWORD_CONDITION
 from src.utils.constant.rules import password_policy
 
 
@@ -46,12 +47,12 @@ class ValidateRegisterUser:
         return_dict = None
         if password_check:
             return_dict = (
-                {"message": ValidationException.PASSWORD_CONDITION, "pre_condition": password_check},
+                {"message": PASSWORD_CONDITION, "pre_condition": password_check},
                 412,
             )
         elif email_check:
             return_dict = (
-                {"message": ValidationException.EMAIL_CONDITION, "pre_condition": email_check},
+                {"message": EMAIL_CONDITION, "pre_condition": email_check},
                 406,
             )
         return return_dict
@@ -77,6 +78,6 @@ class ChangePasswordValidate:
         rules_ignored = [str(rule) for rule in password_rules.test()]
         respone.update({"password_strength": password_strength})
         if rules_ignored:
-            respone.update({"message": ValidationException.PASSWORD_CONDITION, "pre_condition": rules_ignored})
+            respone.update({"message": PASSWORD_CONDITION, "pre_condition": rules_ignored})
             return respone, 412
         return respone, 200
