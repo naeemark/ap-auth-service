@@ -109,16 +109,18 @@ class UserLogin(Resource):
         """
             Returns a new Token
         """
+        try:
+            data = self.request_parser.parse_args()
+            user = UserModel.find_by_email(data["email"])
 
-        data = self.request_parser.parse_args()
-        user = UserModel.find_by_email(data["email"])
-
-        if user and bcrypt.checkpw(data["password"].encode(), user.password):
-            payload = create_payload(get_jwt_identity(), user)
-            response_data = get_jwt_tokens(payload=payload)
-            response_data["user"] = {"email": user.email}
-            return get_success_response(message=SESSION_START, data=response_data)
-        return get_error_response(status_code=401, message=INVALID_CREDENTIAL)
+            if user and bcrypt.checkpw(data["password"].encode(), user.password):
+                payload = create_payload(get_jwt_identity(), user)
+                response_data = get_jwt_tokens(payload=payload)
+                response_data["user"] = {"email": user.email}
+                return get_success_response(message=SESSION_START, data=response_data)
+            return get_error_response(status_code=401, message=INVALID_CREDENTIAL)
+        except OperationalError:
+            return get_error_response(status_code=503, message=DATABASE_CONNECTION)
 
 
 class ChangePassword(Resource):
