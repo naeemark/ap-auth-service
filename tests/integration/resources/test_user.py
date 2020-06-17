@@ -58,17 +58,17 @@ class TestUserBehaviour:
         assert response_login_user.status_code == 200
         TestUserBehaviour.token_dict.update({"fresh_access_token_login": fresh_access_token_login})
 
-    # def test_password_change_without_preconditions(self, api_prefix, test_client):
-    #     """Changing password without preconditons"""
-    #     content_data = TestUserBehaviour.content_data["changePassword_precondition"]["data"]
+    def test_password_change_without_preconditions(self, api_prefix, test_client):
+        """Changing password without preconditons"""
+        content_data = TestUserBehaviour.content_data["changePassword_precondition"]["data"]
 
-    #     fresh_token = TestUserBehaviour.token_dict["fresh_access_token_login"]
-    #     response_password_change = test_client.put(
-    #         f"{api_prefix}/user/changePassword",
-    #         headers={"Authorization": f" {fresh_token}", CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE},
-    #         data=json.dumps(content_data),
-    #     )
-    #     assert response_password_change.status_code == 412
+        fresh_token = TestUserBehaviour.token_dict["fresh_access_token_login"]
+        response_password_change = test_client.put(
+            f"{api_prefix}/user/changePassword",
+            headers={"Authorization": f" {fresh_token}", CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE},
+            data=json.dumps(content_data),
+        )
+        assert response_password_change.status_code == 412
 
     # def test_pwd_change_without_fresh_token(self, api_prefix, test_client, session):
     #     """
