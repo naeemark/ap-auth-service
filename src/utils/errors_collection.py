@@ -50,6 +50,12 @@ not_acceptable_406 = {
     "errorDescription": "email is not correct",
 }
 
+precondition_failed_412 = {
+    "errorCode": "PRECONDITION_FAILED",
+    "errorTitle": "Password precondition failed",
+    "errorDescription": "'Password' policy not followed",
+}
+
 
 errors_collection = {
     500: uncaught,
@@ -60,4 +66,5 @@ errors_collection = {
     503: service_unavailable_503,
     422: unprocessable_entity_422,
     406: not_acceptable_406,
+    412: precondition_failed_412,
 }

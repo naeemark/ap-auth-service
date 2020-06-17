@@ -17,7 +17,6 @@ from src.utils.constant.response_messages import DATABASE_CONNECTION
 from src.utils.constant.response_messages import DUPLICATE_USER
 from src.utils.constant.response_messages import INVALID_CREDENTIAL
 from src.utils.constant.response_messages import LOGOUT
-from src.utils.constant.response_messages import PASSWORD_CONDITION
 from src.utils.constant.response_messages import REDIS_CONNECTION
 from src.utils.constant.response_messages import SESSION_START
 from src.utils.constant.response_messages import UPDATED_PASSWORD
@@ -64,7 +63,7 @@ class UserRegister(Resource):
             if status_code == 406:
                 raise NameError(description)
 
-            raise ValueError(PASSWORD_CONDITION, description)
+            raise ValueError(description)
 
     @jwt_required
     def post(self):
