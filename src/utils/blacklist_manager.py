@@ -3,6 +3,7 @@ blacklist file to handle logout
 """
 import os
 
+import fakeredis
 from redis import exceptions
 from redis import Redis
 from redis.exceptions import ConnectionError as RedisConnection
@@ -50,12 +51,15 @@ class BlacklistManager:
         return encoded_jti.decode()
 
     @classmethod
-    def initialize_redis(cls, token_expire_seconds, redis_instance=None):
+    def initialize_redis(cls, app_config):
         """initialize redis config"""
 
-        cls.__token_expire_seconds = token_expire_seconds
-        cls.__redis_instance = redis_instance
-        if not cls.__redis_instance:
+        # To-d0: need to discuss
+        cls.__token_expire_seconds = app_config["JWT_ACCESS_TOKEN_EXPIRES"].seconds
+
+        if app_config["ENV"] == "testing":
+            cls.__redis_instance = fakeredis.FakeStrictRedis()
+        else:
             try:
                 host, port = os.environ.get("REDIS_HOST"), os.environ.get("REDIS_PORT")
                 redis_instance = Redis(host=host, port=port)

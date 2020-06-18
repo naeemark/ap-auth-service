@@ -5,7 +5,6 @@ import json
 import os
 
 import bcrypt
-import fakeredis
 import pytest
 from mock import Mock
 from src import create_app
@@ -32,11 +31,8 @@ def test_client():
         Configure and provides app-client instance for testing
     """
     flask_app = create_app("flask_test.cfg")
-
-    redis_instance = fakeredis.FakeStrictRedis()
     initialize_resources(flask_app)
-    token_expire_seconds = flask_app.config["JWT_ACCESS_TOKEN_EXPIRES"].seconds
-    BlacklistManager().initialize_redis(token_expire_seconds, redis_instance)
+    BlacklistManager.initialize_redis(flask_app.config)
 
     db.init_app(flask_app)
 

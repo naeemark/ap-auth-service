@@ -53,9 +53,7 @@ def initialize_resources(app):
 
     initialize_jwt_manager(app)
 
-    # To-d0: need to discuss
-    token_expire_seconds = app.config["JWT_ACCESS_TOKEN_EXPIRES"].seconds
-    BlacklistManager().initialize_redis(token_expire_seconds)
+    BlacklistManager.initialize_redis(app.config)
 
     api_prefix = "/api/v1"
 
