@@ -14,7 +14,6 @@ from sqlalchemy.exc import OperationalError
 from src.models.user import UserModel
 from src.utils.blacklist_manager import BlacklistManager
 from src.utils.constant.response_messages import CREDENTIAL_REQUIRED
-from src.utils.constant.response_messages import DATABASE_CONNECTION
 from src.utils.constant.response_messages import DUPLICATE_USER
 from src.utils.constant.response_messages import INVALID_CREDENTIAL
 from src.utils.constant.response_messages import LOGOUT
@@ -105,8 +104,8 @@ class LoginUser(Resource):
                 response_data["user"] = {"email": user.email}
                 return get_success_response(message=SESSION_START, data=response_data)
             return get_error_response(status_code=401, message=INVALID_CREDENTIAL)
-        except OperationalError:
-            return get_error_response(status_code=503, message=DATABASE_CONNECTION)
+        except OperationalError as error:
+            return get_error_response(status_code=error.params, message=error.orig)
         except LookupError as lookup_error:
             return get_error_response(status_code=400, message=str(lookup_error))
 
