@@ -139,7 +139,6 @@ class ChangePassword(Resource):
     def apply_validation(cls):
         """validates before processing data"""
         data = cls.request_parser.parse_args()
-        check_missing_properties(data.items())
 
         change_password_validate = ChangePasswordValidate(data)
         validate = change_password_validate.validate_password()
@@ -159,10 +158,10 @@ class ChangePassword(Resource):
             return get_error_response(status_code=400, message=CREDENTIAL_REQUIRED)
         email = payload["user"]["email"]
         try:
-            self.apply_validation()
             user = UserModel.find_by_email(email)
-
             data = self.request_parser.parse_args()
+            check_missing_properties(data.items())
+            self.apply_validation()
             password = data["new_password"].encode()
             user.password = bcrypt.hashpw(password, bcrypt.gensalt())
             user.save_to_db()
