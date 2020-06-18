@@ -65,7 +65,7 @@ class StartSession(Resource):
             # TO-DO: need to log the error
             print(attribute_error)
             return get_error_response(status_code=400, message=HEADERS_INCORRECT)
-        except (KeyError, LookupError) as error:
+        except LookupError as error:
             message = str(error).strip("'")
             return get_error_response(status_code=400, message=message)
 
