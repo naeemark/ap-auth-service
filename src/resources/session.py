@@ -88,13 +88,13 @@ class RefreshSession(Resource):
 
 class RevokeRefreshSession(Resource):
     """
-    logout user
+    revoke refresh token
     """
 
     @jwt_refresh_token_required
     def post(self):
         """
-        revoke access for access token
+        revoke access for refresh token
         """
         payload = get_raw_jwt()
         jti = payload["jti"]
