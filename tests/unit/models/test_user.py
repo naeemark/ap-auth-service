@@ -47,7 +47,7 @@ def test_blacklist_manager():
     """fake redis test"""
 
     blacklist_manager = BlacklistManager()
-    blacklist_manager.insert_blacklist_token_id("3", "1231231Xdfwefwe")
+    blacklist_manager.insert_blacklist_token_id("3", "1231231Xdfwefwe", 1800)
     black_list = blacklist_manager.get_jti_list()
     assert isinstance(black_list, list)
 

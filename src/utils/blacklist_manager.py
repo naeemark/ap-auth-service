@@ -15,12 +15,11 @@ class BlacklistManager:
     """
 
     __redis_instance = None
-    __token_expire_seconds = None
 
     def __init__(self):
         self.redis = self.__redis_instance
 
-    def insert_blacklist_token_id(self, identity, jti):
+    def insert_blacklist_token_id(self, identity, jti, expire_time_sec):
         """
         :param identity: identity
         :param jti: JWT ID
@@ -28,8 +27,7 @@ class BlacklistManager:
         """
         try:
             # To-do: need to discuss the logic
-            expire_time = self.__token_expire_seconds
-            return self.redis.set(str(jti), str(identity), str(expire_time))
+            return self.redis.set(str(jti), str(identity), str(expire_time_sec))
         except RedisConnection as error:
             raise error
 
@@ -53,9 +51,6 @@ class BlacklistManager:
     @classmethod
     def initialize_redis(cls, app_config):
         """initialize redis config"""
-
-        # To-d0: need to discuss
-        cls.__token_expire_seconds = app_config["JWT_ACCESS_TOKEN_EXPIRES"].seconds
 
         if app_config["ENV"] == "testing":
             cls.__redis_instance = fakeredis.FakeStrictRedis()

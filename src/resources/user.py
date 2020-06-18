@@ -27,6 +27,7 @@ from src.utils.response_builder import get_success_response
 from src.utils.token_manager import get_jwt_tokens
 from src.utils.utils import add_parser_argument
 from src.validators.common import check_missing_properties
+from src.validators.common import get_expire_time_seconds
 from src.validators.user import ChangePasswordValidate
 from src.validators.user import ValidateRegisterUser
 
@@ -185,10 +186,13 @@ class LogoutUser(Resource):
         logout the user through jti of token ,
          jti is "JWT ID", a unique identifier for a JWT
         """
-        jti = get_raw_jwt()["jti"]
+        payload = get_raw_jwt()
+        jti = payload["jti"]
+        jwt_exp = payload["exp"]
         identity = get_jwt_identity()
         try:
-            BlacklistManager().insert_blacklist_token_id(identity, jti)
+            expire_time_sec = get_expire_time_seconds(jwt_exp)
+            BlacklistManager().insert_blacklist_token_id(identity, jti, expire_time_sec)
             return get_success_response(message=LOGOUT)
         except (RedisConnectionUser, AttributeError) as error:
             print(error)

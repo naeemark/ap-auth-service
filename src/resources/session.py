@@ -23,6 +23,7 @@ from src.utils.response_builder import get_success_response
 from src.utils.token_manager import get_jwt_tokens
 from src.utils.utils import add_parser_headers_argument
 from src.validators.common import check_missing_properties
+from src.validators.common import get_expire_time_seconds
 
 
 class StartSession(Resource):
@@ -96,10 +97,12 @@ class RevokeSession(Resource):
         """
         revoke access for access token
         """
-        jti = get_raw_jwt()["jti"]
-        payload = get_jwt_identity()
+        payload = get_raw_jwt()
+        jti = payload["jti"]
+        jwt_exp = payload["exp"]
         try:
-            BlacklistManager().insert_blacklist_token_id(payload, jti)
+            expire_time_sec = get_expire_time_seconds(jwt_exp)
+            BlacklistManager().insert_blacklist_token_id(payload, jti, expire_time_sec)
             return get_success_response(message=ACCESS_REVOKED)
         # TO-DO: seriously required some change here ref: ImportError
         except ImportError as auth_error:
