@@ -1,7 +1,7 @@
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from src.resources.session import RefreshSession
-from src.resources.session import RevokeSession
+from src.resources.session import RevokeRefreshSession
 from src.resources.session import StartSession
 from src.resources.user import ChangePassword
 from src.resources.user import LoginUser
@@ -69,7 +69,7 @@ def initialize_resources(app):
     # Adds resources for Auth Entity
     api.add_resource(StartSession, "/session/start")
     api.add_resource(RefreshSession, "/session/refresh")
-    api.add_resource(RevokeSession, "/session/revoke")
+    api.add_resource(RevokeRefreshSession, "/session/revoke")
 
     # Adding api-prefix for logging purposes
     app.config["API_PREFIX"] = api_prefix

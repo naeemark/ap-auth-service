@@ -8,10 +8,9 @@ import os
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import get_raw_jwt
 from flask_jwt_extended import jwt_refresh_token_required
-from flask_jwt_extended import jwt_required
 from flask_restful import reqparse
 from flask_restful import Resource
-from redis.exceptions import ConnectionError as RedisConnectionAuth
+from redis.exceptions import ConnectionError as RedisConnectionRefresh
 from src.utils.blacklist_manager import BlacklistManager
 from src.utils.constant.response_messages import ACCESS_REVOKED
 from src.utils.constant.response_messages import HEADERS_INCORRECT
@@ -87,12 +86,12 @@ class RefreshSession(Resource):
         return get_error_response()
 
 
-class RevokeSession(Resource):
+class RevokeRefreshSession(Resource):
     """
     logout user
     """
 
-    @jwt_required
+    @jwt_refresh_token_required
     def post(self):
         """
         revoke access for access token
@@ -100,12 +99,10 @@ class RevokeSession(Resource):
         payload = get_raw_jwt()
         jti = payload["jti"]
         jwt_exp = payload["exp"]
+        identity = get_jwt_identity()
         try:
             expire_time_sec = get_expire_time_seconds(jwt_exp)
-            BlacklistManager().revoke_token(payload, jti, expire_time_sec)
+            BlacklistManager().revoke_token(identity, jti, expire_time_sec)
             return get_success_response(message=ACCESS_REVOKED)
-        # TO-DO: seriously required some change here ref: ImportError
-        except ImportError as auth_error:
-            return get_error_response(message=str(auth_error))
-        except RedisConnectionAuth:
+        except RedisConnectionRefresh:
             return get_error_response(message=REDIS_CONNECTION)
