@@ -192,7 +192,7 @@ class LogoutUser(Resource):
         identity = get_jwt_identity()
         try:
             expire_time_sec = get_expire_time_seconds(jwt_exp)
-            BlacklistManager().insert_blacklist_token_id(identity, jti, expire_time_sec)
+            BlacklistManager().revoke_token(identity, jti, expire_time_sec)
             return get_success_response(message=LOGOUT)
         except (RedisConnectionUser, AttributeError) as error:
             print(error)

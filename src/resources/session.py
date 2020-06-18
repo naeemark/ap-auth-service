@@ -102,7 +102,7 @@ class RevokeSession(Resource):
         jwt_exp = payload["exp"]
         try:
             expire_time_sec = get_expire_time_seconds(jwt_exp)
-            BlacklistManager().insert_blacklist_token_id(payload, jti, expire_time_sec)
+            BlacklistManager().revoke_token(payload, jti, expire_time_sec)
             return get_success_response(message=ACCESS_REVOKED)
         # TO-DO: seriously required some change here ref: ImportError
         except ImportError as auth_error:

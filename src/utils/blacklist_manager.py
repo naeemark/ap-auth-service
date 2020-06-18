@@ -19,7 +19,7 @@ class BlacklistManager:
     def __init__(self):
         self.redis = self.__redis_instance
 
-    def insert_blacklist_token_id(self, identity, jti, expire_time_sec):
+    def revoke_token(self, identity, jti, expire_time_sec):
         """
         :param identity: identity
         :param jti: JWT ID
