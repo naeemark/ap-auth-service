@@ -44,7 +44,6 @@ class RegisterUser(Resource):
     def apply_validation(cls):
         """validates before processing data"""
         data = cls.request_parser.parse_args()
-        check_missing_properties(data.items())
 
         email = data["email"]
 
@@ -70,8 +69,9 @@ class RegisterUser(Resource):
     def post(self):
         """create new user"""
         try:
-            self.apply_validation()
             data = self.request_parser.parse_args()
+            check_missing_properties(data.items())
+            self.apply_validation()
             email, password = data["email"], data["password"]
             password = password.encode()
             # To-Do need to write the details of the salt
