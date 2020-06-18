@@ -32,7 +32,7 @@ class StartSession(Resource):
 
     parser = reqparse.RequestParser(bundle_errors=True)
     add_parser_headers_argument(parser=parser, arg_name="Client-App-Token")
-    add_parser_headers_argument(parser=parser, arg_name="Timestamp")
+    add_parser_headers_argument(parser=parser, arg_name="Timestamp", arg_type=int)
     add_parser_headers_argument(parser=parser, arg_name="Device-ID")
 
     @classmethod
