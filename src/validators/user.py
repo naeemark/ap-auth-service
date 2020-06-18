@@ -3,7 +3,6 @@
 """
 from email_validator import EmailNotValidError
 from email_validator import validate_email
-from src.utils.constant.response_messages import PASSWORD_CONDITION
 from src.utils.constant.response_messages import PASSWORD_POLICIY
 from src.utils.constant.rules import password_policy
 
@@ -68,8 +67,5 @@ class ChangePasswordValidate:
         rules_ignored = [str(rule) for rule in password_rules.test()]
         respone.update({"password_strength": password_strength})
         if rules_ignored:
-            respone.update(
-                {"message": PASSWORD_CONDITION, "pre_condition": PASSWORD_POLICIY.format(policy=rules_ignored)}
-            )
-            return respone, 412
+            raise ValueError(PASSWORD_POLICIY.format(policy=rules_ignored))
         return respone, 200

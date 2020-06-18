@@ -70,8 +70,8 @@ class RegisterUser(Resource):
             return get_success_response(status_code=201, message=USER_CREATION, data=response_data)
         except ObjectNotExecutableError:
             return get_error_response(status_code=409, message=DUPLICATE_USER)
-        except OperationalError:
-            return get_error_response(status_code=503, message=DATABASE_CONNECTION)
+        except OperationalError as error:
+            return get_error_response(status_code=error.params, message=error.orig)
         except LookupError as lookup_error:
             return get_error_response(status_code=400, message=str(lookup_error))
         except NameError as error:
@@ -127,10 +127,6 @@ class ChangePassword(Resource):
 
         change_password_validate = ChangePasswordValidate(data)
         validate = change_password_validate.validate_password()
-        error_description = validate[0].get("pre_condition")
-        if validate[0].get("message"):
-            raise ValueError(error_description)
-
         cls.__password_strength = validate[0].get("password_strength")
 
     @fresh_jwt_required
@@ -151,8 +147,8 @@ class ChangePassword(Resource):
             user.password = bcrypt.hashpw(password, bcrypt.gensalt())
             user.save_to_db()
             return get_success_response(message=UPDATED_PASSWORD, data={"passwordStrength": self.__password_strength})
-        except OperationalError:
-            return get_error_response(status_code=503, message=DATABASE_CONNECTION)
+        except OperationalError as error:
+            return get_error_response(status_code=error.params, message=error.orig)
         except LookupError as lookup_error:
             return get_error_response(status_code=400, message=str(lookup_error))
         except ValueError as error:

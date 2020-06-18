@@ -4,6 +4,7 @@
 from sqlalchemy.exc import ObjectNotExecutableError
 from sqlalchemy.exc import OperationalError
 from src import db
+from src.utils.constant.response_messages import DATABASE_CONNECTION
 from src.utils.constant.response_messages import DUPLICATE_USER
 
 
@@ -55,7 +56,7 @@ class UserModel(db.Model):
             return user_instance
 
         except OperationalError:
-            pass
+            raise OperationalError("server error", 503, DATABASE_CONNECTION)
 
     @classmethod
     def find_by_id(cls, _id):
