@@ -5,14 +5,13 @@ import json
 import os
 
 import bcrypt
-import fakeredis
 import pytest
-import redis
 from mock import Mock
 from src import create_app
 from src import db
 from src.models.user import UserModel
 from src.resources import initialize_resources
+from src.utils.blacklist_manager import BlacklistManager
 from tests.integration.mock_data import MockData
 from tests.integration.mock_data import MockDataManager
 
@@ -32,9 +31,8 @@ def test_client():
         Configure and provides app-client instance for testing
     """
     flask_app = create_app("flask_test.cfg")
-
-    redis_instance = fakeredis.FakeStrictRedis()
-    initialize_resources(flask_app, redis_instance)
+    initialize_resources(flask_app)
+    BlacklistManager.initialize_redis(flask_app.config)
 
     db.init_app(flask_app)
 
@@ -60,8 +58,7 @@ def test_redis():
         Generates redis
     """
     flask_app = create_app("flask_test.cfg")
-    redis_instance = redis.Redis(host="127.0.0.1", port=6319)
-    initialize_resources(flask_app, redis_instance)
+    initialize_resources(flask_app)
 
     db.init_app(flask_app)
 
@@ -105,6 +102,7 @@ def test_database():
         db.drop_all()
     # pylint: disable=broad-except
     except Exception as exception:
+        # To-do log
         print(exception)
 
 

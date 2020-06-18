@@ -39,15 +39,12 @@ class StartSession(Resource):
         """
             Validates the token and provided parameters
         """
-        properties_required = check_missing_properties(cls.parser.parse_args().items())
-        if properties_required:
-            raise KeyError(properties_required)
         client_secret_key = os.environ["CLIENT_SECRET_KEY"]
         matcher_string = "{}{}".format(timestamp, client_secret_key)
         hash_string = hashlib.sha256(matcher_string.encode()).digest()
         base64_token = base64.b64encode(hash_string).decode()
         if client_app_token != base64_token:
-            raise AttributeError(HEADERS_INCORRECT)
+            raise AttributeError()
 
     @classmethod
     def post(cls):
@@ -59,14 +56,20 @@ class StartSession(Resource):
         timestamp = data["Timestamp"]
         device_id = data["Device-ID"]
         try:
+            check_missing_properties(data.items())
             cls.is_valid_token(client_app_token, timestamp)
             response_data = get_jwt_tokens(payload={"deviceId": device_id})
             return response_builder.get_success_response(message=SESSION_START, data=response_data)
         except AttributeError as attribute_error:
             # TO-DO: need to log the error
-            return response_builder.get_error_response(status_code=400, message=str(attribute_error))
-        except LookupError as lookup_error:
-            return response_builder.get_error_response(status_code=400, message=str(lookup_error))
+            print(attribute_error)
+            return response_builder.get_error_response(status_code=400, message=HEADERS_INCORRECT)
+        except KeyError as error:
+            message = str(error).strip("'")
+            return response_builder.get_error_response(status_code=400, message=message)
+        except LookupError as error:
+            message = str(error).strip("'")
+            return response_builder.get_error_response(status_code=400, message=message)
 
 
 class RefreshSession(Resource):

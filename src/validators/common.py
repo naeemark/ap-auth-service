@@ -15,6 +15,4 @@ def check_missing_properties(properties):
     if missing_values:
         required_properties_list = (missing_elements[0] for missing_elements in missing_values)
         required_properties = ",".join(required_properties_list)
-        return PROPERTY_REQUIRED.format(required_properties=required_properties)
-
-    return False
+        raise KeyError(PROPERTY_REQUIRED.format(required_properties=required_properties))
