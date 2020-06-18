@@ -104,20 +104,14 @@ class LoginUser(Resource):
     add_parser_argument(parser=request_parser, arg_name="email")
     add_parser_argument(parser=request_parser, arg_name="password")
 
-    @classmethod
-    def apply_validation(cls):
-        """validates before processing data"""
-        data = cls.request_parser.parse_args()
-        check_missing_properties(data.items())
-
     @jwt_required
     def post(self):
         """
             Returns a new Token
         """
         try:
-            self.apply_validation()
             data = self.request_parser.parse_args()
+            check_missing_properties(data.items())
             user = UserModel.find_by_email(data["email"])
 
             if user and bcrypt.checkpw(data["password"].encode(), user.password):
