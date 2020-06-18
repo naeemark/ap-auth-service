@@ -18,7 +18,7 @@ class BlacklistManager:
     __token_expire_seconds = None
 
     def __init__(self):
-        self.redis = BlacklistManager.__redis_instance
+        self.redis = self.__redis_instance
 
     def insert_blacklist_token_id(self, identity, jti):
         """
@@ -28,7 +28,7 @@ class BlacklistManager:
         """
         try:
             # To-do: need to discuss the logic
-            expire_time = BlacklistManager.__token_expire_seconds
+            expire_time = self.__token_expire_seconds
             return self.redis.set(str(jti), str(identity), str(expire_time))
         except RedisConnection as error:
             raise error
