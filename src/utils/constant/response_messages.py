@@ -5,7 +5,7 @@
 USER_CREATION = "User created successfully."
 UPDATED_PASSWORD = "Password updated successfully"
 LOGGED_IN = "successfully logged in"
-ACCESS_REVOKED = "Access token revoked successfully"
+REFRESH_TOKEN_REVOKED = "Refresh token revoked successfully"
 LOGOUT = "Successfully logged out"
 SESSION_START = "Start Session"
 REFRESH_TOKEN = "Refresh Session"

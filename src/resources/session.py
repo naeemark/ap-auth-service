@@ -12,10 +12,10 @@ from flask_restful import reqparse
 from flask_restful import Resource
 from redis.exceptions import ConnectionError as RedisConnectionRefresh
 from src.utils.blacklist_manager import BlacklistManager
-from src.utils.constant.response_messages import ACCESS_REVOKED
 from src.utils.constant.response_messages import HEADERS_INCORRECT
 from src.utils.constant.response_messages import REDIS_CONNECTION
 from src.utils.constant.response_messages import REFRESH_TOKEN
+from src.utils.constant.response_messages import REFRESH_TOKEN_REVOKED
 from src.utils.constant.response_messages import SESSION_START
 from src.utils.response_builder import get_error_response
 from src.utils.response_builder import get_success_response
@@ -103,6 +103,6 @@ class RevokeRefreshSession(Resource):
         try:
             expire_time_sec = get_expire_time_seconds(jwt_exp)
             BlacklistManager().revoke_token(identity, jti, expire_time_sec)
-            return get_success_response(message=ACCESS_REVOKED)
+            return get_success_response(message=REFRESH_TOKEN_REVOKED)
         except RedisConnectionRefresh:
             return get_error_response(message=REDIS_CONNECTION)
