@@ -45,26 +45,10 @@ class RegisterUser(Resource):
     def apply_validation(cls):
         """validates before processing data"""
         data = cls.request_parser.parse_args()
-
         email = data["email"]
-
-        try:
-            if UserModel.find_by_email(email):
-                raise ObjectNotExecutableError(DUPLICATE_USER)
-        except OperationalError:
-            pass
-
+        UserModel.find_by_email(email, already_exist_check=True)
         user_register_validate = ValidateRegisterUser(data)
-        validate_error = user_register_validate.validate_login()
-
-        if validate_error:
-            description = validate_error[0]["pre_condition"]
-            status_code = validate_error[1]
-
-            if status_code == 406:
-                raise NameError(description)
-
-            raise ValueError(description)
+        user_register_validate.validate_login()
 
     @jwt_required
     def post(self):

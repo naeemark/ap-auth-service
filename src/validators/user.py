@@ -3,7 +3,6 @@
 """
 from email_validator import EmailNotValidError
 from email_validator import validate_email
-from src.utils.constant.response_messages import EMAIL_CONDITION
 from src.utils.constant.response_messages import PASSWORD_CONDITION
 from src.utils.constant.response_messages import PASSWORD_POLICIY
 from src.utils.constant.rules import password_policy
@@ -37,26 +36,16 @@ class ValidateRegisterUser:
             email = valid.email
             return not email
         except EmailNotValidError as error_message:
-            return str(error_message)
+            raise NameError(error_message)
 
     def validate_login(self):
         """
             Validates Login
         """
         password_check = self.validate_password()
-        email_check = self.validate_email()
-        return_dict = None
+        self.validate_email()
         if password_check:
-            return_dict = (
-                {"message": PASSWORD_CONDITION, "pre_condition": PASSWORD_POLICIY.format(policy=password_check)},
-                412,
-            )
-        elif email_check:
-            return_dict = (
-                {"message": EMAIL_CONDITION, "pre_condition": email_check},
-                406,
-            )
-        return return_dict
+            raise ValueError(PASSWORD_POLICIY.format(policy=password_check))
 
 
 class ChangePasswordValidate:
