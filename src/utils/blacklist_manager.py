@@ -26,10 +26,9 @@ class BlacklistManager:
         :return: bool status
         """
         try:
-            # To-do: need to discuss the logic
             return self.redis.set(str(jti), str(identity), str(expire_time_sec))
-        except RedisConnection as error:
-            raise error
+        except AttributeError:
+            raise RedisConnection
 
     def get_jti_list(self):
         """

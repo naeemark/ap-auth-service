@@ -105,4 +105,4 @@ class RevokeRefreshSession(Resource):
             BlacklistManager().revoke_token(identity, jti, expire_time_sec)
             return get_success_response(message=REFRESH_TOKEN_REVOKED)
         except RedisConnectionRefresh:
-            return get_error_response(message=REDIS_CONNECTION)
+            return get_error_response(status_code=503, message=REDIS_CONNECTION)
