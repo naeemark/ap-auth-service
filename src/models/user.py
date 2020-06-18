@@ -1,11 +1,7 @@
 """
     User Model
 """
-from sqlalchemy.exc import ObjectNotExecutableError
-from sqlalchemy.exc import OperationalError
 from src import db
-from src.utils.constant.response_messages import DATABASE_CONNECTION
-from src.utils.constant.response_messages import DUPLICATE_USER
 
 
 class UserModel(db.Model):
@@ -44,19 +40,11 @@ class UserModel(db.Model):
         return {"username": self.email, "password": self.password}
 
     @classmethod
-    def find_by_email(cls, email, already_exist_check=False):
+    def find_by_email(cls, email):
         """
             Finds by email
         """
-
-        try:
-            user_instance = cls.query.filter_by(email=email).first()
-            if user_instance and already_exist_check:
-                raise ObjectNotExecutableError(DUPLICATE_USER)
-            return user_instance
-
-        except OperationalError:
-            raise OperationalError("server error", 503, DATABASE_CONNECTION)
+        return cls.query.filter_by(email=email).first()
 
     @classmethod
     def find_by_id(cls, _id):
