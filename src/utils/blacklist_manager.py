@@ -7,6 +7,7 @@ import fakeredis
 from redis import exceptions
 from redis import Redis
 from redis.exceptions import ConnectionError as RedisConnection
+from src.utils.constant.response_messages import REDIS_CONNECTION
 
 
 class BlacklistManager:
@@ -28,7 +29,7 @@ class BlacklistManager:
         try:
             return self.redis.set(str(jti), str(identity), str(expire_time_sec))
         except AttributeError:
-            raise RedisConnection
+            raise RedisConnection(REDIS_CONNECTION)
 
     def get_jti_list(self):
         """

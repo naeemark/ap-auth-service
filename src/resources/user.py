@@ -51,8 +51,8 @@ class RegisterUser(Resource):
         try:
             if UserModel.find_by_email(email):
                 raise ObjectNotExecutableError(DUPLICATE_USER)
-        except OperationalError:
-            pass
+        except OperationalError as error:
+            raise OperationalError(DATABASE_CONNECTION, error.orig.args[0], error.orig.args[0])
         user_register_validate = ValidateRegisterUser(data)
         user_register_validate.validate_login()
 
@@ -73,11 +73,16 @@ class RegisterUser(Resource):
             payload = create_payload(get_jwt_identity(), user)
             response_data = get_jwt_tokens(payload=payload)
             response_data["user"] = {"email": user.email}
+            payload = get_raw_jwt()
+            identity, jwt_exp, jti = payload_logout(payload)
+            expire_time_sec = get_expire_time_seconds(jwt_exp)
+            BlacklistManager().revoke_token(identity, jti, expire_time_sec)
             return get_success_response(status_code=201, message=USER_CREATION, data=response_data)
         except ObjectNotExecutableError:
             return get_error_response(status_code=409, message=DUPLICATE_USER)
-        except OperationalError:
-            return get_error_response(status_code=503, message=DATABASE_CONNECTION)
+        except (OperationalError, RedisConnectionUser) as error:
+            error = DATABASE_CONNECTION if isinstance(error, OperationalError) else REDIS_CONNECTION
+            return get_error_response(status_code=503, message=str(error))
         except LookupError as lookup_error:
             return get_error_response(status_code=400, message=str(lookup_error))
         except NameError as error:
