@@ -11,7 +11,6 @@ from flask_jwt_extended import jwt_refresh_token_required
 from flask_restful import reqparse
 from flask_restful import Resource
 from redis.exceptions import ConnectionError as RedisConnectionRefresh
-from src.utils.blacklist_manager import BlacklistManager
 from src.utils.constant.response_messages import HEADERS_INCORRECT
 from src.utils.constant.response_messages import REDIS_CONNECTION
 from src.utils.constant.response_messages import REFRESH_TOKEN
@@ -22,8 +21,6 @@ from src.utils.response_builder import get_success_response
 from src.utils.token_manager import get_jwt_tokens
 from src.utils.utils import add_parser_headers_argument
 from src.utils.utils import blacklist_token
-from src.utils.utils import get_expire_time_seconds
-from src.utils.utils import get_payload_properties as payload_revoke_token
 from src.validators.common import check_missing_properties
 
 
@@ -103,12 +100,10 @@ class RevokeRefreshSession(Resource):
         """
         revoke access for refresh token
         """
-        payload = get_raw_jwt()
 
-        identity, jwt_exp, jti = payload_revoke_token(payload)
         try:
-            expire_time_sec = get_expire_time_seconds(jwt_exp)
-            BlacklistManager().revoke_token(identity, jti, expire_time_sec)
+            payload_data = get_raw_jwt()
+            blacklist_token(payload_data)
             return get_success_response(message=REFRESH_TOKEN_REVOKED)
         except RedisConnectionRefresh:
             return get_error_response(status_code=503, message=REDIS_CONNECTION)

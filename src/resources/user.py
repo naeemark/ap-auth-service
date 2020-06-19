@@ -12,7 +12,6 @@ from redis.exceptions import ConnectionError as RedisConnectionUser
 from sqlalchemy.exc import ObjectNotExecutableError
 from sqlalchemy.exc import OperationalError
 from src.models.user import UserModel
-from src.utils.blacklist_manager import BlacklistManager
 from src.utils.constant.response_messages import CREDENTIAL_REQUIRED
 from src.utils.constant.response_messages import DATABASE_CONNECTION
 from src.utils.constant.response_messages import DUPLICATE_USER
@@ -27,8 +26,6 @@ from src.utils.response_builder import get_success_response
 from src.utils.token_manager import get_jwt_tokens
 from src.utils.utils import add_parser_argument
 from src.utils.utils import blacklist_token
-from src.utils.utils import get_expire_time_seconds
-from src.utils.utils import get_payload_properties as payload_logout
 from src.validators.common import check_missing_properties
 from src.validators.user import ChangePasswordValidate
 from src.validators.user import ValidateRegisterUser
@@ -182,11 +179,10 @@ class LogoutUser(Resource):
         logout the user through jti of token ,
          jti is "JWT ID", a unique identifier for a JWT
         """
-        payload = get_raw_jwt()
-        identity, jwt_exp, jti = payload_logout(payload)
+
         try:
-            expire_time_sec = get_expire_time_seconds(jwt_exp)
-            BlacklistManager().revoke_token(identity, jti, expire_time_sec)
+            payload_data = get_raw_jwt()
+            blacklist_token(payload_data)
             return get_success_response(message=LOGOUT)
         except (RedisConnectionUser, AttributeError) as error:
             print(error)
