@@ -56,15 +56,14 @@ precondition_failed_412 = {
     "errorDescription": "'Password' policy not followed",
 }
 
-
 errors_collection = {
-    500: uncaught,
     400: bad_request_400,
     401: invalid_credentials_401,
     404: not_found_404,
-    409: user_conflict_409,
-    503: service_unavailable_503,
-    422: unprocessable_entity_422,
     406: not_acceptable_406,
+    409: user_conflict_409,
     412: precondition_failed_412,
+    422: unprocessable_entity_422,
+    500: uncaught,
+    503: service_unavailable_503,
 }
