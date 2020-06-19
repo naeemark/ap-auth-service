@@ -23,9 +23,9 @@ from src.utils.constant.response_messages import UPDATED_PASSWORD
 from src.utils.constant.response_messages import USER_CREATION
 from src.utils.response_builder import get_error_response
 from src.utils.response_builder import get_success_response
+from src.utils.token_manager import blacklist_token
 from src.utils.token_manager import get_jwt_tokens
 from src.utils.utils import add_parser_argument
-from src.utils.utils import blacklist_token
 from src.validators.common import check_missing_properties
 from src.validators.user import ChangePasswordValidate
 from src.validators.user import ValidateRegisterUser
