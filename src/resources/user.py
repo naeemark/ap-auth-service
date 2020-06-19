@@ -159,9 +159,12 @@ class ChangePassword(Resource):
             password = data["new_password"].encode()
             user.password = bcrypt.hashpw(password, bcrypt.gensalt())
             user.save_to_db()
+            payload = get_raw_jwt()
+            blacklist_token(payload)
             return get_success_response(message=UPDATED_PASSWORD, data={"passwordStrength": self.__password_strength})
-        except OperationalError:
-            return get_error_response(status_code=503, message=DATABASE_CONNECTION)
+        except (OperationalError, RedisConnectionUser) as error:
+            error = DATABASE_CONNECTION if isinstance(error, OperationalError) else str(error)
+            return get_error_response(status_code=503, message=error)
         except LookupError as lookup_error:
             return get_error_response(status_code=400, message=str(lookup_error))
         except ValueError as error:
