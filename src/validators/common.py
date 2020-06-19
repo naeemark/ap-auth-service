@@ -1,6 +1,4 @@
 """common validator utilities """
-import datetime
-
 from src.utils.constant.response_messages import PROPERTY_REQUIRED
 
 
@@ -18,11 +16,3 @@ def check_missing_properties(properties):
         required_properties_list = (missing_elements[0] for missing_elements in missing_values)
         required_properties = ",".join(required_properties_list)
         raise LookupError(PROPERTY_REQUIRED.format(required_properties=required_properties))
-
-
-def get_expire_time_seconds(jwt_exp):
-    """tells the remaining expire time of token"""
-    token_expire_time = datetime.datetime.fromtimestamp(jwt_exp)
-    current_time = datetime.datetime.now()
-    time_difference = token_expire_time - current_time
-    return time_difference.seconds

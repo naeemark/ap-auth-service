@@ -21,8 +21,9 @@ from src.utils.response_builder import get_error_response
 from src.utils.response_builder import get_success_response
 from src.utils.token_manager import get_jwt_tokens
 from src.utils.utils import add_parser_headers_argument
+from src.utils.utils import get_expire_time_seconds
+from src.utils.utils import get_payload_properties as payload_revoke_token
 from src.validators.common import check_missing_properties
-from src.validators.common import get_expire_time_seconds
 
 
 class StartSession(Resource):
@@ -97,9 +98,8 @@ class RevokeRefreshSession(Resource):
         revoke access for refresh token
         """
         payload = get_raw_jwt()
-        jti = payload["jti"]
-        jwt_exp = payload["exp"]
-        identity = get_jwt_identity()
+
+        identity, jwt_exp, jti = payload_revoke_token(payload)
         try:
             expire_time_sec = get_expire_time_seconds(jwt_exp)
             BlacklistManager().revoke_token(identity, jti, expire_time_sec)
