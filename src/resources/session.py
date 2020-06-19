@@ -21,6 +21,7 @@ from src.utils.response_builder import get_error_response
 from src.utils.response_builder import get_success_response
 from src.utils.token_manager import get_jwt_tokens
 from src.utils.utils import add_parser_headers_argument
+from src.utils.utils import blacklist_token
 from src.utils.utils import get_expire_time_seconds
 from src.utils.utils import get_payload_properties as payload_revoke_token
 from src.validators.common import check_missing_properties
@@ -82,9 +83,14 @@ class RefreshSession(Resource):
         payload = get_jwt_identity()
         # TO-DO: need to log the payload
         response_data = get_jwt_tokens(payload=payload)
-        if response_data:
-            return get_success_response(message=REFRESH_TOKEN, data=response_data)
-        return get_error_response()
+        try:
+            if response_data:
+                payload_data = get_raw_jwt()
+                blacklist_token(payload_data)
+                return get_success_response(message=REFRESH_TOKEN, data=response_data)
+            return get_error_response()
+        except RedisConnectionRefresh as error:
+            return get_error_response(status_code=503, message=str(error))
 
 
 class RevokeRefreshSession(Resource):
