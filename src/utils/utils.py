@@ -3,6 +3,8 @@
 """
 import datetime
 
+from src.utils.blacklist_manager import BlacklistManager
+
 
 def add_parser_headers_argument(parser=None, arg_name=None, arg_type=str, location="headers"):
     """Adds argument for header validations"""
@@ -25,3 +27,10 @@ def get_expire_time_seconds(jwt_exp):
 def get_payload_properties(payload):
     """common function that returns common payload properties used to revoke or logout token"""
     return payload["identity"], payload["exp"], payload["jti"]
+
+
+def blacklist_token(payload):
+    """common method to black list token"""
+    identity, jwt_exp, jti = get_payload_properties(payload)
+    expire_time_sec = get_expire_time_seconds(jwt_exp)
+    BlacklistManager().revoke_token(identity, jti, expire_time_sec)

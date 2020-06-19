@@ -26,6 +26,7 @@ from src.utils.response_builder import get_error_response
 from src.utils.response_builder import get_success_response
 from src.utils.token_manager import get_jwt_tokens
 from src.utils.utils import add_parser_argument
+from src.utils.utils import blacklist_token
 from src.utils.utils import get_expire_time_seconds
 from src.utils.utils import get_payload_properties as payload_logout
 from src.validators.common import check_missing_properties
@@ -74,9 +75,7 @@ class RegisterUser(Resource):
             response_data = get_jwt_tokens(payload=payload)
             response_data["user"] = {"email": user.email}
             payload = get_raw_jwt()
-            identity, jwt_exp, jti = payload_logout(payload)
-            expire_time_sec = get_expire_time_seconds(jwt_exp)
-            BlacklistManager().revoke_token(identity, jti, expire_time_sec)
+            blacklist_token(payload)
             return get_success_response(status_code=201, message=USER_CREATION, data=response_data)
         except ObjectNotExecutableError:
             return get_error_response(status_code=409, message=DUPLICATE_USER)
@@ -115,9 +114,7 @@ class LoginUser(Resource):
                 response_data = get_jwt_tokens(payload=payload)
                 response_data["user"] = {"email": user.email}
                 payload = get_raw_jwt()
-                identity, jwt_exp, jti = payload_logout(payload)
-                expire_time_sec = get_expire_time_seconds(jwt_exp)
-                BlacklistManager().revoke_token(identity, jti, expire_time_sec)
+                blacklist_token(payload)
                 return get_success_response(message=SESSION_START, data=response_data)
             return get_error_response(status_code=401, message=INVALID_CREDENTIAL)
         except (OperationalError, RedisConnectionUser) as error:
