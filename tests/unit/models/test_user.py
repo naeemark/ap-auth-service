@@ -43,11 +43,12 @@ def test_all_methods_present():
     assert "delete_from_db" in list_of_methods
 
 
-def test_blacklist_manager():
+def test_blacklist_manager(test_context):
     """fake redis test"""
 
     blacklist_manager = BlacklistManager()
-    blacklist_manager.revoke_token("3", "1231231Xdfwefwe", 1800)
+    seconds = test_context[0].config["JWT_ACCESS_TOKEN_EXPIRES"].seconds
+    blacklist_manager.revoke_token("3", "1231231Xdfwefwe", seconds)
     black_list = blacklist_manager.get_jti_list()
     assert isinstance(black_list, list)
 
