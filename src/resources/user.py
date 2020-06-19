@@ -114,10 +114,15 @@ class LoginUser(Resource):
                 payload = create_payload(get_jwt_identity(), user)
                 response_data = get_jwt_tokens(payload=payload)
                 response_data["user"] = {"email": user.email}
+                payload = get_raw_jwt()
+                identity, jwt_exp, jti = payload_logout(payload)
+                expire_time_sec = get_expire_time_seconds(jwt_exp)
+                BlacklistManager().revoke_token(identity, jti, expire_time_sec)
                 return get_success_response(message=SESSION_START, data=response_data)
             return get_error_response(status_code=401, message=INVALID_CREDENTIAL)
-        except OperationalError:
-            return get_error_response(status_code=503, message=DATABASE_CONNECTION)
+        except (OperationalError, RedisConnectionUser) as error:
+            error = DATABASE_CONNECTION if isinstance(error, OperationalError) else str(error)
+            return get_error_response(status_code=503, message=error)
         except LookupError as lookup_error:
             return get_error_response(status_code=400, message=str(lookup_error))
 
