@@ -1,8 +1,6 @@
 """
 blacklist file to handle logout
 """
-import os
-
 import fakeredis
 from redis import exceptions
 from redis import Redis
@@ -56,7 +54,7 @@ class BlacklistManager:
             cls.__redis_instance = fakeredis.FakeStrictRedis()
         else:
             try:
-                host, port = os.environ.get("REDIS_HOST"), os.environ.get("REDIS_PORT")
+                host, port = app_config["REDIS_HOST"], app_config["REDIS_PORT"]
                 redis_instance = Redis(host=host, port=port)
                 redis_instance.ping()
                 cls.__redis_instance = redis_instance
