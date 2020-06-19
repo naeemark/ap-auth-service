@@ -50,7 +50,7 @@ class RegisterUser(Resource):
             if UserModel.find_by_email(email):
                 raise ObjectNotExecutableError(DUPLICATE_USER)
         except OperationalError as error:
-            raise OperationalError(DATABASE_CONNECTION, error.orig.args[0], error.orig.args[0])
+            raise error
         user_register_validate = ValidateRegisterUser(data)
         user_register_validate.validate_login()
 
@@ -58,6 +58,8 @@ class RegisterUser(Resource):
     def post(self):
         """create new user"""
         try:
+            payload = get_raw_jwt()
+            blacklist_token(payload)
             data = self.request_parser.parse_args()
             check_missing_properties(data.items())
             self.apply_validation()
@@ -71,14 +73,12 @@ class RegisterUser(Resource):
             payload = create_payload(get_jwt_identity(), user)
             response_data = get_jwt_tokens(payload=payload)
             response_data["user"] = {"email": user.email}
-            payload = get_raw_jwt()
-            blacklist_token(payload)
             return get_success_response(status_code=201, message=USER_CREATION, data=response_data)
         except ObjectNotExecutableError:
             return get_error_response(status_code=409, message=DUPLICATE_USER)
         except (OperationalError, RedisConnectionUser) as error:
-            error = DATABASE_CONNECTION if isinstance(error, OperationalError) else REDIS_CONNECTION
-            return get_error_response(status_code=503, message=str(error))
+            error = DATABASE_CONNECTION if isinstance(error, OperationalError) else str(error)
+            return get_error_response(status_code=503, message=error)
         except LookupError as lookup_error:
             return get_error_response(status_code=400, message=str(lookup_error))
         except NameError as error:
@@ -102,6 +102,8 @@ class LoginUser(Resource):
             Returns a new Token
         """
         try:
+            payload = get_raw_jwt()
+            blacklist_token(payload)
             data = self.request_parser.parse_args()
             check_missing_properties(data.items())
             user = UserModel.find_by_email(data["email"])
@@ -110,8 +112,6 @@ class LoginUser(Resource):
                 payload = create_payload(get_jwt_identity(), user)
                 response_data = get_jwt_tokens(payload=payload)
                 response_data["user"] = {"email": user.email}
-                payload = get_raw_jwt()
-                blacklist_token(payload)
                 return get_success_response(message=SESSION_START, data=response_data)
             return get_error_response(status_code=401, message=INVALID_CREDENTIAL)
         except (OperationalError, RedisConnectionUser) as error:
@@ -149,6 +149,8 @@ class ChangePassword(Resource):
             return get_error_response(status_code=400, message=CREDENTIAL_REQUIRED)
         email = payload["user"]["email"]
         try:
+            payload = get_raw_jwt()
+            blacklist_token(payload)
             user = UserModel.find_by_email(email)
             data = self.request_parser.parse_args()
             check_missing_properties(data.items())
@@ -156,8 +158,7 @@ class ChangePassword(Resource):
             password = data["new_password"].encode()
             user.password = bcrypt.hashpw(password, bcrypt.gensalt())
             user.save_to_db()
-            payload = get_raw_jwt()
-            blacklist_token(payload)
+
             return get_success_response(message=UPDATED_PASSWORD, data={"passwordStrength": self.__password_strength})
         except (OperationalError, RedisConnectionUser) as error:
             error = DATABASE_CONNECTION if isinstance(error, OperationalError) else str(error)
