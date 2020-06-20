@@ -77,7 +77,7 @@ def test_redis():
 
 
 def test_redis_failure(test_context):
-    """fake redis test"""
+    """connection test"""
 
     flask_app = create_app("flask_test.cfg")
     flask_app.config["ENV"] = "redis_test"
@@ -86,3 +86,15 @@ def test_redis_failure(test_context):
         BlacklistManager().revoke_token("121", "113123131", test_context[0].config["JWT_ACCESS_TOKEN_EXPIRES"].seconds)
     except RedisConnection as error:
         assert str(error) == REDIS_CONNECTION
+
+
+def test_fake_redis(test_context):
+    """fake redis test"""
+
+    flask_app = create_app("flask_test.cfg")
+
+    BlacklistManager.initialize_redis(flask_app.config)
+    token_revoke_status = BlacklistManager().revoke_token(
+        "121", "113123131", test_context[0].config["JWT_ACCESS_TOKEN_EXPIRES"].seconds
+    )
+    assert token_revoke_status
