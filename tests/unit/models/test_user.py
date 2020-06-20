@@ -93,4 +93,5 @@ def test_fake_redis(test_context):
     token_revoke_status = BlacklistManager().revoke_token(
         "121", "113123131", test_context[0].config["JWT_ACCESS_TOKEN_EXPIRES"].seconds
     )
+    assert BlacklistManager().get_jti_list().__len__() > 0
     assert token_revoke_status
