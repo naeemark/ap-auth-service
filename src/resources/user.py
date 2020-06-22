@@ -16,9 +16,9 @@ from src.utils.constant.response_messages import CREDENTIAL_REQUIRED
 from src.utils.constant.response_messages import DATABASE_CONNECTION
 from src.utils.constant.response_messages import DUPLICATE_USER
 from src.utils.constant.response_messages import INVALID_CREDENTIAL
+from src.utils.constant.response_messages import LOGGED_IN
 from src.utils.constant.response_messages import LOGOUT
 from src.utils.constant.response_messages import REDIS_CONNECTION
-from src.utils.constant.response_messages import SESSION_START
 from src.utils.constant.response_messages import UPDATED_PASSWORD
 from src.utils.constant.response_messages import USER_CREATION
 from src.utils.response_builder import get_error_response
@@ -112,7 +112,7 @@ class LoginUser(Resource):
                 payload = create_payload(get_jwt_identity(), user)
                 response_data = get_jwt_tokens(payload=payload)
                 response_data["user"] = {"email": user.email}
-                return get_success_response(message=SESSION_START, data=response_data)
+                return get_success_response(message=LOGGED_IN, data=response_data)
             return get_error_response(status_code=401, message=INVALID_CREDENTIAL)
         except (OperationalError, RedisConnectionUser) as error:
             error = DATABASE_CONNECTION if isinstance(error, OperationalError) else str(error)
