@@ -183,7 +183,7 @@ class LogoutUser(Resource):
 
         try:
             payload_data = get_raw_jwt()
-            blacklist_token(payload_data)
+            blacklist_token(payload_data, logout=True)
             return get_success_response(message=LOGOUT)
         except (RedisConnectionUser, AttributeError) as error:
             print(error)

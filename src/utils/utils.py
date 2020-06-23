@@ -22,6 +22,15 @@ def get_expire_time_seconds(jwt_exp):
     return time_difference.seconds
 
 
-def get_payload_properties(payload):
+def get_payload_properties(payload, logout):
     """common function that returns common payload properties used to revoke or logout token"""
-    return payload["identity"], payload["exp"], payload["jti"]
+    identity = payload["identity"]
+    identity_device_id = identity["deviceId"]
+
+    payload_properties = {"identity": identity_device_id, "jwt_exp": payload["exp"], "jti": payload["jti"]}
+    if logout:
+        refresh_token_id = identity["refreshTokenId"]
+        refresh_token_exp = identity["refreshTokenExpire"]
+        payload_properties.update({"refreshTokenExpire": refresh_token_exp, "refreshTokenId": refresh_token_id})
+
+    return payload_properties

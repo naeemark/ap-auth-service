@@ -12,9 +12,7 @@ from flask_restful import reqparse
 from flask_restful import Resource
 from redis.exceptions import ConnectionError as RedisConnectionRefresh
 from src.utils.constant.response_messages import HEADERS_INCORRECT
-from src.utils.constant.response_messages import REDIS_CONNECTION
 from src.utils.constant.response_messages import REFRESH_TOKEN
-from src.utils.constant.response_messages import REFRESH_TOKEN_REVOKED
 from src.utils.constant.response_messages import SESSION_START
 from src.utils.response_builder import get_error_response
 from src.utils.response_builder import get_success_response
@@ -88,22 +86,3 @@ class RefreshSession(Resource):
             return get_error_response()
         except RedisConnectionRefresh as error:
             return get_error_response(status_code=503, message=str(error))
-
-
-class RevokeRefreshSession(Resource):
-    """
-    revoke refresh token
-    """
-
-    @jwt_refresh_token_required
-    def post(self):
-        """
-        revoke access for refresh token
-        """
-
-        try:
-            payload_data = get_raw_jwt()
-            blacklist_token(payload_data)
-            return get_success_response(message=REFRESH_TOKEN_REVOKED)
-        except RedisConnectionRefresh:
-            return get_error_response(status_code=503, message=REDIS_CONNECTION)
