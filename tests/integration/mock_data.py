@@ -50,6 +50,13 @@ content_data = {
         },
         "password_change": {"data": {"new_password": "7897!!@@AB"}},
     },
+    "TestBlackListManager": {
+        "JWT_ACCESS_TOKEN_EXPIRES_SECONDS": 1800,
+        "REDIS_HOST": "127.0.0.1",
+        "REDIS_PORT": "6319",
+        "key": "121",
+        "value": "113123131",
+    },
 }
 
 
