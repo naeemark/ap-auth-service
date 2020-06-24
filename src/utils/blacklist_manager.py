@@ -35,7 +35,6 @@ class BlacklistManager:
         try:
             return list(map(self.decode_jti, self.redis.keys()))
         except (AttributeError, RedisConnection):
-            # To-do discuss the exception and return
             return []
 
     def decode_jti(self, encoded_jti):
@@ -60,3 +59,5 @@ class BlacklistManager:
                 print("Connected to redis at {}:{}".format(host, port))
             except exceptions.ConnectionError as redis_connection_error:
                 print("Redis:", redis_connection_error)
+            except AttributeError as error:
+                print("AttributeError:", error)
