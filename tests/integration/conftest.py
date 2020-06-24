@@ -5,6 +5,7 @@ import json
 import os
 
 import bcrypt
+import fakeredis
 import pytest
 from mock import Mock
 from src import create_app
@@ -32,7 +33,7 @@ def test_client():
     """
     flask_app = create_app("flask_test.cfg")
     initialize_resources(flask_app)
-    BlacklistManager.initialize_redis(flask_app.config)
+    BlacklistManager.initialize_redis(fake_redis=fakeredis.FakeStrictRedis())
 
     db.init_app(flask_app)
 

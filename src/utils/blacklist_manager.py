@@ -1,7 +1,6 @@
 """
 blacklist file to handle logout
 """
-import fakeredis
 from redis import exceptions
 from redis import Redis
 from redis.exceptions import ConnectionError as RedisConnection
@@ -47,11 +46,11 @@ class BlacklistManager:
         return encoded_jti.decode()
 
     @classmethod
-    def initialize_redis(cls, app_config):
+    def initialize_redis(cls, app_config=None, fake_redis=None):
         """initialize redis config"""
 
-        if app_config["ENV"] == "testing":
-            cls.__redis_instance = fakeredis.FakeStrictRedis()
+        if fake_redis:
+            cls.__redis_instance = fake_redis
         else:
             try:
                 host, port = app_config["REDIS_HOST"], app_config["REDIS_PORT"]

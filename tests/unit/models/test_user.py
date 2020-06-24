@@ -69,13 +69,12 @@ def test_redis_failure():
     """connection test"""
 
     config = {
-        "ENV": "redis_test",
         "JWT_ACCESS_TOKEN_EXPIRES_SECONDS": 1800,
         "REDIS_HOST": "127.0.0.1",
         "REDIS_PORT": "6319",
     }
     try:
-        BlacklistManager.initialize_redis(config)
+        BlacklistManager.initialize_redis(app_config=config)
         BlacklistManager().revoke_token("121", "113123131", config.get("JWT_ACCESS_TOKEN_EXPIRES_SECONDS"))
     except RedisConnection as error:
         assert str(error) == REDIS_CONNECTION
@@ -84,10 +83,9 @@ def test_redis_failure():
 def test_fake_redis():
     """fake redis test"""
     config = {
-        "ENV": "testing",
         "JWT_ACCESS_TOKEN_EXPIRES_SECONDS": 1800,
     }
-    BlacklistManager.initialize_redis(config)
+    BlacklistManager.initialize_redis(fake_redis=fakeredis.FakeStrictRedis())
     token_revoke_status = BlacklistManager().revoke_token(
         "121", "113123131", config["JWT_ACCESS_TOKEN_EXPIRES_SECONDS"]
     )

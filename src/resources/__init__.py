@@ -52,7 +52,7 @@ def initialize_resources(app):
 
     initialize_jwt_manager(app)
 
-    BlacklistManager.initialize_redis(app.config)
+    BlacklistManager.initialize_redis(app_config=app.config)
 
     api_prefix = "/api/v1"
 
