@@ -262,11 +262,3 @@ class TestFailureScenario:
         )
         assert response_login_user.status_code == 400
         assert json.loads(response_login_user.data)["response"]["error"]["errorTitle"] == "Invalid Parameters provided"
-
-    # def test_redis_failure(self, api_prefix, test_redis, session):
-    #     """redis failure"""
-    #     response_revoke = test_redis.post(
-    #         f"{api_prefix}/session/revoke",
-    #         headers={"Authorization": f"{session[0]}", CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE},
-    #     )
-    #     assert response_revoke.status_code == 500
