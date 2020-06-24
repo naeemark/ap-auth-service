@@ -1,5 +1,5 @@
 """
-  Success Message
+  Response Messages Constants
 """
 
 USER_CREATION = "User created successfully."
