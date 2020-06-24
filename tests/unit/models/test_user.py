@@ -2,28 +2,11 @@
     A file to containe all unit tests of
     UserModel
 """
-import datetime
-import os
-
 import fakeredis
 from redis.exceptions import ConnectionError as RedisConnection
-from src import create_app
 from src.models.user import UserModel
 from src.utils.blacklist_manager import BlacklistManager
 from src.utils.constant.response_messages import REDIS_CONNECTION
-
-
-def context():
-    """unit test instance for app and redis"""
-    redis_instance = fakeredis.FakeStrictRedis()
-    flask_app = create_app("flask_test.cfg")
-    flask_app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(
-        minutes=int(os.environ["JWT_ACCESS_TOKEN_EXPIRES_MINUTES"])
-    )
-    flask_app.config["JWT_REFRESH_TOKEN_EXPIRES"] = datetime.timedelta(
-        days=int(os.environ["JWT_REFRESH_TOKEN_EXPIRES_DAYS"])
-    )
-    return flask_app, redis_instance
 
 
 def new_user():
@@ -62,9 +45,11 @@ def test_all_methods_present():
 
 def test_blacklist_manager():
     """fake redis test"""
-    test_context = context()
+    config = {
+        "JWT_ACCESS_TOKEN_EXPIRES_SECONDS": 1800,
+    }
     blacklist_manager = BlacklistManager()
-    seconds = test_context[0].config["JWT_ACCESS_TOKEN_EXPIRES"].seconds
+    seconds = config["JWT_ACCESS_TOKEN_EXPIRES_SECONDS"]
     blacklist_manager.revoke_token("3", "1231231Xdfwefwe", seconds)
     black_list = blacklist_manager.get_jti_list()
     assert isinstance(black_list, list)
@@ -98,11 +83,13 @@ def test_redis_failure():
 
 def test_fake_redis():
     """fake redis test"""
-    test_context = context()
-
-    BlacklistManager.initialize_redis(test_context[0].config)
+    config = {
+        "ENV": "testing",
+        "JWT_ACCESS_TOKEN_EXPIRES_SECONDS": 1800,
+    }
+    BlacklistManager.initialize_redis(config)
     token_revoke_status = BlacklistManager().revoke_token(
-        "121", "113123131", test_context[0].config["JWT_ACCESS_TOKEN_EXPIRES"].seconds
+        "121", "113123131", config["JWT_ACCESS_TOKEN_EXPIRES_SECONDS"]
     )
     assert BlacklistManager().get_jti_list().__len__() > 0
     assert token_revoke_status
