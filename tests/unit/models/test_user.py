@@ -70,17 +70,6 @@ def test_blacklist_manager():
     assert isinstance(black_list, list)
 
 
-def test_jwt_life_span():
-    """life span check"""
-    test_context = context()
-
-    token_expire_seconds = test_context[0].config["JWT_ACCESS_TOKEN_EXPIRES"].seconds
-    refresh_token_expire_days = test_context[0].config["JWT_REFRESH_TOKEN_EXPIRES"].days
-
-    assert token_expire_seconds / 60 == int(os.environ["JWT_ACCESS_TOKEN_EXPIRES_MINUTES"])
-    assert refresh_token_expire_days == int(os.environ["JWT_REFRESH_TOKEN_EXPIRES_DAYS"])
-
-
 def test_redis():
     """fake redis test"""
     redis_instance = fakeredis.FakeStrictRedis()
