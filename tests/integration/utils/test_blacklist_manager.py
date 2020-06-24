@@ -13,7 +13,7 @@ class TestBlackListManager:
     config = {}
 
     def test_content_data(self, data):
-        """content data dest"""
+        """content data test"""
         mock_data_manager = MockDataManager(data)
         data.content.return_value = "TestBlackListManager"
         content_data = mock_data_manager.get_content()

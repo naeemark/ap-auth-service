@@ -24,7 +24,7 @@ class TestUserBehaviour:
     content_data = {}
 
     def test_content_data(self, data):
-        """content data dest"""
+        """content data test"""
         mock_data_manager = MockDataManager(data)
         data.content.return_value = "TestUserBehaviour"
         content_data = mock_data_manager.get_content()
@@ -128,7 +128,7 @@ class TestSuccessScenario:
     content_data = {}
 
     def test_content_data(self, data):
-        """content data dest"""
+        """content data test"""
         mock_data_manager = MockDataManager(data)
         data.content.return_value = "TestSuccessScenario"
         content_data = mock_data_manager.get_content()
@@ -187,7 +187,7 @@ class TestFailureScenario:
     content_data = {}
 
     def test_content_data(self, data):
-        """content data dest"""
+        """content data test"""
         mock_data_manager = MockDataManager(data)
         data.content.return_value = "TestFailureScenario"
         content_data = mock_data_manager.get_content()
