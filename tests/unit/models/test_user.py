@@ -1,5 +1,5 @@
 """
-    A file to containe all unit tests of
+    A file to contain all unit tests of
     UserModel
 """
 from src.models.user import UserModel
