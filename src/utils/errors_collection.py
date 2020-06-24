@@ -44,23 +44,22 @@ unprocessable_entity_422 = {
     ),
 }
 
-not_acceptable_406 = {
-    "errorCode": "NOT_ACCEPTABLE",
-    "errorTitle": "Invalid Email",
-    "errorDescription": "email is not correct",
-}
-
 precondition_failed_412 = {
     "errorCode": "PRECONDITION_FAILED",
     "errorTitle": "Password precondition failed",
     "errorDescription": "'Password' policy not followed",
 }
 
+email_not_valid_412 = {
+    "errorCode": "EmailNotValidError",
+    "errorTitle": "Email not valid",
+    "errorDescription": "Provided value is not a valid email address.",
+}
+
 errors_collection = {
     400: bad_request_400,
     401: invalid_credentials_401,
     404: not_found_404,
-    406: not_acceptable_406,
     409: user_conflict_409,
     412: precondition_failed_412,
     422: unprocessable_entity_422,

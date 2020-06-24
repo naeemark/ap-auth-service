@@ -203,7 +203,7 @@ class TestFailureScenario:
             data=json.dumps(content_data),
             follow_redirects=True,
         )
-        assert response_register_user.status_code == 406
+        assert response_register_user.status_code == 412
 
     def test_register_pwd_fail(self, api_prefix, test_client, session):
         """register user failure case"""

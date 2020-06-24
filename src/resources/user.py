@@ -2,6 +2,7 @@
   User Resource
 """
 import bcrypt
+from email_validator import EmailNotValidError
 from flask_jwt_extended import fresh_jwt_required
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import get_raw_jwt
@@ -9,7 +10,7 @@ from flask_jwt_extended import jwt_required
 from flask_restful import reqparse
 from flask_restful import Resource
 from redis.exceptions import ConnectionError as RedisConnectionUser
-from sqlalchemy.exc import ObjectNotExecutableError
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.exc import OperationalError
 from src.models.user import UserModel
 from src.utils.constant.response_messages import CREDENTIAL_REQUIRED
@@ -21,6 +22,7 @@ from src.utils.constant.response_messages import LOGOUT
 from src.utils.constant.response_messages import REDIS_CONNECTION
 from src.utils.constant.response_messages import UPDATED_PASSWORD
 from src.utils.constant.response_messages import USER_CREATION
+from src.utils.errors_collection import email_not_valid_412
 from src.utils.response_builder import get_error_response
 from src.utils.response_builder import get_success_response
 from src.utils.token_manager import blacklist_token
@@ -28,7 +30,7 @@ from src.utils.token_manager import get_jwt_tokens
 from src.utils.utils import add_parser_argument
 from src.validators.common import check_missing_properties
 from src.validators.user import ChangePasswordValidate
-from src.validators.user import ValidateRegisterUser
+from src.validators.user import validate_register_user_data
 
 
 class RegisterUser(Resource):
@@ -40,49 +42,40 @@ class RegisterUser(Resource):
     add_parser_argument(parser=request_parser, arg_name="email")
     add_parser_argument(parser=request_parser, arg_name="password")
 
-    @classmethod
-    def apply_validation(cls):
-        """validates before processing data"""
-        data = cls.request_parser.parse_args()
-        email = data["email"]
-
-        try:
-            if UserModel.find_by_email(email):
-                raise ObjectNotExecutableError(DUPLICATE_USER)
-        except OperationalError as error:
-            raise error
-        user_register_validate = ValidateRegisterUser(data)
-        user_register_validate.validate_login()
-
     @jwt_required
     def post(self):
         """create new user"""
         try:
-            payload = get_raw_jwt()
-            blacklist_token(payload)
             data = self.request_parser.parse_args()
             check_missing_properties(data.items())
-            self.apply_validation()
+
+            validate_register_user_data(data=data)
+
             email, password = data["email"], data["password"]
             password = password.encode()
             # To-Do need to write the details of the salt
             hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
 
+            # creates and saves a new object
             user = UserModel(email, hashed_password)
             user.save_to_db()
+
             payload = create_payload(get_jwt_identity(), user)
             response_data = get_jwt_tokens(payload=payload)
             response_data["user"] = {"email": user.email}
+
+            # blacklist JWT accessToken and refreshToken
+            blacklist_token(get_raw_jwt())
             return get_success_response(status_code=201, message=USER_CREATION, data=response_data)
-        except ObjectNotExecutableError:
+        except IntegrityError:
             return get_error_response(status_code=409, message=DUPLICATE_USER)
         except (OperationalError, RedisConnectionUser) as error:
             error = DATABASE_CONNECTION if isinstance(error, OperationalError) else str(error)
             return get_error_response(status_code=503, message=error)
+        except EmailNotValidError as error:
+            return get_error_response(status_code=412, message=str(error), error=email_not_valid_412)
         except LookupError as lookup_error:
             return get_error_response(status_code=400, message=str(lookup_error))
-        except NameError as error:
-            return get_error_response(status_code=406, message=str(error))
         except ValueError as error:
             return get_error_response(status_code=412, message=str(error))
 
