@@ -29,7 +29,7 @@ class TestUserBehaviour:
         data.content.return_value = "TestUserBehaviour"
         content_data = mock_data_manager.get_content()
         assert isinstance(content_data, dict)
-        TestUserBehaviour.content_data.update(content_data)
+        self.content_data.update(content_data)
 
     def test_register_generated_token(self, test_client, test_database, register_token):
         """
@@ -40,7 +40,7 @@ class TestUserBehaviour:
 
     def test_login_user(self, api_prefix, test_client):
         """login user for fresh_token and check status in case of login"""
-        login_user_data = TestUserBehaviour.content_data["login"]["data"]
+        login_user_data = self.content_data["login"]["data"]
 
         response_login_user = test_client.post(
             f"{api_prefix}/user/login",
@@ -60,7 +60,7 @@ class TestUserBehaviour:
 
     def test_password_change_without_preconditions(self, api_prefix, test_client):
         """Changing password without preconditons"""
-        content_data = TestUserBehaviour.content_data["changePassword_precondition"]["data"]
+        content_data = self.content_data["changePassword_precondition"]["data"]
 
         fresh_token = TestUserBehaviour.token_dict["fresh_access_token_login"]
         response_password_change = test_client.put(
@@ -74,7 +74,7 @@ class TestUserBehaviour:
         """
         Test case to check user register without authentication token
         """
-        content_data = TestUserBehaviour.content_data["register_without_token"]["data"]
+        content_data = self.content_data["register_without_token"]["data"]
         response_register_user = test_client.post(f"{api_prefix}/user/register", data=json.dumps(content_data),)
         assert response_register_user.status_code == 401
 
@@ -82,7 +82,7 @@ class TestUserBehaviour:
         """
         Test case to check preconditions applied on password on userregister
         """
-        content_data = TestUserBehaviour.content_data["register_precondition_password"]
+        content_data = self.content_data["register_precondition_password"]
         register_user = test_client.post(
             content_data["url"].format(prefix=api_prefix),
             headers={"Authorization": f" {session[0]}", "Content-Type": "application/json"},
@@ -92,7 +92,7 @@ class TestUserBehaviour:
 
     def test_password_change_prev_token(self, api_prefix, test_client):
         """password change case """
-        content_data = TestUserBehaviour.content_data["password_change"]["data"]
+        content_data = self.content_data["password_change"]["data"]
 
         fresh_token = TestUserBehaviour.token_dict["fresh_access_token_login"]
         response_password_change = test_client.put(
@@ -133,17 +133,17 @@ class TestSuccessScenario:
         data.content.return_value = "TestSuccessScenario"
         content_data = mock_data_manager.get_content()
         assert isinstance(content_data, dict)
-        TestSuccessScenario.content_data.update(content_data)
+        self.content_data.update(content_data)
 
     def test_start_session_success(self, api_prefix, test_client):
         """session start success case"""
-        content_data = TestSuccessScenario.content_data["start_session"]["headers"]
+        content_data = self.content_data["start_session"]["headers"]
         response_start_session = test_client.post(f"{api_prefix}/session/start", headers=content_data,)
         assert "accessToken" and "refreshToken" in json.loads(response_start_session.data)["response"].keys()
 
     def test_register_user_success(self, api_prefix, test_client, session):
         """register user success case"""
-        content_data = TestSuccessScenario.content_data["user_register"]["data"]
+        content_data = self.content_data["user_register"]["data"]
         response_register_user = test_client.post(
             f"{api_prefix}/user/register",
             headers={"Authorization": f" {session[0]}", CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE},
@@ -160,7 +160,7 @@ class TestSuccessScenario:
 
     def test_login_user_success(self, api_prefix, test_client):
         """valid login case """
-        content_data = TestSuccessScenario.content_data["login"]["data"]
+        content_data = self.content_data["login"]["data"]
 
         response_login_user = test_client.post(
             f"{api_prefix}/user/login",
@@ -192,11 +192,11 @@ class TestFailureScenario:
         data.content.return_value = "TestFailureScenario"
         content_data = mock_data_manager.get_content()
         assert isinstance(content_data, dict)
-        TestFailureScenario.content_data.update(content_data)
+        self.content_data.update(content_data)
 
     def test_register_email_fail(self, api_prefix, test_client, session):
         """register user failure case"""
-        content_data = TestFailureScenario.content_data["user_register_email"]["data"]
+        content_data = self.content_data["user_register_email"]["data"]
         response_register_user = test_client.post(
             f"{api_prefix}/user/register",
             headers={"Authorization": f" {session[0]}", CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE},
@@ -207,7 +207,7 @@ class TestFailureScenario:
 
     def test_register_pwd_fail(self, api_prefix, test_client, session):
         """register user failure case"""
-        content_data = TestFailureScenario.content_data["user_register_password"]["data"]
+        content_data = self.content_data["user_register_password"]["data"]
         response_register_user = test_client.post(
             f"{api_prefix}/user/register",
             headers={"Authorization": f" {session[0]}", CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE},
@@ -218,14 +218,14 @@ class TestFailureScenario:
 
     def test_start_session_failure(self, api_prefix, test_client):
         """session start failure case"""
-        content_data = TestFailureScenario.content_data["start_session"]["headers"]
+        content_data = self.content_data["start_session"]["headers"]
         response_start_session = test_client.post(f"{api_prefix}/session/start", headers=content_data,)
 
         assert response_start_session.status_code == 400
 
     def test_register_bad_req(self, api_prefix, test_client, session):
         """register user failure case"""
-        content_data = TestFailureScenario.content_data["user_register_bad_req"]["data"]
+        content_data = self.content_data["user_register_bad_req"]["data"]
         response_register_user = test_client.post(
             f"{api_prefix}/user/register",
             headers={"Authorization": f" {session[0]}", CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE},
@@ -236,14 +236,14 @@ class TestFailureScenario:
 
     def test_start_session_failure_headers(self, api_prefix, test_client):
         """session start failure case"""
-        content_data = TestFailureScenario.content_data["start_session"]["incomplete_headers"]
+        content_data = self.content_data["start_session"]["incomplete_headers"]
         response_start_session = test_client.post(f"{api_prefix}/session/start", headers=content_data)
         assert response_start_session.status_code == 400
         assert "Device-ID" in json.loads(response_start_session.data)["responseMessage"]
 
     def test_missing_jwt(self, api_prefix, test_client):
         """missing auth case"""
-        content_data = TestFailureScenario.content_data["user_register_bad_req"]["data"]
+        content_data = self.content_data["user_register_bad_req"]["data"]
         response_register_user = test_client.post(
             f"{api_prefix}/user/register",
             headers={CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE},
@@ -255,7 +255,7 @@ class TestFailureScenario:
 
     def test_missing_keys_login(self, api_prefix, test_client, session):
         """missing keys in login case"""
-        content_data = TestFailureScenario.content_data["login_missing_email"]["data"]
+        content_data = self.content_data["login_missing_email"]["data"]
         response_login_user = test_client.post(
             f"{api_prefix}/user/register",
             headers={"Authorization": f" {session[0]}", CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE},
