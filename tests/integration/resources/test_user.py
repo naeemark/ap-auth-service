@@ -5,8 +5,6 @@
 """
 import json
 
-from src.utils.constant.response_messages import TOKEN_REVOKED
-
 from ..mock_data import MockDataManager
 
 
@@ -90,7 +88,7 @@ class TestUserBehaviour:
         )
         assert register_user.status_code == 412
 
-    def test_password_change_prev_token(self, api_prefix, test_client):
+    def test_password_change(self, api_prefix, test_client):
         """password change case """
         content_data = self.content_data["password_change"]["data"]
 
@@ -101,8 +99,7 @@ class TestUserBehaviour:
             data=json.dumps(content_data),
             follow_redirects=True,
         )
-        assert response_password_change.status_code == 401
-        assert json.loads(response_password_change.data)["responseMessage"] == TOKEN_REVOKED
+        assert response_password_change.status_code == 200
 
     def test_user_logout_cycle(self, api_prefix, test_client):
         """logout user case"""
