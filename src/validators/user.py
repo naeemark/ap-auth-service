@@ -15,25 +15,15 @@ def validate_register_user_data(data=None):
         raise ValueError(PASSWORD_POLICY.format(policy=rules_ignored))
 
 
-class ChangePasswordValidate:
+def validate_change_password(data):
     """
-      Change Password Validation
+    Validates Password
     """
 
-    __slots__ = ["new_password"]
+    password_rules = password_policy.password(data["new_password"])
+    password_strength = round(password_rules.strength() * 100, 2)
+    rules_ignored = [str(rule) for rule in password_rules.test()]
 
-    def __init__(self, data):
-        self.new_password = data["new_password"]
-
-    def validate_password(self):
-        """
-        Validates Password
-        """
-        respone = {}
-        password_rules = password_policy.password(self.new_password)
-        password_strength = round(password_rules.strength() * 100, 2)
-        rules_ignored = [str(rule) for rule in password_rules.test()]
-        respone.update({"password_strength": password_strength})
-        if rules_ignored:
-            raise ValueError(PASSWORD_POLICY.format(policy=rules_ignored))
-        return respone, 200
+    if rules_ignored:
+        raise ValueError(PASSWORD_POLICY.format(policy=rules_ignored))
+    return password_strength

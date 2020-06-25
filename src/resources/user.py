@@ -29,7 +29,7 @@ from src.utils.token_manager import blacklist_token
 from src.utils.token_manager import get_jwt_tokens
 from src.utils.utils import add_parser_argument
 from src.validators.common import check_missing_properties
-from src.validators.user import ChangePasswordValidate
+from src.validators.user import validate_change_password
 from src.validators.user import validate_register_user_data
 
 
@@ -122,22 +122,13 @@ class ChangePassword(Resource):
 
     request_parser = reqparse.RequestParser()
     add_parser_argument(parser=request_parser, arg_name="new_password")
-    __password_strength = None
-
-    @classmethod
-    def apply_validation(cls):
-        """validates before processing data"""
-        data = cls.request_parser.parse_args()
-
-        change_password_validate = ChangePasswordValidate(data)
-        validate = change_password_validate.validate_password()
-        cls.__password_strength = validate[0].get("password_strength")
 
     @fresh_jwt_required
     def put(self):
         """
             Updates the Model
         """
+
         payload = get_jwt_identity()
         if "user" not in payload:
             return get_error_response(status_code=400, message=CREDENTIAL_REQUIRED)
@@ -147,13 +138,14 @@ class ChangePassword(Resource):
             user = UserModel.find_by_email(email)
             data = self.request_parser.parse_args()
             check_missing_properties(data.items())
-            self.apply_validation()
+            password_strength = validate_change_password(data)
+
             password = data["new_password"].encode()
             user.password = bcrypt.hashpw(password, bcrypt.gensalt())
             user.save_to_db()
             # blacklist Header JWT accessToken
             blacklist_token(get_raw_jwt())
-            return get_success_response(message=UPDATED_PASSWORD, data={"passwordStrength": self.__password_strength})
+            return get_success_response(message=UPDATED_PASSWORD, data={"passwordStrength": password_strength})
         except (OperationalError, RedisConnectionUser) as error:
             error = DATABASE_CONNECTION if isinstance(error, OperationalError) else str(error)
             return get_error_response(status_code=503, message=error)
