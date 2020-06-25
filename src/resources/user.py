@@ -64,7 +64,7 @@ class RegisterUser(Resource):
             response_data = get_jwt_tokens(payload=payload)
             response_data["user"] = {"email": user.email}
 
-            # blacklist JWT accessToken and refreshToken
+            # blacklist Header JWT accessToken
             blacklist_token(get_raw_jwt())
             return get_success_response(status_code=201, message=USER_CREATION, data=response_data)
         except IntegrityError:
@@ -95,8 +95,7 @@ class LoginUser(Resource):
             Returns a new Token
         """
         try:
-            payload = get_raw_jwt()
-            blacklist_token(payload)
+
             data = self.request_parser.parse_args()
             check_missing_properties(data.items())
             user = UserModel.find_by_email(data["email"])
@@ -105,6 +104,8 @@ class LoginUser(Resource):
                 payload = create_payload(get_jwt_identity(), user)
                 response_data = get_jwt_tokens(payload=payload)
                 response_data["user"] = {"email": user.email}
+                # blacklist Header JWT accessToken
+                blacklist_token(get_raw_jwt())
                 return get_success_response(message=LOGGED_IN, data=response_data)
             return get_error_response(status_code=401, message=INVALID_CREDENTIAL)
         except (OperationalError, RedisConnectionUser) as error:
@@ -142,8 +143,7 @@ class ChangePassword(Resource):
             return get_error_response(status_code=400, message=CREDENTIAL_REQUIRED)
         email = payload["user"]["email"]
         try:
-            payload = get_raw_jwt()
-            blacklist_token(payload)
+
             user = UserModel.find_by_email(email)
             data = self.request_parser.parse_args()
             check_missing_properties(data.items())
@@ -151,7 +151,8 @@ class ChangePassword(Resource):
             password = data["new_password"].encode()
             user.password = bcrypt.hashpw(password, bcrypt.gensalt())
             user.save_to_db()
-
+            # blacklist Header JWT accessToken
+            blacklist_token(get_raw_jwt())
             return get_success_response(message=UPDATED_PASSWORD, data={"passwordStrength": self.__password_strength})
         except (OperationalError, RedisConnectionUser) as error:
             error = DATABASE_CONNECTION if isinstance(error, OperationalError) else str(error)
@@ -175,8 +176,8 @@ class LogoutUser(Resource):
         """
 
         try:
-            payload_data = get_raw_jwt()
-            blacklist_token(payload_data, logout=True)
+            # blacklist Header JWT accessToken
+            blacklist_token(get_raw_jwt(), logout=True)
             return get_success_response(message=LOGOUT)
         except (RedisConnectionUser, AttributeError) as error:
             print(error)

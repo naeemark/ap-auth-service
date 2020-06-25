@@ -80,8 +80,8 @@ class RefreshSession(Resource):
         response_data = get_jwt_tokens(payload=payload)
         try:
             if response_data:
-                payload_data = get_raw_jwt()
-                blacklist_token(payload_data)
+                # blacklist Header JWT accessToken
+                blacklist_token(get_raw_jwt())
                 return get_success_response(message=REFRESH_TOKEN, data=response_data)
             return get_error_response()
         except RedisConnectionRefresh as error:
