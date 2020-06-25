@@ -7,7 +7,6 @@ import json
 
 from ..mock_data import MockDataManager
 
-
 CONTENT_TYPE_KEY = "Content-Type"
 CONTENT_TYPE_VALUE = "application/json"
 PASSWORD = "123!!@@AB"
@@ -101,14 +100,16 @@ class TestUserBehaviour:
         )
         assert response_password_change.status_code == 200
 
-    # def test_user_logout_cycle(self, api_prefix, test_client):
-    #     """logout user case"""
-    #     fresh_token = TestUserBehaviour.token_dict["fresh_access_token_login"]
-    #     response_logout = test_client.post(
-    #         f"{api_prefix}/user/logout",
-    #         headers={"Authorization": f"{fresh_token}", CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE},
-    #     )
-    #     assert response_logout.status_code == 401
+    def test_user_logout_cycle(self, api_prefix, test_client):
+        """logout user case"""
+        access_token = TestUserBehaviour.token_dict["fresh_access_token_login"]
+        print(f"This is  token = {access_token}")
+
+        response_logout = test_client.post(
+            f"{api_prefix}/user/logout",
+            headers={"Authorization": f"{access_token}", CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE},
+        )
+        assert response_logout.status_code == 200
 
     def test_user_logout_without_token(self, api_prefix, test_client):
         """logout user case without token"""
