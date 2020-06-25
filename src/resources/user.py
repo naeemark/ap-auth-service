@@ -148,9 +148,8 @@ class ChangePassword(Resource):
             user.save_to_db()
 
             return get_success_response(message=UPDATED_PASSWORD)
-        except (OperationalError, RedisConnectionUser) as error:
-            error = DATABASE_CONNECTION if isinstance(error, OperationalError) else str(error)
-            return get_error_response(status_code=503, message=error)
+        except OperationalError:
+            return get_error_response(status_code=503, message=DATABASE_CONNECTION)
         except LookupError as lookup_error:
             return get_error_response(status_code=400, message=str(lookup_error))
         except ValueError as error:
