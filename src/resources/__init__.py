@@ -1,109 +1,59 @@
-import datetime
-import os
-
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from src.resources.session import RefreshSession
-from src.resources.session import RevokeSession
 from src.resources.session import StartSession
 from src.resources.user import ChangePassword
 from src.resources.user import LoginUser
 from src.resources.user import LogoutUser
 from src.resources.user import RegisterUser
 from src.utils.blacklist_manager import BlacklistManager
-from src.utils.constant.exception import ValidationException
-from src.utils.errors import error_handler
-from src.utils.errors import ErrorManager
+from src.utils.constant.response_messages import FRESH_TOKEN
+from src.utils.constant.response_messages import TOKEN_EXPIRED
+from src.utils.constant.response_messages import TOKEN_REVOKED
+from src.utils.response_builder import get_error_response
 
 
-class InitializationJWT:
-    exception = error_handler.exception_factory("Auth")
+def initialize_jwt_manager(app):
+    """
+        Intialized JWT Manager
+        - Registers overridden callbacks for custom response
+    """
 
-    @classmethod
-    def initialize(cls, jwt_instance):
-        cls.initialize_token_in_blacklist_loader(jwt_instance)
-        cls.initialize_invalid_token(jwt_instance)
-        cls.initialize_expired_token_callback(jwt_instance)
-        cls.initialize_revoke_token_callback(jwt_instance)
-        cls.initialize_fresh_token_required(jwt_instance)
-        cls.initialize_unauthorized_loader_callback(jwt_instance)
+    jwt_manager = JWTManager(app)
 
-    @classmethod
-    def initialize_fresh_token_required(cls, jwt):
-        @jwt.needs_fresh_token_loader
-        def fresh_token_required():
-            """
-            response for fresh token required
-            """
-            return cls.exception.get_response(ErrorManager.FRESH_TOKEN, jsonify_response=True)
+    @jwt_manager.needs_fresh_token_loader
+    def fresh_token_required():
+        return get_error_response(status_code=401, message=FRESH_TOKEN)
 
-        return fresh_token_required
+    @jwt_manager.token_in_blacklist_loader
+    def check_if_token_in_blacklist(decrypted_token):
+        return decrypted_token["jti"] in BlacklistManager().get_jti_list()
 
-    @classmethod
-    def initialize_token_in_blacklist_loader(cls, jwt):
-        """call back for blacklist tokens"""
+    @jwt_manager.revoked_token_loader
+    def revoke_token_callback():
+        return get_error_response(status_code=401, message=TOKEN_REVOKED)
 
-        @jwt.token_in_blacklist_loader
-        def check_if_token_in_blacklist(decrypted_token):
-            """
-            this method will check if a token is blacklisted
-            """
-            return decrypted_token["jti"] in BlacklistManager().get_jti_list()  # Here we blacklist particular users.
+    @jwt_manager.expired_token_loader
+    def expired_token_callback():
+        return get_error_response(status_code=401, message=TOKEN_EXPIRED)
 
-        return check_if_token_in_blacklist
+    @jwt_manager.unauthorized_loader
+    def unauthorized_loader_callback(reason):
+        return get_error_response(status_code=401, message=reason)
 
-    @classmethod
-    def initialize_revoke_token_callback(cls, jwt):
-        @jwt.revoked_token_loader
-        def revoke_token_callback():
-            """token revoke response handled"""
-
-            return cls.exception.get_response(ErrorManager.TOKEN_REVOKED, jsonify_response=True)
-
-        return revoke_token_callback
-
-    @classmethod
-    def initialize_expired_token_callback(cls, jwt):
-        @jwt.expired_token_loader
-        def expired_token_callback():
-            """token expire response handled"""
-            return cls.exception.get_response(ErrorManager.TOKEN_EXPIRED, jsonify_response=True)
-
-        return expired_token_callback
-
-    @classmethod
-    def initialize_unauthorized_loader_callback(cls, jwt):
-        @jwt.unauthorized_loader
-        def unauthorized_loader_callback(reason):
-            """missing token response handled"""
-            return cls.exception.get_response(
-                jsonify_response=True, error_description=reason, title=ValidationException.MISSING_AUTH,
-            )
-
-        return unauthorized_loader_callback
-
-    @classmethod
-    def initialize_invalid_token(cls, jwt):
-        @jwt.invalid_token_loader
-        def invalid_token_callback(error_reason):
-            """invalid token response handled"""
-            return cls.exception.get_response(
-                ErrorManager.TOKEN_INVALID, status=422, jsonify_response=True, response_message=error_reason,
-            )
-
-        return invalid_token_callback
+    @jwt_manager.invalid_token_loader
+    def invalid_token_callback(error_reason):
+        return get_error_response(status_code=422, message=error_reason)
 
 
-def initialize_resources(app, redis_instance):
-    jwt = JWTManager(app)
+def initialize_resources(app):
+    if not app:
+        return
 
-    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(
-        minutes=int(os.environ["JWT_ACCESS_TOKEN_EXPIRES_MINUTES"])
-    )
-    app.config["JWT_REFRESH_TOKEN_EXPIRES"] = datetime.timedelta(days=int(os.environ["JWT_REFRESH_TOKEN_EXPIRES_DAYS"]))
-    token_expire_seconds = app.config["JWT_ACCESS_TOKEN_EXPIRES"].seconds
-    BlacklistManager().initialize_redis(token_expire_seconds, redis_instance)
-    InitializationJWT.initialize(jwt)
+    initialize_jwt_manager(app)
+
+    BlacklistManager.initialize_redis(app_config=app.config)
+
     api_prefix = "/api/v1"
 
     # Instantiates API
@@ -118,7 +68,6 @@ def initialize_resources(app, redis_instance):
     # Adds resources for Auth Entity
     api.add_resource(StartSession, "/session/start")
     api.add_resource(RefreshSession, "/session/refresh")
-    api.add_resource(RevokeSession, "/session/revoke")
 
     # Adding api-prefix for logging purposes
     app.config["API_PREFIX"] = api_prefix

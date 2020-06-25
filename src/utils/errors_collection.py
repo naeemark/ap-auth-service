@@ -12,7 +12,6 @@ invalid_credentials_401 = {
     "errorDescription": "Seems the provided input is not validated by the system",
 }
 
-
 bad_request_400 = {
     "errorCode": "VALIDATION_ERROR",
     "errorTitle": "Invalid Parameters provided",
@@ -37,11 +36,33 @@ service_unavailable_503 = {
     "errorDescription": "One or more services are not available at the moment.",
 }
 
+unprocessable_entity_422 = {
+    "errorCode": "UNPROCESSABLE_ENTITY",
+    "errorTitle": "Token Invalid",
+    "errorDescription": (
+        "Request was well-formed but was unable to be followed due to semantic errors specify correct token"
+    ),
+}
+
+precondition_failed_412 = {
+    "errorCode": "PRECONDITION_FAILED",
+    "errorTitle": "Password precondition failed",
+    "errorDescription": "'Password' policy not followed",
+}
+
+email_not_valid_412 = {
+    "errorCode": "EmailNotValidError",
+    "errorTitle": "Email not valid",
+    "errorDescription": "Provided value is not a valid email address.",
+}
+
 errors_collection = {
-    500: uncaught,
     400: bad_request_400,
     401: invalid_credentials_401,
     404: not_found_404,
     409: user_conflict_409,
+    412: precondition_failed_412,
+    422: unprocessable_entity_422,
+    500: uncaught,
     503: service_unavailable_503,
 }

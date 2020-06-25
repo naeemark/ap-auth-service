@@ -8,19 +8,18 @@ import os
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import get_raw_jwt
 from flask_jwt_extended import jwt_refresh_token_required
-from flask_jwt_extended import jwt_required
 from flask_restful import reqparse
 from flask_restful import Resource
-from redis.exceptions import ConnectionError as RedisConnectionAuth
-from src.utils import response_builder
-from src.utils.blacklist_manager import BlacklistManager
-from src.utils.constant.response_messages import ACCESS_REVOKED
+from redis.exceptions import ConnectionError as RedisConnectionRefresh
 from src.utils.constant.response_messages import HEADERS_INCORRECT
-from src.utils.constant.response_messages import REDIS_CONNECTION
 from src.utils.constant.response_messages import REFRESH_TOKEN
 from src.utils.constant.response_messages import SESSION_START
+from src.utils.response_builder import get_error_response
+from src.utils.response_builder import get_success_response
+from src.utils.token_manager import blacklist_token
 from src.utils.token_manager import get_jwt_tokens
 from src.utils.utils import add_parser_headers_argument
+from src.validators.common import check_missing_properties
 
 
 class StartSession(Resource):
@@ -43,7 +42,7 @@ class StartSession(Resource):
         hash_string = hashlib.sha256(matcher_string.encode()).digest()
         base64_token = base64.b64encode(hash_string).decode()
         if client_app_token != base64_token:
-            raise AttributeError("Bad headers values provided")
+            raise AttributeError()
 
     @classmethod
     def post(cls):
@@ -55,13 +54,17 @@ class StartSession(Resource):
         timestamp = data["Timestamp"]
         device_id = data["Device-ID"]
         try:
+            check_missing_properties(data.items())
             cls.is_valid_token(client_app_token, timestamp)
             response_data = get_jwt_tokens(payload={"deviceId": device_id})
-            return response_builder.get_success_response(message=SESSION_START, data=response_data)
+            return get_success_response(message=SESSION_START, data=response_data)
         except AttributeError as attribute_error:
             # TO-DO: need to log the error
             print(attribute_error)
-            return response_builder.get_error_response(status_code=400, message=HEADERS_INCORRECT)
+            return get_error_response(status_code=400, message=HEADERS_INCORRECT)
+        except LookupError as error:
+            message = str(error).strip("'")
+            return get_error_response(status_code=400, message=message)
 
 
 class RefreshSession(Resource):
@@ -75,28 +78,11 @@ class RefreshSession(Resource):
         payload = get_jwt_identity()
         # TO-DO: need to log the payload
         response_data = get_jwt_tokens(payload=payload)
-        if response_data:
-            return response_builder.get_success_response(message=REFRESH_TOKEN, data=response_data)
-        return response_builder.get_error_response()
-
-
-class RevokeSession(Resource):
-    """
-    logout user
-    """
-
-    @jwt_required
-    def post(self):
-        """
-        revoke access for access token
-        """
-        jti = get_raw_jwt()["jti"]
-        payload = get_jwt_identity()
         try:
-            BlacklistManager().insert_blacklist_token_id(payload, jti)
-            return response_builder.get_success_response(message=ACCESS_REVOKED)
-        # TO-DO: seriously required some change here ref: ImportError
-        except ImportError as auth_error:
-            return response_builder.get_error_response(message=str(auth_error))
-        except RedisConnectionAuth:
-            return response_builder.get_error_response(message=REDIS_CONNECTION)
+            if response_data:
+                # blacklist Header JWT refresh
+                blacklist_token(get_raw_jwt())
+                return get_success_response(message=REFRESH_TOKEN, data=response_data)
+            return get_error_response()
+        except RedisConnectionRefresh as error:
+            return get_error_response(status_code=503, message=str(error))
