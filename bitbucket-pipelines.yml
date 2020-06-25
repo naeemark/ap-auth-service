@@ -44,20 +44,20 @@ definitions:
 
     - step: &deploy-dev
         name: Deploy -> dev
-        deployment: dev
+        deployment: Development
         script:
           - echo 'This will deploy to dev'
 
     - step: &deploy-stg
         name: Deploy -> stg
-        deployment: stg
+        deployment: Staging
         script:
           - echo 'This will deploy to stg'
 
     - step: &deploy-prod
         name: Deploy -> prod
         trigger: manual
-        deployment: prod
+        deployment: Production
         script:
           - echo 'This will deploy to prod'
 
