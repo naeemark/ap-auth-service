@@ -49,7 +49,7 @@ class RegisterUser(Resource):
             data = self.request_parser.parse_args()
             check_missing_properties(data.items())
 
-            validate_register_user_data(None)
+            validate_register_user_data(data=data)
 
             email, password = data["email"], data["password"]
             password = password.encode()
