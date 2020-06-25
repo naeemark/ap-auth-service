@@ -1,7 +1,6 @@
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
-from src.resources.session import RefreshSession
-from src.resources.session import StartSession
+from src.resources.health import Health
 from src.resources.user import ChangePassword
 from src.resources.user import LoginUser
 from src.resources.user import LogoutUser
@@ -59,15 +58,14 @@ def initialize_resources(app):
     # Instantiates API
     api = Api(app=app, prefix=api_prefix)
 
+    # Adds resources for Health Check
+    api.add_resource(Health, "/health")
+
     # Adds resources for User Entity
     api.add_resource(RegisterUser, "/user/register")
     api.add_resource(LoginUser, "/user/login")
     api.add_resource(ChangePassword, "/user/changePassword")
     api.add_resource(LogoutUser, "/user/logout")
-
-    # Adds resources for Auth Entity
-    api.add_resource(StartSession, "/session/start")
-    api.add_resource(RefreshSession, "/session/refresh")
 
     # Adding api-prefix for logging purposes
     app.config["API_PREFIX"] = api_prefix

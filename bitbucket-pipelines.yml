@@ -9,10 +9,10 @@ definitions:
           - export FLASK_RUN_PORT=5000
           - export FLASK_ENV=development
           - export STAGE=dev
+          - export ENV=testing
           - export FLASK_APP=src/app.py
           - export FLASK_DEBUG=True
 
-          - export SQLALCHEMY_TRACK_MODIFICATIONS=False
           - export SQLALCHEMY_TRACK_MODIFICATIONS=False
           - export PROPAGATE_EXCEPTIONS=True
 
@@ -39,14 +39,103 @@ definitions:
 
     - step: &sonar-scan
         name: SonarScan
+        image: naeemark/sonar-scanner:latest
         script:
-          - echo 'SonarScan will happen here'
+          - if [[ 1 == $(cat continue_sonar) ]]; then bitbucket-sonar-scanner; else echo 'Skipped SonarScan'; fi
+
+    - step: &init-deploy-dev
+        name: Set Stage
+        script:
+          - echo dev > stage-prefix
+        artifacts:
+          - stage-prefix
+
+    - step: &init-deploy-stg
+        name: Set Stage
+        script:
+          - echo stg > stage-prefix
+        artifacts:
+          - stage-prefix
+
+    - step: &init-deploy-prod
+        name: Set Stage
+        script:
+          - echo prod > stage-prefix
+        artifacts:
+          - stage-prefix
+
+    - step: &pre-deploy
+        name: Pre-Deploy -> Dev
+        image: atlassian/default-image:2
+        script:
+          - export STAGE=$(cat stage-prefix)
+          - export DOCKER_IMAGE_NAME=$(echo ${ECR_REPOSITORY_TEMPLATE} | envsubst)
+          - export DOCKER_IMAGE_URI=${ECR_URI}/${DOCKER_IMAGE_NAME}
+
+          - echo ${DOCKER_IMAGE_NAME} > docker-image-name
+          - echo ${DOCKER_IMAGE_URI} > docker-image-uri
+          - echo ${CLUSTER_NAME_TEMPLATE} | envsubst > cluster-name
+          - echo ${SERVICE_NAME_TEMPLATE} | envsubst > service-name
+          - echo ${TASK_DEFINITION_TEMPLATE} | envsubst > task-definition.json
+          - if [[ $(curl -sL -w "%{http_code}\n" $SONAR_URL -o /dev/null -m 3) == 200 ]]; then echo 1 > continue_sonar; else echo 0 > continue_sonar ; fi
+        artifacts:
+          - docker-image-name
+          - cluster-name
+          - service-name
+          - task-definition.json
+          - continue_sonar
+
+    - step: &build_push_docker_image
+        name: Build, Push Docker Image
+        services:
+          - docker
+        caches:
+          - docker
+        script:
+          - export FLASK_RUN_PORT=5000
+          - export FLASK_ENV=development
+          - export STAGE=dev
+          - export FLASK_APP=src/app.py
+          - export FLASK_DEBUG=True
+          - export DEVELOPMENT=True
+
+          - export SQLALCHEMY_TRACK_MODIFICATIONS=False
+          - export SQLALCHEMY_TRACK_MODIFICATIONS=False
+          - export PROPAGATE_EXCEPTIONS=True
+
+          - export DB_URL=${DB_URL_DEV}
+          - export CLIENT_SECRET_KEY=this-is-client-secret-key
+          - export JWT_SECRET_KEY=this-is-jwt-secret-key
+          - export JWT_ERROR_MESSAGE_KEY=message
+          - export JWT_ACCESS_TOKEN_EXPIRES_MINUTES=30
+          - export JWT_REFRESH_TOKEN_EXPIRES_DAYS=7
+
+          - export DOCKER_IMAGE_NAME=$(cat docker-image-name)
+
+          - env
+
+          - docker build -t ${DOCKER_IMAGE_NAME} .
+          - docker inspect ${DOCKER_IMAGE_NAME}
+
+          - pipe: atlassian/aws-ecr-push-image:1.1.2
+            variables:
+              IMAGE_NAME: ${DOCKER_IMAGE_NAME}
+              TAGS: "build-${BITBUCKET_BUILD_NUMBER} ${BITBUCKET_TAG} $(date +%s) latest"
+        artifacts:
+          - cluster-name
+          - service-name
+          - task-definition.json
 
     - step: &deploy-dev
         name: Deploy -> dev
+        image: atlassian/default-image:2
         deployment: Development
         script:
-          - echo 'This will deploy to dev'
+          - pipe: atlassian/aws-ecs-deploy:1.1.3
+            variables:
+              CLUSTER_NAME: $(cat cluster-name)
+              SERVICE_NAME: $(cat service-name)
+              TASK_DEFINITION: "task-definition.json"
 
     - step: &deploy-stg
         name: Deploy -> stg
@@ -71,6 +160,12 @@ pipelines:
       - step: *build-lint-test
 
   branches:
+    cicd:
+      - step: *init-deploy-dev
+      - step: *pre-deploy
+      # - step: *sonar-scan
+      - step: *build_push_docker_image
+      - step: *deploy-dev
     develop:
       - step: *build-lint-test
       - step: *sonar-scan
