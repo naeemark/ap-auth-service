@@ -8,8 +8,17 @@ from src.utils.constant.rules import password_policy
 
 def validate_register_user_data(data=None):
     """Validates data provided for new user register"""
-    validate_email(data["email"])
-    validate_password_data_param(password_param=data["password"])
+    name, email, password = data["name"], data["email"], data["password"]
+    validate_name(name=name)
+    validate_email(email)
+    validate_password_data_param(password_param=password)
+
+
+def validate_name(name=None):
+    """Validates Name"""
+    name_string = name.replace(" ", "")
+    if not name_string.isalpha() or not len(name_string) > 2:
+        raise ValueError("`Name` is not valid")
 
 
 def validate_password_data_param(password_param=None):

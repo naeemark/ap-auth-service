@@ -3,7 +3,6 @@
 """
 import bcrypt
 from email_validator import EmailNotValidError
-from flask_jwt_extended import fresh_jwt_required
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import get_raw_jwt
 from flask_jwt_extended import jwt_required
@@ -29,6 +28,7 @@ from src.utils.response_builder import get_success_response
 from src.utils.token_manager import blacklist_token
 from src.utils.token_manager import get_jwt_tokens
 from src.utils.utils import add_parser_argument
+from src.utils.utils import add_parser_headers_argument
 from src.validators.common import check_missing_properties
 from src.validators.user import validate_password_data_param
 from src.validators.user import validate_register_user_data
@@ -40,10 +40,12 @@ class RegisterUser(Resource):
     """
 
     request_parser = reqparse.RequestParser()
+    add_parser_headers_argument(parser=request_parser, arg_name="Device-ID")
+    add_parser_argument(parser=request_parser, arg_name="name")
     add_parser_argument(parser=request_parser, arg_name="email")
     add_parser_argument(parser=request_parser, arg_name="password")
 
-    @jwt_required
+    # @jwt_required
     def post(self):
         """create new user"""
         try:
@@ -52,21 +54,17 @@ class RegisterUser(Resource):
 
             validate_register_user_data(data=data)
 
-            email, password = data["email"], data["password"]
-            password = password.encode()
+            device_id = data["Device-ID"]
+            name, email, password = data["name"], data["email"], data["password"].encode()
+
             # To-Do need to write the details of the salt
             hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
 
             # creates and saves a new object
-            user = UserModel(email, hashed_password)
+            user = UserModel(email, hashed_password, name)
             user.save_to_db()
 
-            payload = create_payload(get_jwt_identity(), user)
-            response_data = get_jwt_tokens(payload=payload)
-            response_data["user"] = {"email": user.email}
-
-            # blacklist Header JWT accessToken
-            blacklist_token(get_raw_jwt())
+            response_data = create_response_data(device_id, user)
             return get_success_response(status_code=201, message=USER_CREATION, data=response_data)
         except IntegrityError:
             return get_error_response(status_code=409, message=DUPLICATE_USER)
@@ -87,27 +85,26 @@ class LoginUser(Resource):
     """
 
     request_parser = reqparse.RequestParser(bundle_errors=True)
+    add_parser_headers_argument(parser=request_parser, arg_name="Device-ID")
     add_parser_argument(parser=request_parser, arg_name="email")
     add_parser_argument(parser=request_parser, arg_name="password")
 
-    @jwt_required
+    # @jwt_required
     def post(self):
         """
             Returns a new Token
         """
         try:
-
             data = self.request_parser.parse_args()
             check_missing_properties(data.items())
+
+            device_id = data["Device-ID"]
             user = UserModel.find_by_email(data["email"])
 
             if user and bcrypt.checkpw(data["password"].encode(), user.password):
-                payload = create_payload(get_jwt_identity(), user)
-                response_data = get_jwt_tokens(payload=payload)
-                response_data["user"] = {"email": user.email}
-                # blacklist Header JWT accessToken
-                blacklist_token(get_raw_jwt())
+                response_data = create_response_data(device_id, user)
                 return get_success_response(message=LOGGED_IN, data=response_data)
+
             return get_error_response(status_code=401, message=INVALID_CREDENTIAL)
         except (OperationalError, RedisConnectionUser) as error:
             error = DATABASE_CONNECTION if isinstance(error, OperationalError) else str(error)
@@ -124,7 +121,7 @@ class ChangePassword(Resource):
     request_parser = reqparse.RequestParser()
     add_parser_argument(parser=request_parser, arg_name="new_password")
 
-    @fresh_jwt_required
+    @jwt_required
     def put(self):
         """
             Updates the Model
@@ -161,7 +158,7 @@ class LogoutUser(Resource):
     logout user
     """
 
-    @fresh_jwt_required
+    @jwt_required
     def post(self):
         """
         logout the user through jti of token ,
@@ -177,9 +174,13 @@ class LogoutUser(Resource):
             return get_error_response(status_code=503, message=REDIS_CONNECTION)
 
 
-def create_payload(jwt_identity, user):
-    """Common Method to create payload"""
-    payload = {"user": {"email": user.email}}
-    if "deviceId" in jwt_identity:
-        payload["deviceId"] = jwt_identity["deviceId"]
-    return payload
+def create_response_data(device_id=None, user=None):
+    """Common Method to create response data"""
+
+    user_data = {"email": user.email, "name": user.name}
+
+    payload = {"user": user_data, "deviceId": device_id}
+    response_data = get_jwt_tokens(payload=payload)
+
+    response_data["user"] = user_data
+    return response_data

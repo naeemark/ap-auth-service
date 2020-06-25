@@ -22,7 +22,7 @@ def new_user():
     """
         Creates a new user
     """
-    user = UserModel("patkennedy79@gmail.com", "FlaskIsAwesome")
+    user = UserModel("patkennedy79@gmail.com", "FlaskIsAwesome", "Flask Developer")
     return user
 
 
@@ -87,8 +87,8 @@ def test_database():
         db.create_all()
 
         # create user data objects
-        user1 = UserModel(email="abc@gmail.com", password=bcrypt.hashpw(b"123abc@", bcrypt.gensalt()))
-        user2 = UserModel(email="abcd@gmail.com", password=bcrypt.hashpw(b"PaSsWoRd", bcrypt.gensalt()),)
+        user1 = UserModel(email="abc@gmail.com", password=bcrypt.hashpw(b"123abc@", bcrypt.gensalt()), name="Test")
+        user2 = UserModel(email="abcd@gmail.com", password=bcrypt.hashpw(b"PaSsWoRd", bcrypt.gensalt()), name="Test")
 
         # Add users to database
         db.session.add(user1)
