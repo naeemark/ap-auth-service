@@ -74,8 +74,8 @@ class RegisterUser(Resource):
             return get_error_response(status_code=503, message=error)
         except EmailNotValidError as error:
             return get_error_response(status_code=412, message=str(error), error=email_not_valid_412)
-        except (LookupError, TypeError) as lookup_error:
-            return get_error_response(status_code=400, message=str(lookup_error))
+        except (LookupError, TypeError) as error:
+            return get_error_response(status_code=400, message=str(error))
         except ValueError as error:
             return get_error_response(status_code=412, message=str(error))
 
