@@ -2,9 +2,9 @@
   Response Messages Constants
 """
 
-USER_CREATION = "User created successfully."
+USER_CREATION = "User Register Successful"
 UPDATED_PASSWORD = "Password updated successfully"
-LOGGED_IN = "successfully logged in"
+LOGGED_IN = "User Login Successful"
 REFRESH_TOKEN_REVOKED = "Refresh token revoked successfully"
 LOGOUT = "Successfully logged out"
 SESSION_START = "Start Session"
