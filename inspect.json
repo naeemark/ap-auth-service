@@ -1,21 +1,24 @@
 [
     {
-        "Id": "sha256:bf227b7bbd1e366a190003d6b58a005df4f6c1d72c979b5d4336af82d6362e6e",
+        "Id": "sha256:81227145905604ec152db8d922c485f040120174045bce00b1b0cf25b056a2e2",
         "RepoTags": [
             "test-1:latest"
         ],
         "RepoDigests": [],
-        "Parent": "sha256:042503113b3956b41456a57f7c615a222c9f1eba9b56e2f00202568b566c442a",
+        "Parent": "sha256:361419a553cf02c528648e5513bbb06198ca471edbd3670acf02cccda134abb0",
         "Comment": "",
-        "Created": "2020-06-28T04:21:37.9794036Z",
-        "Container": "69f56129326a2374a6a46bc7d1a1fdbb9f600b3f5a306498fc7f583bd7fab0ec",
+        "Created": "2020-06-28T05:02:56.1497625Z",
+        "Container": "3ec5227535130453c7c22574b1a751f6d049005ce41c9088c8bda0ab6c73594d",
         "ContainerConfig": {
-            "Hostname": "69f56129326a",
+            "Hostname": "3ec522753513",
             "Domainname": "",
             "User": "",
             "AttachStdin": false,
             "AttachStdout": false,
             "AttachStderr": false,
+            "ExposedPorts": {
+                "5000/tcp": {}
+            },
             "Tty": false,
             "OpenStdin": false,
             "StdinOnce": false,
@@ -27,7 +30,7 @@
                 "PYTHON_PIP_VERSION=20.1.1",
                 "PYTHON_GET_PIP_URL=https://github.com/pypa/get-pip/raw/eff16c878c7fd6b688b9b4c4267695cf1a0bf01b/get-pip.py",
                 "PYTHON_GET_PIP_SHA256=b3153ec0cf7b7bbf9556932aa37e4981c35dc2a2c501d70d91d2795aa532be79",
-                "FLASK_RUN_PORT="
+                "FLASK_RUN_PORT=5000"
             ],
             "Cmd": [
                 "/bin/sh",
@@ -35,7 +38,7 @@
                 "#(nop) ",
                 "CMD [\"/bin/sh\" \"-c\" \"gunicorn --chdir src app:app -w 2 --threads 2 -b 0.0.0.0:${FLASK_RUN_PORT}\"]"
             ],
-            "Image": "sha256:042503113b3956b41456a57f7c615a222c9f1eba9b56e2f00202568b566c442a",
+            "Image": "sha256:361419a553cf02c528648e5513bbb06198ca471edbd3670acf02cccda134abb0",
             "Volumes": null,
             "WorkingDir": "/app",
             "Entrypoint": null,
@@ -51,6 +54,9 @@
             "AttachStdin": false,
             "AttachStdout": false,
             "AttachStderr": false,
+            "ExposedPorts": {
+                "5000/tcp": {}
+            },
             "Tty": false,
             "OpenStdin": false,
             "StdinOnce": false,
@@ -62,14 +68,14 @@
                 "PYTHON_PIP_VERSION=20.1.1",
                 "PYTHON_GET_PIP_URL=https://github.com/pypa/get-pip/raw/eff16c878c7fd6b688b9b4c4267695cf1a0bf01b/get-pip.py",
                 "PYTHON_GET_PIP_SHA256=b3153ec0cf7b7bbf9556932aa37e4981c35dc2a2c501d70d91d2795aa532be79",
-                "FLASK_RUN_PORT="
+                "FLASK_RUN_PORT=5000"
             ],
             "Cmd": [
                 "/bin/sh",
                 "-c",
                 "gunicorn --chdir src app:app -w 2 --threads 2 -b 0.0.0.0:${FLASK_RUN_PORT}"
             ],
-            "Image": "sha256:042503113b3956b41456a57f7c615a222c9f1eba9b56e2f00202568b566c442a",
+            "Image": "sha256:361419a553cf02c528648e5513bbb06198ca471edbd3670acf02cccda134abb0",
             "Volumes": null,
             "WorkingDir": "/app",
             "Entrypoint": null,
@@ -78,14 +84,14 @@
         },
         "Architecture": "amd64",
         "Os": "linux",
-        "Size": 262514731,
-        "VirtualSize": 262514731,
+        "Size": 262522949,
+        "VirtualSize": 262522949,
         "GraphDriver": {
             "Data": {
-                "LowerDir": "/var/lib/docker/overlay2/c64edd72ee286c589a8eb3afb1d147cf954b40440ac546161b4116dfe02c8e4a/diff:/var/lib/docker/overlay2/12d4e99001d96c5071a4dc8f261a2525e07a1c8087c2fbd087a8c473d12661c2/diff:/var/lib/docker/overlay2/ad173eb29b34ef337a34bdcface0e36a2627826acbe8e0b65c0b19cbee86c042/diff:/var/lib/docker/overlay2/74104402772a4575bc56f3cb1dd65711013605fa52b53a6df5c172044a90f66a/diff:/var/lib/docker/overlay2/74e831adbf33466d61d7c1a1815d0f87f942e9bdfaf62e41b48031acf1fe08fa/diff:/var/lib/docker/overlay2/081e662a01125510d18d40df870b7e05459b034115213b7e33d0fa65034b0304/diff:/var/lib/docker/overlay2/67aa91eb5f0f8d4ccaa25b3a3fc2a0a74aa24925c243a75296fc64d9512000bc/diff:/var/lib/docker/overlay2/06349871db6d7a2b78bdc3392b88d0d972e50220714c0bb758730b5daacebb7a/diff",
-                "MergedDir": "/var/lib/docker/overlay2/ad5b50f657d2b3ab0f1a1f52125e69fc8382bae3850640224a413eee4e5c1953/merged",
-                "UpperDir": "/var/lib/docker/overlay2/ad5b50f657d2b3ab0f1a1f52125e69fc8382bae3850640224a413eee4e5c1953/diff",
-                "WorkDir": "/var/lib/docker/overlay2/ad5b50f657d2b3ab0f1a1f52125e69fc8382bae3850640224a413eee4e5c1953/work"
+                "LowerDir": "/var/lib/docker/overlay2/291ed1b8814a22b4ddb2de07d24b5660ef595e488669f4967739fce4ff0c54e1/diff:/var/lib/docker/overlay2/311b38f05ce36a4a75ec7d62be1a35e796cce88b122590f6ae74c90b4412ea47/diff:/var/lib/docker/overlay2/7287cf8cabf91c087700b92e7e05bfcf84272a5c209b262186d7e46dc948860c/diff:/var/lib/docker/overlay2/74104402772a4575bc56f3cb1dd65711013605fa52b53a6df5c172044a90f66a/diff:/var/lib/docker/overlay2/74e831adbf33466d61d7c1a1815d0f87f942e9bdfaf62e41b48031acf1fe08fa/diff:/var/lib/docker/overlay2/081e662a01125510d18d40df870b7e05459b034115213b7e33d0fa65034b0304/diff:/var/lib/docker/overlay2/67aa91eb5f0f8d4ccaa25b3a3fc2a0a74aa24925c243a75296fc64d9512000bc/diff:/var/lib/docker/overlay2/06349871db6d7a2b78bdc3392b88d0d972e50220714c0bb758730b5daacebb7a/diff",
+                "MergedDir": "/var/lib/docker/overlay2/f192e2affbf6de6fca000f481bc4cf2767af608646c375c41b3a43c3bc731dd6/merged",
+                "UpperDir": "/var/lib/docker/overlay2/f192e2affbf6de6fca000f481bc4cf2767af608646c375c41b3a43c3bc731dd6/diff",
+                "WorkDir": "/var/lib/docker/overlay2/f192e2affbf6de6fca000f481bc4cf2767af608646c375c41b3a43c3bc731dd6/work"
             },
             "Name": "overlay2"
         },
@@ -97,14 +103,14 @@
                 "sha256:bad4d6453752c89e125c27d5c9e7856331944a78312c12cfb9eb8b455e1af7dc",
                 "sha256:c33230ddf4c12145102f5dfda02b9a43c6c841d10afea7c3dabb79220f79adfe",
                 "sha256:cab49e142fe00741b1a9f214c55b032611ef25df7a32c9876b9849ab326536ea",
-                "sha256:83c50dccfffb2471c742b8a502e6e7e4c516df8c44e455d233008e7928470f2b",
-                "sha256:ef020144156f6e9fa962b64fb96e929495a818e54dab1a50459898d4586e5e35",
-                "sha256:111eb2cd52f213dac7c3fbc2d995c00dbb39ac2777bb8911e474ec16ceaccc37",
-                "sha256:55b90e0ffeb9eb7d9fae27b68c6f4657a09f4eea4a81dd2173f4ab93106cffe1"
+                "sha256:1dbdc53618edf60b35a9bd0910b6e58d8a3012e76e148c6118b32ed42a2d1657",
+                "sha256:04fb4797e06d838e44f5801a10dc635b622b341e2b5738654f6eb8c2fbf1f359",
+                "sha256:b4802344e29ed7e666b08c0b94638838fcbd46e2741c44c38ffe40617a8c826e",
+                "sha256:ea228ab0d0edd1e44c278df62cbe25864531b45c8aabfa6c119adce6bce6cb23"
             ]
         },
         "Metadata": {
-            "LastTagTime": "2020-06-28T04:21:38.0161395Z"
+            "LastTagTime": "2020-06-28T05:02:56.1886902Z"
         }
     }
 ]

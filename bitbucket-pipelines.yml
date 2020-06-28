@@ -104,10 +104,10 @@ definitions:
           - env
           - docker build -t ${DOCKER_IMAGE_NAME} .
           - docker inspect ${DOCKER_IMAGE_NAME}
-        #   - pipe: atlassian/aws-ecr-push-image:1.1.2
-        #     variables:
-        #       IMAGE_NAME: ${DOCKER_IMAGE_NAME}
-        #       TAGS: "build-${BITBUCKET_BUILD_NUMBER} ${BITBUCKET_TAG} $(date +%s) latest"
+          - pipe: atlassian/aws-ecr-push-image:1.1.2
+            variables:
+              IMAGE_NAME: ${DOCKER_IMAGE_NAME}
+              TAGS: "build-${BITBUCKET_BUILD_NUMBER} ${BITBUCKET_TAG} $(date +%s) latest"
         # artifacts:
         #   - cluster-name
         #   - service-name
@@ -159,7 +159,7 @@ pipelines:
       # - step: *build-lint-test
       # - step: *sonar-scan
       - step: *build_push_docker_image
-      # - step: *deploy-dev
+      - step: *deploy-dev
     develop:
       - step: *build-lint-test
       - step: *sonar-scan
