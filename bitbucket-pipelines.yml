@@ -50,7 +50,7 @@ definitions:
           - echo "export SERVICE_NAME=$(echo ${SERVICE_NAME_TEMPLATE} | envsubst)" >> env-vars-file
 
           - while read line; do $line; done < env-vars-file
-          # - export APP_ENV_VARS=$(echo ${APP_ENV_VARS} | envsubst)
+          - export APP_ENV_VARS=$(echo ${APP_ENV_VARS} | envsubst)
           - echo ${TASK_DEFINITION_TEMPLATE} | envsubst > task-definition.json
 
           - if [[ $(curl -sL -w "%{http_code}\n" $SONAR_URL -o /dev/null -m 3) == 200 ]]; then echo 1 > continue_sonar; else echo 0 > continue_sonar ; fi
@@ -93,9 +93,9 @@ definitions:
           - docker
         script:
           - while read line; do $line; done < env-vars-file
-          - docker build -t ${DOCKER_IMAGE_NAME} .
-          - docker inspect ${DOCKER_IMAGE_NAME}
           - cat task-definition.json
+          # - docker build -t ${DOCKER_IMAGE_NAME} .
+          # - docker inspect ${DOCKER_IMAGE_NAME}
           # - pipe: atlassian/aws-ecr-push-image:1.1.2
           #   variables:
           #     IMAGE_NAME: ${DOCKER_IMAGE_NAME}
