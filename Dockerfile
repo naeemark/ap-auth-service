@@ -13,4 +13,4 @@ ADD . /app
 
 EXPOSE $FLASK_RUN_PORT
 
-CMD flask run --host=0.0.0.0
+CMD gunicorn --chdir src app:app -w 2 --threads 2 -b 0.0.0.0:${FLASK_RUN_PORT}

@@ -47,6 +47,7 @@ bcrypt = "*"
 psycopg2-binary = "*"
 pytest-cov = "*"
 redis = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.8"

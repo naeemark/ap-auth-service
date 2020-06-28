@@ -32,6 +32,7 @@ definitions:
           - while read line; do $line; done < stage-prefixes
           - env
 
+          - echo "export SERVICE_NAME=ap-auth-service" >> env-vars-file
           - echo "export STAGE=${STAGE}" >> env-vars-file
           - echo "export ENV=${ENV}" >> env-vars-file
           - echo "export FLASK_ENV=${ENV}" >> env-vars-file
@@ -60,7 +61,7 @@ definitions:
 
     - step: &build-lint-test
         name: Build -> Lint -> Test
-        image: python:3.8.3
+        image: python:3.8.3-slim
         caches:
           - pip
         script:
@@ -101,8 +102,8 @@ definitions:
 
           - while read line; do $line; done < env-vars-file
           - env
-        #   - docker build -t ${DOCKER_IMAGE_NAME} .
-        #   - docker inspect ${DOCKER_IMAGE_NAME}
+          - docker build -t ${DOCKER_IMAGE_NAME} .
+          - docker inspect ${DOCKER_IMAGE_NAME}
         #   - pipe: atlassian/aws-ecr-push-image:1.1.2
         #     variables:
         #       IMAGE_NAME: ${DOCKER_IMAGE_NAME}
