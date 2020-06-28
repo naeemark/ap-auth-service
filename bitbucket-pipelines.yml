@@ -30,7 +30,6 @@ definitions:
         script:
           - while read line; do $line; done < stage-prefixes
 
-          - echo "export SERVICE_NAME=ap-auth-service" >> env-vars-file
           - echo "export STAGE=${STAGE}" >> env-vars-file
           - echo "export ENV=${ENV}" >> env-vars-file
           - echo "export FLASK_ENV=${ENV}" >> env-vars-file
@@ -141,6 +140,10 @@ definitions:
 pipelines:
   default:
     - step: *build-lint-test
+
+  pull-requests:
+    "**":
+      - step: *build-lint-test
 
   branches:
     develop:
