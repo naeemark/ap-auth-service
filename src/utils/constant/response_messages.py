@@ -8,8 +8,8 @@ UPDATED_PASSWORD = "Password updated successfully"
 LOGGED_IN = "User Login Successful"
 REFRESH_TOKEN_REVOKED = "Refresh token revoked successfully"
 LOGOUT = "Successfully logged out"
-SESSION_START = "Start Session"
-REFRESH_TOKEN = "Refresh Session"
+REFRESH_SESSION = "Refresh Session"
+VALIDATE_SESSION = "Validate Session"
 
 HEADERS_INCORRECT = "Invalid Headers"
 REDIS_CONNECTION = "Redis Connectivity Error: {}".format(os.environ["REDIS_HOST"])
