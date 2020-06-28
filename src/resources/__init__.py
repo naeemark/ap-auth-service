@@ -4,6 +4,8 @@ from src.resources.health import Health
 from src.resources.session import RefreshSession
 from src.resources.session import ValidateSession
 from src.resources.user.change_password import ChangePassword
+from src.resources.user.init_reset_password import InitResetPassword
+from src.resources.user.init_verify_email import InitVerifyEmail
 from src.resources.user.login import LoginUser
 from src.resources.user.logout import LogoutUser
 from src.resources.user.register import RegisterUser
@@ -68,6 +70,10 @@ def initialize_resources(app):
     api.add_resource(LoginUser, "/user/login")
     api.add_resource(ChangePassword, "/user/changePassword")
     api.add_resource(LogoutUser, "/user/logout")
+
+    # Adds resources for Auth Entity
+    api.add_resource(InitResetPassword, "/user/initResetPassword")
+    api.add_resource(InitVerifyEmail, "/user/initVerifyEmail")
 
     # Adds resources for Auth Entity
     api.add_resource(RefreshSession, "/session/refresh")

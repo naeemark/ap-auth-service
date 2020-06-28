@@ -49,7 +49,7 @@ class ValidateSession(Resource):
 
     def post(self):
         """
-         Returns access and refresh token
+         Returns success if accessToken is valid
         """
         try:
             data = self.request_parser.parse_args()
