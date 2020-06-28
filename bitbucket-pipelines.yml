@@ -92,7 +92,6 @@ definitions:
           - docker
         script:
           - while read line; do $line; done < env-vars-file
-          - env
           - docker build -t ${DOCKER_IMAGE_NAME} .
           - docker inspect ${DOCKER_IMAGE_NAME}
           - pipe: atlassian/aws-ecr-push-image:1.1.2
