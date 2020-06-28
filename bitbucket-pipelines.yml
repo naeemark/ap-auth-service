@@ -51,6 +51,8 @@ definitions:
           - echo "export DOCKER_IMAGE_URI=${DOCKER_IMAGE_URI}" >> env-vars-file
           - echo "export CLUSTER_NAME=$(echo ${CLUSTER_NAME_TEMPLATE} | envsubst)" >> env-vars-file
           - echo "export SERVICE_NAME=$(echo ${SERVICE_NAME_TEMPLATE} | envsubst)" >> env-vars-file
+
+          - while read line; do $line; done < env-vars-file
           - echo ${TASK_DEFINITION_TEMPLATE} | envsubst > task-definition.json
 
           - if [[ $(curl -sL -w "%{http_code}\n" $SONAR_URL -o /dev/null -m 3) == 200 ]]; then echo 1 > continue_sonar; else echo 0 > continue_sonar ; fi
