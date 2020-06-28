@@ -61,7 +61,7 @@ definitions:
 
     - step: &build-lint-test
         name: Build -> Lint -> Test
-        image: python:3.8.3-slim
+        image: python:3.8.3
         caches:
           - pip
         script:
