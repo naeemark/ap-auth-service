@@ -49,7 +49,8 @@ definitions:
           - echo "export CLUSTER_NAME=$(echo ${CLUSTER_NAME_TEMPLATE} | envsubst)" >> env-vars-file
           - echo "export SERVICE_NAME=$(echo ${SERVICE_NAME_TEMPLATE} | envsubst)" >> env-vars-file
 
-          - export APP_ENV_VARS=$(echo ${APP_ENV_VARS} | envsubst)
+          - while read line; do $line; done < env-vars-file
+          # - export APP_ENV_VARS=$(echo ${APP_ENV_VARS} | envsubst)
           - echo ${TASK_DEFINITION_TEMPLATE} | envsubst > task-definition.json
 
           - if [[ $(curl -sL -w "%{http_code}\n" $SONAR_URL -o /dev/null -m 3) == 200 ]]; then echo 1 > continue_sonar; else echo 0 > continue_sonar ; fi
@@ -94,10 +95,11 @@ definitions:
           - while read line; do $line; done < env-vars-file
           - docker build -t ${DOCKER_IMAGE_NAME} .
           - docker inspect ${DOCKER_IMAGE_NAME}
-          - pipe: atlassian/aws-ecr-push-image:1.1.2
-            variables:
-              IMAGE_NAME: ${DOCKER_IMAGE_NAME}
-              TAGS: "build-${BITBUCKET_BUILD_NUMBER} ${BITBUCKET_TAG} $(date +%s) latest"
+          - cat task-definition.json
+          # - pipe: atlassian/aws-ecr-push-image:1.1.2
+          #   variables:
+          #     IMAGE_NAME: ${DOCKER_IMAGE_NAME}
+          #     TAGS: "build-${BITBUCKET_BUILD_NUMBER} ${BITBUCKET_TAG} $(date +%s) latest"
 
     - step: &deploy-dev
         name: Deploy -> Development
@@ -148,10 +150,10 @@ pipelines:
     develop:
       - step: *init-deploy-dev
       - step: *pre-deploy
-      - step: *build-lint-test
-      - step: *sonar-scan
+      # - step: *build-lint-test
+      # - step: *sonar-scan
       - step: *build_push_docker_image
-      - step: *deploy-dev
+      # - step: *deploy-dev
     master:
       - step: *init-deploy-stg
       - step: *pre-deploy
