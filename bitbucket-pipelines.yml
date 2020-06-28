@@ -62,9 +62,6 @@ definitions:
         script:
           - while read line; do $line; done < env-vars-file
 
-          - export STAGE=test
-          - export ENV=testing
-
           - pip install pipenv
           - pipenv install --dev
           # Running Lint Analysis
