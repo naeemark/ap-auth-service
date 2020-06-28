@@ -1,22 +1,73 @@
 definitions:
   steps:
+    - step: &init-deploy-dev
+        name: Set Stage
+        script:
+          - echo "export STAGE=dev" >> stage-prefixes
+          - echo "export ENV=development" >> stage-prefixes
+        artifacts:
+          - stage-prefixes
+
+    - step: &init-deploy-stg
+        name: Set Stage
+        script:
+          - echo stg > stage-prefix
+        artifacts:
+          - stage-prefix
+
+    - step: &init-deploy-prod
+        name: Set Stage
+        script:
+          - echo prod > stage-prefix
+        artifacts:
+          - stage-prefix
+
+    - step: &pre-deploy
+        name: Pre-Deploy -> Dev
+        image: atlassian/default-image:2
+        script:
+          - env
+          - while read line; do $line; done < stage-prefixes
+          - env
+
+          - echo "export STAGE=${STAGE}" >> env-vars-file
+          - echo "export ENV=${ENV}" >> env-vars-file
+          - echo "export FLASK_ENV=${ENV}" >> env-vars-file
+          - echo "export FLASK_RUN_PORT=5000" >> env-vars-file
+          - echo "export FLASK_APP=src/app.py" >> env-vars-file
+          - echo "export FLASK_DEBUG=True" >> env-vars-file
+
+          - echo "export SQLALCHEMY_TRACK_MODIFICATIONS=False" >> env-vars-file
+          - echo "export PROPAGATE_EXCEPTIONS=True" >> env-vars-file
+          - echo "export DB_URL=${DB_URL_DEV}" >> env-vars-file
+
+          - export DOCKER_IMAGE_NAME=$(echo ${ECR_REPOSITORY_TEMPLATE} | envsubst)
+          - export DOCKER_IMAGE_URI=${ECR_URI}/${DOCKER_IMAGE_NAME}
+
+          - echo "export DOCKER_IMAGE_NAME=${DOCKER_IMAGE_NAME}" >> env-vars-file
+          - echo "export DOCKER_IMAGE_URI=${DOCKER_IMAGE_URI}" >> env-vars-file
+          - echo "export CLUSTER_NAME=$(echo ${CLUSTER_NAME_TEMPLATE} | envsubst)" >> env-vars-file
+          - echo "export SERVICE_NAME=$(echo ${SERVICE_NAME_TEMPLATE} | envsubst)" >> env-vars-file
+          - echo ${TASK_DEFINITION_TEMPLATE} | envsubst > task-definition.json
+
+          - if [[ $(curl -sL -w "%{http_code}\n" $SONAR_URL -o /dev/null -m 3) == 200 ]]; then echo 1 > continue_sonar; else echo 0 > continue_sonar ; fi
+        artifacts:
+          - env-vars-file
+          - task-definition.json
+          - continue_sonar
+
     - step: &build-lint-test
         name: Build -> Lint -> Test
         image: python:3.8.3
         caches:
           - pip
         script:
-          - export FLASK_RUN_PORT=5000
-          - export FLASK_ENV=development
+          - env
+          - while read line; do $line; done < env-vars-file
+          - env
           - export STAGE=dev
           - export ENV=testing
-          - export FLASK_APP=src/app.py
-          - export FLASK_DEBUG=True
 
-          - export SQLALCHEMY_TRACK_MODIFICATIONS=False
-          - export PROPAGATE_EXCEPTIONS=True
-
-          - export DB_URL=postgresql://user:password@127.0.0.1:5432/my-db-please-update
           - export CLIENT_SECRET_KEY=this-is-client-secret-key
           - export JWT_SECRET_KEY=this-is-jwt-secret-key
           - export JWT_ACCESS_TOKEN_EXPIRES_MINUTES=30
@@ -43,48 +94,6 @@ definitions:
         script:
           - if [[ 1 == $(cat continue_sonar) ]]; then bitbucket-sonar-scanner; else echo 'Skipped SonarScan'; fi
 
-    - step: &init-deploy-dev
-        name: Set Stage
-        script:
-          - echo dev > stage-prefix
-        artifacts:
-          - stage-prefix
-
-    - step: &init-deploy-stg
-        name: Set Stage
-        script:
-          - echo stg > stage-prefix
-        artifacts:
-          - stage-prefix
-
-    - step: &init-deploy-prod
-        name: Set Stage
-        script:
-          - echo prod > stage-prefix
-        artifacts:
-          - stage-prefix
-
-    - step: &pre-deploy
-        name: Pre-Deploy -> Dev
-        image: atlassian/default-image:2
-        script:
-          - export STAGE=$(cat stage-prefix)
-          - export DOCKER_IMAGE_NAME=$(echo ${ECR_REPOSITORY_TEMPLATE} | envsubst)
-          - export DOCKER_IMAGE_URI=${ECR_URI}/${DOCKER_IMAGE_NAME}
-
-          - echo ${DOCKER_IMAGE_NAME} > docker-image-name
-          - echo ${DOCKER_IMAGE_URI} > docker-image-uri
-          - echo ${CLUSTER_NAME_TEMPLATE} | envsubst > cluster-name
-          - echo ${SERVICE_NAME_TEMPLATE} | envsubst > service-name
-          - echo ${TASK_DEFINITION_TEMPLATE} | envsubst > task-definition.json
-          - if [[ $(curl -sL -w "%{http_code}\n" $SONAR_URL -o /dev/null -m 3) == 200 ]]; then echo 1 > continue_sonar; else echo 0 > continue_sonar ; fi
-        artifacts:
-          - docker-image-name
-          - cluster-name
-          - service-name
-          - task-definition.json
-          - continue_sonar
-
     - step: &build_push_docker_image
         name: Build, Push Docker Image
         services:
@@ -92,39 +101,38 @@ definitions:
         caches:
           - docker
         script:
-          - export FLASK_RUN_PORT=5000
-          - export FLASK_ENV=development
-          - export STAGE=dev
-          - export FLASK_APP=src/app.py
-          - export FLASK_DEBUG=True
-          - export DEVELOPMENT=True
-
-          - export SQLALCHEMY_TRACK_MODIFICATIONS=False
-          - export SQLALCHEMY_TRACK_MODIFICATIONS=False
-          - export PROPAGATE_EXCEPTIONS=True
-
-          - export DB_URL=${DB_URL_DEV}
-          - export CLIENT_SECRET_KEY=this-is-client-secret-key
-          - export JWT_SECRET_KEY=this-is-jwt-secret-key
-          - export JWT_ERROR_MESSAGE_KEY=message
-          - export JWT_ACCESS_TOKEN_EXPIRES_MINUTES=30
-          - export JWT_REFRESH_TOKEN_EXPIRES_DAYS=7
-
-          - export DOCKER_IMAGE_NAME=$(cat docker-image-name)
-
           - env
-
-          - docker build -t ${DOCKER_IMAGE_NAME} .
-          - docker inspect ${DOCKER_IMAGE_NAME}
-
-          - pipe: atlassian/aws-ecr-push-image:1.1.2
-            variables:
-              IMAGE_NAME: ${DOCKER_IMAGE_NAME}
-              TAGS: "build-${BITBUCKET_BUILD_NUMBER} ${BITBUCKET_TAG} $(date +%s) latest"
-        artifacts:
-          - cluster-name
-          - service-name
-          - task-definition.json
+          - while read line; do $line; done < env-vars-file
+          - env
+          - cat task-definition.json
+          - cat continue_sonar
+        #   - export FLASK_RUN_PORT=5000
+        #   - export FLASK_ENV=development
+        #   - export STAGE=dev
+        #   - export FLASK_APP=src/app.py
+        #   - export FLASK_DEBUG=True
+        #   - export DEVELOPMENT=True
+        #   - export SQLALCHEMY_TRACK_MODIFICATIONS=False
+        #   - export SQLALCHEMY_TRACK_MODIFICATIONS=False
+        #   - export PROPAGATE_EXCEPTIONS=True
+        #   - export DB_URL=${DB_URL_DEV}
+        #   - export CLIENT_SECRET_KEY=this-is-client-secret-key
+        #   - export JWT_SECRET_KEY=this-is-jwt-secret-key
+        #   - export JWT_ERROR_MESSAGE_KEY=message
+        #   - export JWT_ACCESS_TOKEN_EXPIRES_MINUTES=30
+        #   - export JWT_REFRESH_TOKEN_EXPIRES_DAYS=7
+        #   - export DOCKER_IMAGE_NAME=$(cat docker-image-name)
+        #   - env
+        #   - docker build -t ${DOCKER_IMAGE_NAME} .
+        #   - docker inspect ${DOCKER_IMAGE_NAME}
+        #   - pipe: atlassian/aws-ecr-push-image:1.1.2
+        #     variables:
+        #       IMAGE_NAME: ${DOCKER_IMAGE_NAME}
+        #       TAGS: "build-${BITBUCKET_BUILD_NUMBER} ${BITBUCKET_TAG} $(date +%s) latest"
+        # artifacts:
+        #   - cluster-name
+        #   - service-name
+        #   - task-definition.json
 
     - step: &deploy-dev
         name: Deploy -> dev
@@ -163,9 +171,10 @@ pipelines:
     cicd:
       - step: *init-deploy-dev
       - step: *pre-deploy
+      - step: *build-lint-test
       # - step: *sonar-scan
       - step: *build_push_docker_image
-      - step: *deploy-dev
+      # - step: *deploy-dev
     develop:
       - step: *build-lint-test
       - step: *sonar-scan

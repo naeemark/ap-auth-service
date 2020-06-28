@@ -1,6 +1,7 @@
 """
   Response Messages Constants
 """
+import os
 
 USER_CREATION = "User Register Successful"
 UPDATED_PASSWORD = "Password updated successfully"
@@ -11,12 +12,12 @@ SESSION_START = "Start Session"
 REFRESH_TOKEN = "Refresh Session"
 
 HEADERS_INCORRECT = "Invalid Headers"
-REDIS_CONNECTION = "Redis Server Error"
+REDIS_CONNECTION = "Redis Connectivity Error: {}".format(os.environ["REDIS_HOST"])
 HEADERS_REQUIRED = "'{properties}' is required"
 INVALID_CREDENTIAL = "Invalid email or password"
-DATABASE_CONNECTION = "Database Server Error"
+DATABASE_CONNECTION = "Database Connectivity Error: {}".format(os.environ["DB_URL"])
 DUPLICATE_USER = "Email already registered"
-REDIS_CONNECTION = "Redis Server Error"
+REDIS_CONNECTION = "Redis Connectivity Error: {}".format(os.environ["REDIS_HOST"])
 TOKEN_EXPIRED = "Token has expired"
 TOKEN_REVOKED = "Token has been revoked"
 FRESH_TOKEN = "Login required"
