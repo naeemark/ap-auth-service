@@ -93,13 +93,12 @@ definitions:
           - docker
         script:
           - while read line; do $line; done < env-vars-file
-          - cat task-definition.json
-          # - docker build -t ${DOCKER_IMAGE_NAME} .
-          # - docker inspect ${DOCKER_IMAGE_NAME}
-          # - pipe: atlassian/aws-ecr-push-image:1.1.2
-          #   variables:
-          #     IMAGE_NAME: ${DOCKER_IMAGE_NAME}
-          #     TAGS: "build-${BITBUCKET_BUILD_NUMBER} ${BITBUCKET_TAG} $(date +%s) latest"
+          - docker build -t ${DOCKER_IMAGE_NAME} .
+          - docker inspect ${DOCKER_IMAGE_NAME}
+          - pipe: atlassian/aws-ecr-push-image:1.1.2
+            variables:
+              IMAGE_NAME: ${DOCKER_IMAGE_NAME}
+              TAGS: "build-${BITBUCKET_BUILD_NUMBER} ${BITBUCKET_TAG} $(date +%s) latest"
 
     - step: &deploy-dev
         name: Deploy -> Development
@@ -131,7 +130,6 @@ definitions:
         deployment: Production
         script:
           - while read line; do $line; done < env-vars-file
-          - echo ${TASK_DEFINITION_TEMPLATE} | envsubst > task-definition.json
           - pipe: atlassian/aws-ecs-deploy:1.1.3
             variables:
               CLUSTER_NAME: ${CLUSTER_NAME}
@@ -150,10 +148,10 @@ pipelines:
     develop:
       - step: *init-deploy-dev
       - step: *pre-deploy
-      # - step: *build-lint-test
-      # - step: *sonar-scan
+      - step: *build-lint-test
+      - step: *sonar-scan
       - step: *build_push_docker_image
-      # - step: *deploy-dev
+      - step: *deploy-dev
     master:
       - step: *init-deploy-stg
       - step: *pre-deploy
