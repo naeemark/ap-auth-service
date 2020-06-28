@@ -30,7 +30,6 @@ definitions:
         script:
           - while read line; do $line; done < stage-prefixes
 
-          - echo "export SERVICE_NAME=ap-auth-service" >> env-vars-file
           - echo "export STAGE=${STAGE}" >> env-vars-file
           - echo "export ENV=${ENV}" >> env-vars-file
           - echo "export FLASK_ENV=${ENV}" >> env-vars-file
@@ -50,9 +49,14 @@ definitions:
           - echo "export CLUSTER_NAME=$(echo ${CLUSTER_NAME_TEMPLATE} | envsubst)" >> env-vars-file
           - echo "export SERVICE_NAME=$(echo ${SERVICE_NAME_TEMPLATE} | envsubst)" >> env-vars-file
 
+          - while read line; do $line; done < env-vars-file
+          - export APP_ENV_VARS=$(echo ${APP_ENV_VARS} | envsubst)
+          - echo ${TASK_DEFINITION_TEMPLATE} | envsubst > task-definition.json
+
           - if [[ $(curl -sL -w "%{http_code}\n" $SONAR_URL -o /dev/null -m 3) == 200 ]]; then echo 1 > continue_sonar; else echo 0 > continue_sonar ; fi
         artifacts:
           - env-vars-file
+          - task-definition.json
           - continue_sonar
 
     - step: &build-lint-test
@@ -62,9 +66,6 @@ definitions:
           - pip
         script:
           - while read line; do $line; done < env-vars-file
-
-          - export STAGE=test
-          - export ENV=testing
 
           - pip install pipenv
           - pipenv install --dev
@@ -94,7 +95,7 @@ definitions:
           - while read line; do $line; done < env-vars-file
           - docker build -t ${DOCKER_IMAGE_NAME} .
           - docker inspect ${DOCKER_IMAGE_NAME}
-          - pipe: atlassian/aws-ecr-push-image:1.1.2
+          - pipe: atlassian/aws-ecr-push-image:1.1.3
             variables:
               IMAGE_NAME: ${DOCKER_IMAGE_NAME}
               TAGS: "build-${BITBUCKET_BUILD_NUMBER} ${BITBUCKET_TAG} $(date +%s) latest"
@@ -105,8 +106,7 @@ definitions:
         deployment: Development
         script:
           - while read line; do $line; done < env-vars-file
-          - echo ${TASK_DEFINITION_TEMPLATE} | envsubst > task-definition.json
-          - pipe: atlassian/aws-ecs-deploy:1.1.3
+          - pipe: atlassian/aws-ecs-deploy:1.1.4
             variables:
               CLUSTER_NAME: ${CLUSTER_NAME}
               SERVICE_NAME: ${SERVICE_NAME}
@@ -118,8 +118,7 @@ definitions:
         deployment: Staging
         script:
           - while read line; do $line; done < env-vars-file
-          - echo ${TASK_DEFINITION_TEMPLATE} | envsubst > task-definition.json
-          - pipe: atlassian/aws-ecs-deploy:1.1.3
+          - pipe: atlassian/aws-ecs-deploy:1.1.4
             variables:
               CLUSTER_NAME: ${CLUSTER_NAME}
               SERVICE_NAME: ${SERVICE_NAME}
@@ -131,8 +130,7 @@ definitions:
         deployment: Production
         script:
           - while read line; do $line; done < env-vars-file
-          - echo ${TASK_DEFINITION_TEMPLATE} | envsubst > task-definition.json
-          - pipe: atlassian/aws-ecs-deploy:1.1.3
+          - pipe: atlassian/aws-ecs-deploy:1.1.4
             variables:
               CLUSTER_NAME: ${CLUSTER_NAME}
               SERVICE_NAME: ${SERVICE_NAME}
@@ -141,6 +139,10 @@ definitions:
 pipelines:
   default:
     - step: *build-lint-test
+
+  pull-requests:
+    "**":
+      - step: *build-lint-test
 
   branches:
     develop:
