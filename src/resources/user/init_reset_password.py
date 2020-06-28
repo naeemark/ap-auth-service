@@ -19,7 +19,7 @@ class InitResetPassword(Resource):
 
     def post(self):
         """
-         Returns access and refresh token
+         Send email for reset password
         """
         try:
             data = self.request_parser.parse_args()
