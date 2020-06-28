@@ -22,8 +22,8 @@ repos:
         files: "^(?!examples/)"
         args: ["--application-directories", "src"]
 
-  - repo: https://gitlab.com/pycqa/flake8
-    rev: 3.8.1
+  - repo: https://github.com/PyCQA/flake8
+    rev: 3.8.2
     hooks:
       - id: flake8
         args: ["--max-line-length", "120"]
@@ -32,12 +32,16 @@ repos:
     rev: 19.10b0
     hooks:
       - id: black
+        args:
+          - "--line-length=120"
+        language_version: python3.8
 
   - repo: https://github.com/pre-commit/mirrors-pylint
     rev: v2.5.2
     hooks:
       - id: pylint
         args:
+          - "--max-line-length=120"
           - "--disable=R0201"
           - "--disable=E0401"
           - "--disable=R0903"

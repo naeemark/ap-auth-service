@@ -63,6 +63,7 @@ _NOTE_: `pre-commit run --all-files` should always be validated before doing a c
 
 - [Python 3.8](https://www.python.org/downloads/release/python-383/)
 - [VS Code](https://code.visualstudio.com/)
+- [redis](https://redis.io/)
 - [Flask](https://flask.palletsprojects.com/en/1.1.x/)
 - [Flask-JWT-Extended](https://pypi.org/project/Flask-JWT-Extended/)
 - [pipenv](https://pypi.org/project/pipenv/)

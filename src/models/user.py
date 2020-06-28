@@ -12,12 +12,14 @@ class UserModel(db.Model):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(80))
+    email = db.Column(db.String(255), unique=True)
     password = db.Column(db.LargeBinary())
+    name = db.Column(db.String(255))
 
-    def __init__(self, email, password):
+    def __init__(self, email, password, name):
         self.email = email
         self.password = password
+        self.name = name
 
     def save_to_db(self):
         """
@@ -37,7 +39,7 @@ class UserModel(db.Model):
         """
             Returns a json of self
         """
-        return {"username": self.email, "password": self.password}
+        return {"username": self.email, "password": self.password, "name": self.name}
 
     @classmethod
     def find_by_email(cls, email):
