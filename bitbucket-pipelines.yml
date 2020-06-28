@@ -121,8 +121,8 @@ definitions:
           - while read line; do $line; done < env-vars-file
           - pipe: atlassian/aws-ecs-deploy:1.1.3
             variables:
-              CLUSTER_NAME: $(cat cluster-name)
-              SERVICE_NAME: $(cat service-name)
+              CLUSTER_NAME: ${CLUSTER_NAME}
+              SERVICE_NAME: ${SERVICE_NAME}
               TASK_DEFINITION: "task-definition.json"
 
     - step: &deploy-stg
