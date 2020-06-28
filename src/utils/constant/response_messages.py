@@ -11,7 +11,6 @@ LOGOUT = "Successfully logged out"
 REFRESH_SESSION = "Refresh Session"
 VALIDATE_SESSION = "Validate Session"
 
-HEADERS_INCORRECT = "Invalid Headers"
 REDIS_CONNECTION = "Redis Connectivity Error: {}".format(os.environ["REDIS_HOST"])
 HEADERS_REQUIRED = "'{properties}' is required"
 INVALID_CREDENTIAL = "Invalid email or password"

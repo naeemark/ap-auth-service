@@ -3,10 +3,10 @@ from flask_restful import Api
 from src.resources.health import Health
 from src.resources.session import RefreshSession
 from src.resources.session import ValidateSession
-from src.resources.user import ChangePassword
-from src.resources.user import LoginUser
-from src.resources.user import LogoutUser
-from src.resources.user import RegisterUser
+from src.resources.user.change_password import ChangePassword
+from src.resources.user.login import LoginUser
+from src.resources.user.logout import LogoutUser
+from src.resources.user.register import RegisterUser
 from src.utils.blacklist_manager import BlacklistManager
 from src.utils.constant.response_messages import FRESH_TOKEN
 from src.utils.constant.response_messages import TOKEN_EXPIRED
