@@ -156,7 +156,7 @@ pipelines:
     cicd:
       - step: *init-deploy-dev
       - step: *pre-deploy
-      - step: *build-lint-test
+      # - step: *build-lint-test
       # - step: *sonar-scan
       - step: *build_push_docker_image
       # - step: *deploy-dev
