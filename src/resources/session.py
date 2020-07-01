@@ -11,7 +11,7 @@ from src.utils.constant.response_messages import REFRESH_SESSION
 from src.utils.constant.response_messages import VALIDATE_SESSION
 from src.utils.response_builder import get_error_response
 from src.utils.response_builder import get_success_response
-from src.utils.token_manager import blacklist_token
+from src.utils.token_manager import blacklist_tokens
 from src.utils.token_manager import get_jwt_tokens
 from src.utils.utils import add_parser_argument
 from src.validators.common import check_missing_properties
@@ -31,7 +31,7 @@ class RefreshSession(Resource):
         try:
             if response_data:
                 # blacklist Header JWT refresh
-                blacklist_token(get_raw_jwt())
+                blacklist_tokens(get_raw_jwt())
                 return get_success_response(message=REFRESH_SESSION, data=response_data)
             return get_error_response()
         except RedisConnectionRefresh as error:
