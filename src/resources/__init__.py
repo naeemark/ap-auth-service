@@ -1,3 +1,4 @@
+from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from src.resources.health import Health
@@ -58,6 +59,9 @@ def initialize_resources(app):
     BlacklistManager.initialize_redis(app_config=app.config)
 
     api_prefix = "/api/v1"
+
+    # Allow Origins
+    CORS(app, resources={r"*": {"origins": "*"}})
 
     # Instantiates API
     api = Api(app=app, prefix=api_prefix)
