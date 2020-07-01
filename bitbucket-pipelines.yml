@@ -40,6 +40,7 @@ definitions:
           - echo "export SQLALCHEMY_TRACK_MODIFICATIONS=False" >> env-vars-file
           - echo "export PROPAGATE_EXCEPTIONS=True" >> env-vars-file
           - echo "export DB_URL=$(echo ${DB_URL_TEMPLATE} | envsubst)" >> env-vars-file
+          - echo "export REDIS_HOST=$(echo ${REDIS_HOST_TEMPLATE} | envsubst)" >> env-vars-file
 
           - export DOCKER_IMAGE_NAME=$(echo ${ECR_REPOSITORY_TEMPLATE} | envsubst)
           - export DOCKER_IMAGE_URI=${ECR_URI}/${DOCKER_IMAGE_NAME}
