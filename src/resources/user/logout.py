@@ -9,7 +9,7 @@ from src.utils.constant.response_messages import LOGOUT
 from src.utils.constant.response_messages import REDIS_CONNECTION
 from src.utils.response_builder import get_error_response
 from src.utils.response_builder import get_success_response
-from src.utils.token_manager import blacklist_token
+from src.utils.token_manager import blacklist_tokens
 
 
 class LogoutUser(Resource):
@@ -20,13 +20,12 @@ class LogoutUser(Resource):
     @jwt_required
     def post(self):
         """
-        logout the user through jti of token ,
-         jti is "JWT ID", a unique identifier for a JWT
+        logout the user through jti of token
         """
 
         try:
-            # blacklist Header JWT accessToken
-            blacklist_token(get_raw_jwt(), logout=True)
+            # blacklist JWT Tokens for the user
+            blacklist_tokens(get_raw_jwt())
             return get_success_response(message=LOGOUT)
         except (RedisConnectionUser, AttributeError) as error:
             print(error)

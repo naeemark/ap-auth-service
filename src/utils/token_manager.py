@@ -17,14 +17,11 @@ def get_jwt_tokens(payload=None, fresh=True):
     return {"accessToken": access_token, "refreshToken": refresh_token}
 
 
-def blacklist_token(payload, logout=False):
+def blacklist_tokens(raw_jwt):
     """common method to black list token"""
     blacklist_manager = BlacklistManager()
-    payload_properties = get_payload_properties(payload, logout)
-    expire_sec_access_token = get_expire_time_seconds(payload_properties["jwt_exp"])
-    blacklist_manager.revoke_token(payload_properties["identity"], payload_properties["jti"], expire_sec_access_token)
-    if logout:
-        expire_sec_refresh_token = get_expire_time_seconds(payload_properties["refreshTokenExpire"])
-        blacklist_manager.revoke_token(
-            payload_properties["identity"], payload_properties["refreshTokenId"], expire_sec_refresh_token
-        )
+    props = get_payload_properties(raw_jwt)
+    expire_sec_access_token = get_expire_time_seconds(props["jwt_exp"])
+    blacklist_manager.revoke_token(props["identity"], props["jti"], expire_sec_access_token)
+    refresh_expiry_sec = get_expire_time_seconds(props["refreshTokenExpire"])
+    blacklist_manager.revoke_token(props["identity"], props["refreshTokenId"], refresh_expiry_sec)
