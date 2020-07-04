@@ -25,7 +25,7 @@ class ChangePassword(Resource):
     """
 
     request_parser = reqparse.RequestParser()
-    add_parser_argument(parser=request_parser, arg_name="new_password")
+    add_parser_argument(parser=request_parser, arg_name="newPassword")
 
     @jwt_required
     def put(self):
@@ -39,7 +39,7 @@ class ChangePassword(Resource):
         try:
             user = UserModel.find_by_email(email)
             data = self.request_parser.parse_args()
-            new_password = data["new_password"]
+            new_password = data["newPassword"]
 
             check_missing_properties(data.items())
             validate_password_data_param(password_param=new_password)
