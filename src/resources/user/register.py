@@ -8,7 +8,7 @@ from flask_restful import Resource
 from redis.exceptions import ConnectionError as RedisConnectionUser
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.exc import OperationalError
-from src.models.user import UserModel
+from src.repositories.user import User
 from src.resources.user.common import create_response_data
 from src.utils.constant.response_messages import DATABASE_CONNECTION
 from src.utils.constant.response_messages import DUPLICATE_USER
@@ -47,12 +47,13 @@ class RegisterUser(Resource):
 
             # To-Do need to write the details of the salt
             hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
+            print(hashed_password)
 
             # creates and saves a new object
-            user = UserModel(email, hashed_password, name)
-            user.save_to_db()
+            user = User(email=email, name=name, password=hashed_password)
+            user.save()
 
-            response_data = create_response_data(device_id, user)
+            response_data = create_response_data(device_id, user.json())
             return get_success_response(status_code=201, message=USER_CREATION, data=response_data)
         except IntegrityError:
             return get_error_response(status_code=409, message=DUPLICATE_USER)
