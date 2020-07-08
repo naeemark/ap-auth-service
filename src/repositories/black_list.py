@@ -39,6 +39,11 @@ class Blacklist(DynaModel):
         """  Overridden Get """
         return super(Blacklist, cls).get(entity_hash_key=SLUG_ENTITY_HASH_KEY, token_id=token_id)
 
+    @classmethod
+    def exists(cls, token_id=None):
+        """  Checks if Token is Blacklisted """
+        return cls.get(token_id=token_id) is not None
+
     def json(self):
         """  Test """
         return {"token_id": self.token_id, "type": self.type, "time_to_live": self.time_to_live}

@@ -1,6 +1,7 @@
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
+from src.repositories.black_list import Blacklist
 from src.resources.health import Health
 from src.resources.session import RefreshSession
 from src.resources.session import ValidateSession
@@ -31,7 +32,7 @@ def initialize_jwt_manager(app):
 
     @jwt_manager.token_in_blacklist_loader
     def check_if_token_in_blacklist(decrypted_token):
-        return decrypted_token["jti"] in BlacklistManager().get_jti_list()
+        return Blacklist.exists(token_id=decrypted_token["jti"])
 
     @jwt_manager.revoked_token_loader
     def revoke_token_callback():
