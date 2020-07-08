@@ -2,12 +2,12 @@
   User Register Resource
 """
 import bcrypt
+from botocore.exceptions import ClientError
+from dynamorm.exceptions import HashKeyExists
 from email_validator import EmailNotValidError
 from flask_restful import reqparse
 from flask_restful import Resource
 from redis.exceptions import ConnectionError as RedisConnectionUser
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy.exc import OperationalError
 from src.repositories.user import User
 from src.resources.user.common import create_response_data
 from src.utils.constant.response_messages import DATABASE_CONNECTION
@@ -52,13 +52,14 @@ class RegisterUser(Resource):
             # creates and saves a new object
             user = User(email=email, name=name, password=hashed_password)
             user.save()
+            user.log()
 
             response_data = create_response_data(device_id, user.json())
             return get_success_response(status_code=201, message=USER_CREATION, data=response_data)
-        except IntegrityError:
+        except HashKeyExists:
             return get_error_response(status_code=409, message=DUPLICATE_USER)
-        except (OperationalError, RedisConnectionUser) as error:
-            error = DATABASE_CONNECTION if isinstance(error, OperationalError) else str(error)
+        except (RedisConnectionUser, ClientError) as error:
+            error = DATABASE_CONNECTION if "ResourceNotFoundException" in str(error) else str(error)
             return get_error_response(status_code=503, message=error)
         except EmailNotValidError as error:
             return get_error_response(status_code=412, message=str(error), error=email_not_valid_412)
