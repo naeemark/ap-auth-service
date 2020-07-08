@@ -18,13 +18,12 @@ class User(DynaModel):
 
         name = os.environ.get("DYNAMODB_TABLE_NAME_USERS")
         hash_key = "entity_hash_key"
-        range_key = "entity_sort_key"
+        range_key = "email"
 
     class Schema:
         """  Test """
 
         entity_hash_key = fields.String(default="#AP-USER#")
-        entity_sort_key = fields.Function(lambda obj: "#{}#".format(obj["email"]))
         email = fields.String(required=True, validate=validate_email)
         name = fields.String()
         password = fields.String()
@@ -49,8 +48,7 @@ class User(DynaModel):
     def get(cls, email=None):
         """  Overridden Get """
         entity_hash_key = "#AP-USER#"
-        entity_sort_key = "#{}#".format(email)
-        return super(User, cls).get(entity_hash_key=entity_hash_key, entity_sort_key=entity_sort_key)
+        return super(User, cls).get(entity_hash_key=entity_hash_key, email=email)
 
     def json(self):
         """  Test """

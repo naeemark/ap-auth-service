@@ -7,7 +7,7 @@ from flask_jwt_extended import jwt_required
 from flask_restful import reqparse
 from flask_restful import Resource
 from sqlalchemy.exc import OperationalError
-from src.models.user import UserModel
+from src.repositories.user import User
 from src.utils.constant.response_messages import CREDENTIAL_REQUIRED
 from src.utils.constant.response_messages import DATABASE_CONNECTION
 from src.utils.constant.response_messages import REUSE_PASSWORD_ERROR
@@ -37,18 +37,18 @@ class ChangePassword(Resource):
             return get_error_response(status_code=400, message=CREDENTIAL_REQUIRED)
         email = payload["user"]["email"]
         try:
-            user = UserModel.find_by_email(email)
             data = self.request_parser.parse_args()
-            new_password = data["newPassword"]
-
             check_missing_properties(data.items())
-            validate_password_data_param(password_param=new_password)
 
-            if bcrypt.checkpw(new_password.encode(), user.password):
+            new_password = data["newPassword"]
+            validate_password_data_param(password_param=new_password)
+            user = User.get(email=email)
+
+            if bcrypt.checkpw(new_password.encode(), user.password.encode()):
                 raise ValueError(REUSE_PASSWORD_ERROR)
 
-            user.password = bcrypt.hashpw(new_password.encode(), bcrypt.gensalt())
-            user.save_to_db()
+            new_hashed_password = bcrypt.hashpw(new_password.encode(), bcrypt.gensalt())
+            user.update(password=new_hashed_password)
 
             return get_success_response(message=UPDATED_PASSWORD)
         except OperationalError:
