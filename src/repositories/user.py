@@ -24,7 +24,7 @@ class User(DynaModel):
         """  Test """
 
         entity_hash_key = fields.String(default="#AP-USER#")
-        entity_sort_key = fields.Function(lambda obj: "#{}#".format(obj["email"].upper()))
+        entity_sort_key = fields.Function(lambda obj: "#{}#".format(obj["email"]))
         email = fields.String(required=True, validate=validate_email)
         name = fields.String()
         password = fields.String()
@@ -44,6 +44,13 @@ class User(DynaModel):
     def save(self):
         """  Overridden Save """
         super(User, self).save(unique=True)
+
+    @classmethod
+    def get(cls, email=None):
+        """  Overridden Get """
+        entity_hash_key = "#AP-USER#"
+        entity_sort_key = "#{}#".format(email)
+        return super(User, cls).get(entity_hash_key=entity_hash_key, entity_sort_key=entity_sort_key)
 
     def json(self):
         """  Test """
