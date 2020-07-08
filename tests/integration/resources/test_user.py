@@ -41,10 +41,7 @@ class TestUserBehaviour:
 
         response_login_user = test_client.post(
             f"{api_prefix}/user/login",
-            headers={
-                "Authorization": f" {TestUserBehaviour.token_dict['register_token']}",
-                CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
-            },
+            headers={"Authorization": f" {TestUserBehaviour.token_dict['register_token']}", CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE},
             data=json.dumps(login_user_data),
             follow_redirects=True,
         )
@@ -106,8 +103,7 @@ class TestUserBehaviour:
         print(f"This is  token = {access_token}")
 
         response_logout = test_client.post(
-            f"{api_prefix}/user/logout",
-            headers={"Authorization": f"{access_token}", CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE},
+            f"{api_prefix}/user/logout", headers={"Authorization": f"{access_token}", CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE},
         )
         assert response_logout.status_code == 200
 
@@ -162,10 +158,7 @@ class TestSuccessScenario:
 
         response_login_user = test_client.post(
             f"{api_prefix}/user/login",
-            headers={
-                "Authorization": f" {TestSuccessScenario.token_dict['register_token']}",
-                CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE,
-            },
+            headers={"Authorization": f" {TestSuccessScenario.token_dict['register_token']}", CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE},
             data=json.dumps(content_data),
             follow_redirects=True,
         )
@@ -243,10 +236,7 @@ class TestFailureScenario:
         """missing auth case"""
         content_data = self.content_data["user_register_bad_req"]["data"]
         response_register_user = test_client.post(
-            f"{api_prefix}/user/register",
-            headers={CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE},
-            data=json.dumps(content_data),
-            follow_redirects=True,
+            f"{api_prefix}/user/register", headers={CONTENT_TYPE_KEY: CONTENT_TYPE_VALUE}, data=json.dumps(content_data), follow_redirects=True,
         )
         assert response_register_user.status_code == 401
         assert json.loads(response_register_user.data)["responseMessage"] == "Missing Authorization Header"

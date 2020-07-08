@@ -34,9 +34,7 @@ class TestBlackListManager:
 
         try:
             BlacklistManager.initialize_redis(app_config=self.config)
-            BlacklistManager().revoke_token(
-                self.config.get("key"), self.config.get("value"), self.config.get("JWT_ACCESS_TOKEN_EXPIRES_SECONDS")
-            )
+            BlacklistManager().revoke_token(self.config.get("key"), self.config.get("value"), self.config.get("JWT_ACCESS_TOKEN_EXPIRES_SECONDS"))
         except RedisConnection as error:
             assert str(error) == REDIS_CONNECTION
 

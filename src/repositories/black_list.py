@@ -50,9 +50,7 @@ class Blacklist(DynaModel):
 
     def __repr__(self):
         """  Test """
-        return "<Blacklisted(token_id={}, token_id={}, time_to_live={})>".format(
-            self.token_id, self.type, self.time_to_live
-        )
+        return "<Blacklisted(token_id={}, token_id={}, time_to_live={})>".format(self.token_id, self.type, self.time_to_live)
 
     def log(self):
         """  Logs Representation """

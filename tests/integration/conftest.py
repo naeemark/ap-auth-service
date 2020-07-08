@@ -130,9 +130,7 @@ def session(api_prefix, test_client, data):
     # pylint: disable=redefined-outer-name
     mock_data_manager = MockDataManager(data)
     data.content.return_value = "base_startSession"
-    response_start_session = test_client.post(
-        f"{api_prefix}/session/start", headers=mock_data_manager.get_content()["headers"],
-    )
+    response_start_session = test_client.post(f"{api_prefix}/session/start", headers=mock_data_manager.get_content()["headers"],)
     tokens = json.loads(response_start_session.data)
     return tokens["response"]["accessToken"], tokens["response"]["refreshToken"]
 

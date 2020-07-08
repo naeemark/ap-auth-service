@@ -33,10 +33,7 @@ content_data = {
                 "Timestamp": "1591028817",
                 "Device-ID": "this is unique device id",
             },
-            "incomplete_headers": {
-                "Client-App-Token": "Lv4Apvf6zX3mnRRKRNid3z500JtAfYx9kIqsju",
-                "Timestamp": "1591028817",
-            },
+            "incomplete_headers": {"Client-App-Token": "Lv4Apvf6zX3mnRRKRNid3z500JtAfYx9kIqsju", "Timestamp": "1591028817"},
         },
     },
     "TestUserBehaviour": {
@@ -44,10 +41,7 @@ content_data = {
         "changePassword_precondition": {"data": {"new_password": "1212312"}},
         "changePassword_no_fresh_token": {"data": {"new_password": "7897!!@@AB"}},
         "register_without_token": {"data": {"email": "john12@gmail.com", "password": "123!!@@AB"}},
-        "register_precondition_password": {
-            "data": {"email": "john1234@gmail.com", "password": "12378"},
-            "url": "{prefix}/user/register",
-        },
+        "register_precondition_password": {"data": {"email": "john1234@gmail.com", "password": "12378"}, "url": "{prefix}/user/register"},
         "password_change": {"data": {"new_password": "7897!!@@AB"}},
     },
     "TestBlackListManager": {
