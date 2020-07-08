@@ -76,11 +76,11 @@ definitions:
           - pipenv run pre-commit install
           - pipenv run pre-commit run --all-files
           # Running Unit and Integration Tests
-          - pipenv run pytest --cov-report xml --cov-report term-missing --junitxml=pytest.xml --cov=src tests -vvs
+          #- pipenv run pytest --cov-report xml --cov-report term-missing --junitxml=pytest.xml --cov=src tests -vvs
 
-        artifacts:
-          - coverage.xml
-          - pytest.xml
+        # artifacts:
+        #   - coverage.xml
+        #   - pytest.xml
 
     - step: &sonar-scan
         name: SonarScan
