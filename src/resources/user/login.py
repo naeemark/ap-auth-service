@@ -41,7 +41,7 @@ class LoginUser(Resource):
             user = User.get(email=data["email"])
 
             if user and bcrypt.checkpw(data["password"].encode(), user.password.encode()):
-                response_data = create_response_data(device_id, user.json())
+                response_data = create_response_data(device_id, user.dict())
                 return get_success_response(message=LOGGED_IN, data=response_data)
 
             return get_error_response(status_code=401, message=INVALID_CREDENTIAL)

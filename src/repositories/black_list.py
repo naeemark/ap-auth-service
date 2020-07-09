@@ -1,8 +1,8 @@
 """
   Test
 """
-import datetime
 import os
+from datetime import datetime
 
 from dynamorm import DynaModel
 from marshmallow import fields
@@ -27,7 +27,7 @@ class Blacklist(DynaModel):
         token_id = fields.String(required=True)
         type = fields.String(default="access")
         time_to_live = fields.Integer(required=True)
-        created_at = fields.DateTime(default=datetime.datetime.utcnow())
+        created_at = fields.Integer(default=int(datetime.now().timestamp()))
 
     def save(self):
         """  Overridden Save """
@@ -44,13 +44,13 @@ class Blacklist(DynaModel):
         """  Checks if Token is Blacklisted """
         return cls.get(token_id=token_id) is not None
 
-    def json(self):
+    def dict(self):
         """  Test """
         return {"token_id": self.token_id, "type": self.type, "time_to_live": self.time_to_live}
 
     def __repr__(self):
         """  Test """
-        return "<Blacklisted(token_id={}, token_id={}, time_to_live={})>".format(self.token_id, self.type, self.time_to_live)
+        return "{}: {}".format(self.__class__.__name__, self.dict())
 
     def log(self):
         """  Logs Representation """

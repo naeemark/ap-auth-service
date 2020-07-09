@@ -47,14 +47,12 @@ class RegisterUser(Resource):
 
             # To-Do need to write the details of the salt
             hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
-            print(hashed_password)
 
             # creates and saves a new object
             user = User(email=email, name=name, password=hashed_password)
             user.save()
-            user.log()
 
-            response_data = create_response_data(device_id, user.json())
+            response_data = create_response_data(device_id, user.dict())
             return get_success_response(status_code=201, message=USER_CREATION, data=response_data)
         except HashKeyExists:
             return get_error_response(status_code=409, message=DUPLICATE_USER)

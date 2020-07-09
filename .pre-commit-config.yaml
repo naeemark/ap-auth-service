@@ -45,4 +45,5 @@ repos:
           - "--disable=R0201"
           - "--disable=E0401"
           - "--disable=R0903"
+          - "--disable=R0801"
           - "--ignore=__init__.py"
