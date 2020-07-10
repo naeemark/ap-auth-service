@@ -65,6 +65,7 @@ definitions:
           - pip
         script:
           - while read line; do $line; done < env-vars-file
+          - env
 
           - pip install pipenv
           - pipenv install --dev
