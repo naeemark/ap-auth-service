@@ -67,6 +67,8 @@ definitions:
           - while read line; do $line; done < env-vars-file
 
           - export FLASK_ENV=testing
+          - export DYNAMODB_TABLE_NAME_USERS=users
+          - export DYNAMODB_TABLE_NAME_BLACKLIST=blacklist
 
           - pip install pipenv
           - pipenv install --dev
