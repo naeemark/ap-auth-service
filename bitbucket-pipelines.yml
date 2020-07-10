@@ -37,8 +37,8 @@ definitions:
           - echo "export FLASK_APP=src/app.py" >> env-vars-file
           - echo "export FLASK_DEBUG=True" >> env-vars-file
 
-          - echo "export DYNAMODB_TABLE_NAME_USERS=$(echo ${DYNO_TBL_BLACKLIST_TEMPLATE} | envsubst)" >> env-vars-file
-          - echo "export DYNAMODB_TABLE_NAME_BLACKLIST=$(echo ${DYNO_TBL_USERS_TEMPLATE} | envsubst)" >> env-vars-file
+          - echo "export DYNAMODB_TABLE_NAME_USERS=$(echo ${DYNO_TBL_USERS_TEMPLATE} | envsubst)" >> env-vars-file
+          - echo "export DYNAMODB_TABLE_NAME_BLACKLIST=$(echo ${DYNO_TBL_BLACKLIST_TEMPLATE} | envsubst)" >> env-vars-file
 
           - export DOCKER_IMAGE_NAME=$(echo ${ECR_REPOSITORY_TEMPLATE} | envsubst)
           - export DOCKER_IMAGE_URI=${ECR_URI}/${DOCKER_IMAGE_NAME}

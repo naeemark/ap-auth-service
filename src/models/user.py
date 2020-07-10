@@ -94,9 +94,3 @@ class UserModel(DynaModel):
         """  Logs Representation """
         log_data = f"{log_at} => {self}" if log_at else self
         print(log_data)
-
-
-if os.environ.get("DYNAMODB_LOCAL_ENDPOINT"):
-    # pylint: disable=no-member
-    UserModel.Table.get_resource(endpoint_url=os.environ.get("DYNAMODB_LOCAL_ENDPOINT"),)
-    print("Connected: Local DYNAMODB")
