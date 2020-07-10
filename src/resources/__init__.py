@@ -1,7 +1,7 @@
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
-from src.repositories.black_list import Blacklist
+from src.models.black_list import BlacklistModel as Blacklist
 from src.resources.health import Health
 from src.resources.session import RefreshSession
 from src.resources.session import ValidateSession
@@ -11,7 +11,6 @@ from src.resources.user.init_verify_email import InitVerifyEmail
 from src.resources.user.login import LoginUser
 from src.resources.user.logout import LogoutUser
 from src.resources.user.register import RegisterUser
-from src.utils.blacklist_manager import BlacklistManager
 from src.utils.constant.response_messages import FRESH_TOKEN
 from src.utils.constant.response_messages import TOKEN_EXPIRED
 from src.utils.constant.response_messages import TOKEN_REVOKED
@@ -56,8 +55,6 @@ def initialize_resources(app):
         return
 
     initialize_jwt_manager(app)
-
-    BlacklistManager.initialize_redis(app_config=app.config)
 
     api_prefix = "/api/v1"
 

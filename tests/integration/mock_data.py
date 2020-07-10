@@ -44,13 +44,7 @@ content_data = {
         "register_precondition_password": {"data": {"email": "john1234@gmail.com", "password": "12378"}, "url": "{prefix}/user/register"},
         "password_change": {"data": {"new_password": "7897!!@@AB"}},
     },
-    "TestBlackListManager": {
-        "JWT_ACCESS_TOKEN_EXPIRES_SECONDS": 1800,
-        "REDIS_HOST": "127.0.0.1",
-        "REDIS_PORT": "6319",
-        "key": "121",
-        "value": "113123131",
-    },
+    "TestBlackListManager": {"JWT_ACCESS_TOKEN_EXPIRES_SECONDS": 1800, "key": "121", "value": "113123131"},
 }
 
 

@@ -7,9 +7,8 @@ from dynamorm.exceptions import HashKeyExists
 from email_validator import EmailNotValidError
 from flask_restful import reqparse
 from flask_restful import Resource
-from redis.exceptions import ConnectionError as RedisConnectionUser
-from src.repositories.user import User
-from src.resources.user.common import create_response_data
+from src.models.user import UserModel
+from src.resources.common import create_response_data
 from src.utils.constant.response_messages import DATABASE_CONNECTION
 from src.utils.constant.response_messages import DUPLICATE_USER
 from src.utils.constant.response_messages import USER_CREATION
@@ -49,14 +48,14 @@ class RegisterUser(Resource):
             hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
 
             # creates and saves a new object
-            user = User(email=email, name=name, password=hashed_password)
+            user = UserModel(email=email, name=name, password=hashed_password)
             user.save()
 
             response_data = create_response_data(device_id, user.dict())
             return get_success_response(status_code=201, message=USER_CREATION, data=response_data)
         except HashKeyExists:
             return get_error_response(status_code=409, message=DUPLICATE_USER)
-        except (RedisConnectionUser, ClientError) as error:
+        except ClientError as error:
             error = DATABASE_CONNECTION if "ResourceNotFoundException" in str(error) else str(error)
             return get_error_response(status_code=503, message=error)
         except EmailNotValidError as error:

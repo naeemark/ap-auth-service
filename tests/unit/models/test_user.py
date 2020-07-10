@@ -9,7 +9,7 @@ def new_user():
     """
         Creates and return new User
     """
-    user = UserModel("abc123@gmail.com", "FlaskIsAwesome", "Flask Developer")
+    user = UserModel(name="abc123@gmail.com", email="FlaskIsAwesome", password="Flask Developer")
     return user
 
 

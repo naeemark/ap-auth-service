@@ -2,17 +2,12 @@
     A configuration file for pytest integration testing
 """
 import json
-import os
 
-import bcrypt
-import fakeredis
 import pytest
 from mock import Mock
 from src import create_app
-from src import db
 from src.models.user import UserModel
 from src.resources import initialize_resources
-from src.utils.blacklist_manager import BlacklistManager
 from tests.integration.mock_data import MockData
 from tests.integration.mock_data import MockDataManager
 
@@ -22,7 +17,7 @@ def new_user():
     """
         Creates a new user
     """
-    user = UserModel("patkennedy79@gmail.com", "FlaskIsAwesome", "Flask Developer")
+    user = UserModel(name="patkennedy79@gmail.com", email="FlaskIsAwesome", password="Flask Developer")
     return user
 
 
@@ -33,9 +28,6 @@ def test_client():
     """
     flask_app = create_app("flask_test.cfg")
     initialize_resources(flask_app)
-    BlacklistManager.initialize_redis(fake_redis=fakeredis.FakeStrictRedis())
-
-    db.init_app(flask_app)
 
     # Flask provides a way to test your application by exposing the Werkzeug test Client
     # and handling the context locals for you.
@@ -50,61 +42,59 @@ def test_client():
     context.pop()
 
     # Delete test database file after execution
-    os.remove(flask_app.config["SQLALCHEMY_DATABASE_URI"].split("///")[-1])
+    # os.remove(flask_app.config["SQLALCHEMY_DATABASE_URI"].split("///")[-1])
 
 
-@pytest.yield_fixture()
-def test_redis():
-    """
-        Generates redis
-    """
-    flask_app = create_app("flask_test.cfg")
-    initialize_resources(flask_app)
+# @pytest.yield_fixture()
+# def test_redis():
+#     """
+#         Generates redis
+#     """
+#     flask_app = create_app("flask_test.cfg")
+#     initialize_resources(flask_app)
 
-    db.init_app(flask_app)
+#     # Flask provides a way to test your application by exposing the Werkzeug test Client
+#     # and handling the context locals for you.
+#     testing_client = flask_app.test_client()
 
-    # Flask provides a way to test your application by exposing the Werkzeug test Client
-    # and handling the context locals for you.
-    testing_client = flask_app.test_client()
+#     # # Establish an application context before running the tests.
+#     context = flask_app.app_context()
+#     context.push()
 
-    # # Establish an application context before running the tests.
-    context = flask_app.app_context()
-    context.push()
+#     yield testing_client  # this is where the testing happens!
 
-    yield testing_client  # this is where the testing happens!
-
-    context.pop()
+#     context.pop()
 
 
-@pytest.fixture(scope="module")
-def test_database():
-    """
-        Configure and provides database instance for testing
-    """
+# @pytest.fixture(scope="module")
+# def test_database():
+#     """
+#         Configure and provides database instance for testing
+#     """
 
-    try:
-        # Create the database and the database table
-        db.create_all()
+#     try:
+#         # Create the database and the database table
+#         db.create_all()
 
-        # create user data objects
-        user1 = UserModel(email="abc@gmail.com", password=bcrypt.hashpw(b"123abc@", bcrypt.gensalt()), name="Test")
-        user2 = UserModel(email="abcd@gmail.com", password=bcrypt.hashpw(b"PaSsWoRd", bcrypt.gensalt()), name="Test")
+#         # create user data objects
+#         user1 = UserModel(email="abc@gmail.com", password=bcrypt.hashpw(b"123abc@", bcrypt.gensalt()), name="Test")
+#         user2 = UserModel(email="abcd@gmail.com", password=bcrypt.hashpw(b"PaSsWoRd", bcrypt.gensalt()), name="Test")
 
-        # Add users to database
-        db.session.add(user1)
-        db.session.add(user2)
+#         # Add users to database
+#         db.session.add(user1)
+#         db.session.add(user2)
 
-        # Commit the changes for the users
-        db.session.commit()
+#         # Commit the changes for the users
+#         db.session.commit()
 
-        yield db  # this is where the testing happens!
+#         yield db  # this is where the testing happens!
 
-        db.session.close()
-        db.drop_all()
-    # pylint: disable=broad-except
-    except Exception as exception:
-        # To-do log
-        print(exception)
+#         db.session.close()
+#         db.drop_all()
+#     # pylint: disable=broad-except
+#     except Exception as exception:
+#         # To-do log
+#         print(exception)
 
 
 @pytest.yield_fixture()
