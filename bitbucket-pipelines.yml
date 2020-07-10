@@ -66,6 +66,8 @@ definitions:
         script:
           - while read line; do $line; done < env-vars-file
           - env
+          - cat task-definition.json
+          - export FLASK_ENV=testing
 
           - pip install pipenv
           - pipenv install --dev

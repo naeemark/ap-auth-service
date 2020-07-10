@@ -2,6 +2,7 @@
   Response Messages Constants
 """
 
+MESSAGE_WELCOME = "*** Welcome to ap-auth-service ***"
 USER_CREATION = "User Register Successful"
 UPDATED_PASSWORD = "You’ve successfully changed your password"
 LOGGED_IN = "User Login Successful"
