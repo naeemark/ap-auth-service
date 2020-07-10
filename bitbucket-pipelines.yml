@@ -96,6 +96,8 @@ definitions:
           - docker
         script:
           - while read line; do $line; done < env-vars-file
+          - env
+          - cat task-definition.json
           - docker build -t ${DOCKER_IMAGE_NAME} .
           - docker inspect ${DOCKER_IMAGE_NAME}
           - pipe: atlassian/aws-ecr-push-image:1.1.3
@@ -151,8 +153,8 @@ pipelines:
     develop:
       - step: *init-deploy-dev
       - step: *pre-deploy
-      - step: *build-lint-test
-      - step: *sonar-scan
+      # - step: *build-lint-test
+      # - step: *sonar-scan
       - step: *build_push_docker_image
       - step: *deploy-dev
     master:
