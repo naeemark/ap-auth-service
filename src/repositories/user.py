@@ -2,12 +2,12 @@
   Test
 """
 import os
-from datetime import datetime
 
 from dynamorm import DynaModel
 from email_validator import validate_email
 from marshmallow import fields
 from marshmallow import validates
+from src.utils.utils import get_epoch_utc_timestamp
 
 SLUG_ENTITY_HASH_KEY = "#AP-USER#"
 SLUG_ENTITY_SORT_KEY = "#USR#{}#"
@@ -36,8 +36,8 @@ class User(DynaModel):
         self.is_admin = kwargs.get("is_admin", False)
         self.is_active = kwargs.get("is_active", False)
         self.is_approved = kwargs.get("is_approved", False)
-        self.created_at = int(kwargs.get("created_at", datetime.now().timestamp()))
-        self.updated_at = int(kwargs.get("updated_at", datetime.now().timestamp()))
+        self.created_at = int(kwargs.get("created_at", get_epoch_utc_timestamp()))
+        self.updated_at = int(kwargs.get("updated_at", get_epoch_utc_timestamp()))
         self.log()
 
     class Schema:
@@ -63,8 +63,11 @@ class User(DynaModel):
 
     def save(self):
         """  Overridden Save """
-        self.log()
         super(User, self).save(unique=True)
+
+    def update(self, **kwargs):
+        """  Overridden Update - Includes new value for updated_at """
+        super(User, self).update(updated_at=get_epoch_utc_timestamp(), **kwargs)
 
     @classmethod
     def get(cls, email=None):
@@ -87,9 +90,10 @@ class User(DynaModel):
         """  Test """
         return "{}: {}".format(self.__class__.__name__, self.dict())
 
-    def log(self):
+    def log(self, log_at=None):
         """  Logs Representation """
-        print(self)
+        log_data = f"{log_at} => {self}" if log_at else self
+        print(log_data)
 
 
 if os.environ.get("DYNAMODB_LOCAL_ENDPOINT"):

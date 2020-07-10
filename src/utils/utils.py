@@ -1,7 +1,7 @@
 """
     A misc utility file
 """
-import datetime
+from datetime import datetime
 
 
 def add_parser_headers_argument(parser=None, arg_name=None, arg_type=str, location="headers"):
@@ -16,8 +16,8 @@ def add_parser_argument(parser=None, arg_name=None, arg_type=str):
 
 def get_expire_time_seconds(jwt_exp):
     """tells the remaining expire time of token"""
-    token_expire_time = datetime.datetime.fromtimestamp(jwt_exp)
-    current_time = datetime.datetime.now()
+    token_expire_time = datetime.fromtimestamp(jwt_exp)
+    current_time = datetime.now()
     time_difference = token_expire_time - current_time
     return time_difference.seconds
 
@@ -34,3 +34,13 @@ def get_payload_properties(payload):
     payload_properties.update({"refreshTokenExpire": refresh_token_exp, "refreshTokenId": refresh_token_id})
 
     return payload_properties
+
+
+def get_epoch_utc_timestamp():
+    """Returns a UTC epoch timestamp"""
+    return int(datetime.utcnow().timestamp())
+
+
+def get_epoch_timestamp():
+    """Returns a local epoch timestamp"""
+    return int(datetime.now().timestamp())
