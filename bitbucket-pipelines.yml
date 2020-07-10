@@ -37,7 +37,6 @@ definitions:
           - echo "export FLASK_APP=src/app.py" >> env-vars-file
           - echo "export FLASK_DEBUG=True" >> env-vars-file
 
-          - echo "export REDIS_HOST=$(echo ${REDIS_HOST_TEMPLATE} | envsubst)" >> env-vars-file
           - echo "export DYNAMODB_TABLE_NAME_USERS=$(echo ${DYNO_TBL_BLACKLIST_TEMPLATE} | envsubst)" >> env-vars-file
           - echo "export DYNAMODB_TABLE_NAME_BLACKLIST=$(echo ${DYNO_TBL_USERS_TEMPLATE} | envsubst)" >> env-vars-file
 
@@ -73,11 +72,11 @@ definitions:
           - pipenv run pre-commit install
           - pipenv run pre-commit run --all-files
           # Running Unit and Integration Tests
-          #- pipenv run pytest --cov-report xml --cov-report term-missing --junitxml=pytest.xml --cov=src tests -vvs
+          - pipenv run pytest --cov-report xml --cov-report term-missing --junitxml=pytest.xml --cov=src tests -vvs
 
-        # artifacts:
-        #   - coverage.xml
-        #   - pytest.xml
+        artifacts:
+          - coverage.xml
+          - pytest.xml
 
     - step: &sonar-scan
         name: SonarScan
