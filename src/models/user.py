@@ -1,6 +1,8 @@
 """
     User Model
 """
+import os
+
 from dynamorm import DynaModel
 from email_validator import validate_email
 from marshmallow import fields
@@ -21,7 +23,7 @@ class UserModel(DynaModel):
     class Table:
         """  DynamoDB Table Specifications """
 
-        name = "ap-users-dev"
+        name = os.environ.get("DYNAMODB_TABLE_NAME_USERS")
         hash_key = "entity_hash_key"
         range_key = "entity_sort_key"
 

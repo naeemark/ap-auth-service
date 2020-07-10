@@ -1,6 +1,7 @@
 """
   Test
 """
+import os
 from datetime import datetime
 
 from dynamorm import DynaModel
@@ -15,7 +16,7 @@ class BlacklistModel(DynaModel):
     class Table:
         """  DynamoDB Table Specifications for the Entity """
 
-        name = "ap-auth-blacklist-dev"
+        name = os.environ.get("DYNAMODB_TABLE_NAME_BLACKLIST")
         hash_key = "entity_hash_key"
         range_key = "token_id"
 
