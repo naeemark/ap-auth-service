@@ -1,6 +1,7 @@
 """
   Flask App
 """
+from flask import request
 from src import create_app
 from src.resources import initialize_resources
 from src.utils.constant.response_messages import MESSAGE_WELCOME
@@ -14,7 +15,13 @@ initialize_resources(app)
 def log_health_message():
     """ Greets """
     info(MESSAGE_WELCOME)
-    print(MESSAGE_WELCOME)
+
+
+@app.before_request
+def log_request_info():
+    """ Request Interceptor """
+    info("Request Headers:\n{}".format(str(request.headers).rstrip()))
+    info("Request Body: {}".format(request.get_data().decode()))
 
 
 if __name__ == "__main__":

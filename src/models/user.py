@@ -95,4 +95,3 @@ class UserModel(DynaModel):
         """  Logs Representation """
         log_data = f"{log_at} => {self}" if log_at else self
         info(log_data)
-        print(log_data)

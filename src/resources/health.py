@@ -2,7 +2,7 @@
 A module to check App Health
 """
 from flask_restful import Resource
-from src.utils.logger import info
+from src.utils.response_builder import get_success_response
 
 
 class Health(Resource):
@@ -14,5 +14,4 @@ class Health(Resource):
         """
             Returns health
         """
-        info("Hello from HealthCheck")
-        return {"health": "Ok"}, 200
+        return get_success_response(data={"health": "Ok"})

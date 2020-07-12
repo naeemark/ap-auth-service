@@ -56,4 +56,3 @@ class BlacklistModel(DynaModel):
     def log(self):
         """  Logs Representation """
         info(self)
-        print(self)

@@ -5,7 +5,7 @@ import logging
 import os
 
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(os.environ["MICROSERVICE_NAME"])
+logger = logging.getLogger("{}-{}".format(os.environ["MICROSERVICE_NAME"], os.environ["STAGE"]))
 
 
 def info(log_data):
