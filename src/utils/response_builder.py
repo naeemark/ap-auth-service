@@ -1,5 +1,7 @@
 """Response Builder for the application"""
 from src.utils.errors_collection import errors_collection
+from src.utils.logger import error as log_error
+from src.utils.logger import info
 
 
 def get_success_response(status_code=200, message="Success", data=None):
@@ -11,6 +13,7 @@ def get_success_response(status_code=200, message="Success", data=None):
 
         :return: an error dict, status code
     """
+    info({"message": message, "data": data})
     return {"responseCode": status_code, "responseMessage": message, "response": data}, status_code
 
 
@@ -29,4 +32,5 @@ def get_error_response(status_code=500, message="Something bad happened!", error
         "responseMessage": message,
         "response": {"error": error if error else errors_collection.get(status_code)},
     }
+    log_error(error)
     return error, status_code

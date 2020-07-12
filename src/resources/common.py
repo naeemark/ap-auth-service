@@ -9,6 +9,7 @@ from datetime import timedelta
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import create_refresh_token
 from src.models.black_list import BlacklistModel as Blacklist
+from src.utils.logger import info
 
 
 def get_user_claim():
@@ -28,9 +29,12 @@ def get_jwt_tokens(payload=None, fresh=True):
     """creates and return jwt token in a dictionary"""
 
     user_claims = get_user_claim()
+    info(user_claims)
     access_token = create_access_token(identity=payload, fresh=fresh, user_claims=user_claims)
     refresh_token = create_refresh_token(identity=payload, user_claims=user_claims)
-    return {"accessToken": access_token, "refreshToken": refresh_token}
+    tokens_dict = {"accessToken": access_token, "refreshToken": refresh_token}
+    info(tokens_dict)
+    return tokens_dict
 
 
 def create_response_data(device_id=None, user=None):

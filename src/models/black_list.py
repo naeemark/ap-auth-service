@@ -6,6 +6,7 @@ from datetime import datetime
 
 from dynamorm import DynaModel
 from marshmallow import fields
+from src.utils.logger import info
 
 SLUG_ENTITY_HASH_KEY = "#AP-AUTH-BLACKLISTED#"
 
@@ -54,4 +55,5 @@ class BlacklistModel(DynaModel):
 
     def log(self):
         """  Logs Representation """
+        info(self)
         print(self)

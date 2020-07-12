@@ -12,6 +12,7 @@ from src.resources.common import get_jwt_tokens
 from src.utils.constant.response_messages import DATABASE_CONNECTION
 from src.utils.constant.response_messages import REFRESH_SESSION
 from src.utils.constant.response_messages import VALIDATE_SESSION
+from src.utils.logger import info
 from src.utils.response_builder import get_error_response
 from src.utils.response_builder import get_success_response
 from src.utils.utils import add_parser_argument
@@ -64,7 +65,7 @@ class ValidateSession(Resource):
 
             # access = verify_token_not_blacklisted(data.accessToken, "access")
             # refresh = verify_token_not_blacklisted(data.refreshToken, "refresh")
-
+            info(data)
             return get_success_response(message=VALIDATE_SESSION, data=data)
         except LookupError as error:
             message = str(error).strip("'")
