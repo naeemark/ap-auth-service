@@ -2,12 +2,11 @@
   User Login Resource
 """
 import bcrypt
+from botocore.exceptions import ClientError
 from flask_restful import reqparse
 from flask_restful import Resource
-from redis.exceptions import ConnectionError as RedisConnectionUser
-from sqlalchemy.exc import OperationalError
 from src.models.user import UserModel
-from src.resources.user.common import create_response_data
+from src.resources.common import create_response_data
 from src.utils.constant.response_messages import DATABASE_CONNECTION
 from src.utils.constant.response_messages import INVALID_CREDENTIAL
 from src.utils.constant.response_messages import LOGGED_IN
@@ -38,15 +37,15 @@ class LoginUser(Resource):
             check_missing_properties(data.items())
 
             device_id = data["Device-ID"]
-            user = UserModel.find_by_email(data["email"])
+            user = UserModel.get(email=data["email"])
 
-            if user and bcrypt.checkpw(data["password"].encode(), user.password):
-                response_data = create_response_data(device_id, user)
+            if user and bcrypt.checkpw(data["password"].encode(), user.password.encode()):
+                response_data = create_response_data(device_id, user.dict())
                 return get_success_response(message=LOGGED_IN, data=response_data)
 
             return get_error_response(status_code=401, message=INVALID_CREDENTIAL)
-        except (OperationalError, RedisConnectionUser) as error:
-            error = DATABASE_CONNECTION if isinstance(error, OperationalError) else str(error)
+        except (ClientError) as error:
+            error = DATABASE_CONNECTION if "ResourceNotFoundException" in str(error) else str(error)
             return get_error_response(status_code=503, message=error)
         except LookupError as lookup_error:
             return get_error_response(status_code=400, message=str(lookup_error))

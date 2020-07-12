@@ -9,7 +9,7 @@ def new_user():
     """
         Creates and return new User
     """
-    user = UserModel("abc123@gmail.com", "FlaskIsAwesome", "Flask Developer")
+    user = UserModel(email="abc123@gmail.com", password="FlaskIsAwesome", name="Flask Developer")
     return user
 
 
@@ -28,4 +28,4 @@ def test_new_user():
 def test_json_user_model():
     """test json function """
 
-    assert isinstance(new_user().json(), dict)
+    assert isinstance(new_user().dict(), dict)

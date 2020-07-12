@@ -2,14 +2,13 @@
   User Register Resource
 """
 import bcrypt
+from botocore.exceptions import ClientError
+from dynamorm.exceptions import HashKeyExists
 from email_validator import EmailNotValidError
 from flask_restful import reqparse
 from flask_restful import Resource
-from redis.exceptions import ConnectionError as RedisConnectionUser
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy.exc import OperationalError
 from src.models.user import UserModel
-from src.resources.user.common import create_response_data
+from src.resources.common import create_response_data
 from src.utils.constant.response_messages import DATABASE_CONNECTION
 from src.utils.constant.response_messages import DUPLICATE_USER
 from src.utils.constant.response_messages import USER_CREATION
@@ -49,15 +48,15 @@ class RegisterUser(Resource):
             hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
 
             # creates and saves a new object
-            user = UserModel(email, hashed_password, name)
-            user.save_to_db()
+            user = UserModel(email=email, name=name, password=hashed_password)
+            user.save()
 
-            response_data = create_response_data(device_id, user)
+            response_data = create_response_data(device_id, user.dict())
             return get_success_response(status_code=201, message=USER_CREATION, data=response_data)
-        except IntegrityError:
+        except HashKeyExists:
             return get_error_response(status_code=409, message=DUPLICATE_USER)
-        except (OperationalError, RedisConnectionUser) as error:
-            error = DATABASE_CONNECTION if isinstance(error, OperationalError) else str(error)
+        except ClientError as error:
+            error = DATABASE_CONNECTION if "ResourceNotFoundException" in str(error) else str(error)
             return get_error_response(status_code=503, message=error)
         except EmailNotValidError as error:
             return get_error_response(status_code=412, message=str(error), error=email_not_valid_412)

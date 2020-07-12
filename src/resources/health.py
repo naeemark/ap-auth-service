@@ -13,4 +13,4 @@ class Health(Resource):
         """
             Returns health
         """
-        return {"health": "ok"}, 200
+        return {"health": "Ok"}, 200

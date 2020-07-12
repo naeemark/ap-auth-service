@@ -1,6 +1,7 @@
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
+from src.models.black_list import BlacklistModel as Blacklist
 from src.resources.health import Health
 from src.resources.session import RefreshSession
 from src.resources.session import ValidateSession
@@ -10,7 +11,6 @@ from src.resources.user.init_verify_email import InitVerifyEmail
 from src.resources.user.login import LoginUser
 from src.resources.user.logout import LogoutUser
 from src.resources.user.register import RegisterUser
-from src.utils.blacklist_manager import BlacklistManager
 from src.utils.constant.response_messages import FRESH_TOKEN
 from src.utils.constant.response_messages import TOKEN_EXPIRED
 from src.utils.constant.response_messages import TOKEN_REVOKED
@@ -31,7 +31,9 @@ def initialize_jwt_manager(app):
 
     @jwt_manager.token_in_blacklist_loader
     def check_if_token_in_blacklist(decrypted_token):
-        return decrypted_token["jti"] in BlacklistManager().get_jti_list()
+        user_claims = decrypted_token["user_claims"]
+        token_id = user_claims["access_token_id"] if decrypted_token["type"] == "access" else user_claims["refresh_token_id"]
+        return Blacklist.exists(token_id=token_id)
 
     @jwt_manager.revoked_token_loader
     def revoke_token_callback():
@@ -55,8 +57,6 @@ def initialize_resources(app):
         return
 
     initialize_jwt_manager(app)
-
-    BlacklistManager.initialize_redis(app_config=app.config)
 
     api_prefix = "/api/v1"
 

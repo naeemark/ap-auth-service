@@ -1,56 +1,96 @@
 """
     User Model
 """
-from src import db
+import os
+
+from dynamorm import DynaModel
+from email_validator import validate_email
+from marshmallow import fields
+from marshmallow import validates
+from src.utils.utils import get_epoch_utc_timestamp
+
+SLUG_ENTITY_HASH_KEY = "#AP-USER#"
+SLUG_ENTITY_SORT_KEY = "#USR#{}#"
 
 
-class UserModel(db.Model):
-    """
-        Provides an instance of UserModel
-    """
+# pylint: disable=too-many-instance-attributes
+class UserModel(DynaModel):
+    """ Provides an instance of entity User::DynaModel """
 
-    __tablename__ = "users"
+    # for partial updates
+    _validated_data = {}
 
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(255), unique=True)
-    password = db.Column(db.LargeBinary())
-    name = db.Column(db.String(255))
+    class Table:
+        """  DynamoDB Table Specifications """
 
-    def __init__(self, email, password, name):
-        self.email = email.lower()
-        self.password = password
-        self.name = name
+        name = os.environ.get("DYNAMODB_TABLE_NAME_USERS")
+        hash_key = "entity_hash_key"
+        range_key = "entity_sort_key"
 
-    def save_to_db(self):
-        """
-            Saves to Database
-        """
-        db.session.add(self)
-        db.session.commit()
+    def __init__(self, **kwargs):
+        self.entity_hash_key = SLUG_ENTITY_HASH_KEY
+        self.entity_sort_key = SLUG_ENTITY_SORT_KEY.format(kwargs.get("email"))
+        self.email = kwargs.get("email")
+        self.name = kwargs.get("name")
+        self.password = kwargs.get("password")
+        self.is_admin = kwargs.get("is_admin", False)
+        self.is_active = kwargs.get("is_active", False)
+        self.is_approved = kwargs.get("is_approved", False)
+        self.created_at = int(kwargs.get("created_at", get_epoch_utc_timestamp()))
+        self.updated_at = int(kwargs.get("updated_at", get_epoch_utc_timestamp()))
+        self.log()
 
-    def delete_from_db(self):
-        """
-            Deletes from Database
-        """
-        db.session.delete(self)
-        db.session.commit()
+    class Schema:
+        """  Attributes Schema """
 
-    def json(self):
-        """
-            Returns a json of self
-        """
-        return {"username": self.email, "password": self.password, "name": self.name}
+        entity_hash_key = fields.String(required=True)
+        entity_sort_key = fields.String(required=True)
+        email = fields.String(required=True, validate=validate_email)
+        name = fields.String()
+        password = fields.String()
+        is_admin = fields.Boolean(default=False)
+        is_active = fields.Boolean(default=False)
+        is_approved = fields.Boolean(default=False)
+        created_at = fields.Integer()
+        updated_at = fields.Integer()
+
+        @validates("name")
+        def validate_name(self, name):
+            """Validates Name"""
+            name_string = name.replace(" ", "")
+            if not name_string.isalpha() or not len(name_string) > 2:
+                raise ValueError("`name` is not valid")
+
+    def save(self):
+        """  Overridden Save """
+        super(UserModel, self).save(unique=True)
+
+    def update(self, **kwargs):
+        """  Overridden Update - Includes new value for updated_at """
+        super(UserModel, self).update(updated_at=get_epoch_utc_timestamp(), **kwargs)
 
     @classmethod
-    def find_by_email(cls, email):
-        """
-            Finds by email
-        """
-        return cls.query.filter_by(email=email).first()
+    def get(cls, email=None):
+        """  Overridden Get """
+        return super(UserModel, cls).get(entity_hash_key=SLUG_ENTITY_HASH_KEY, entity_sort_key=SLUG_ENTITY_SORT_KEY.format(email))
 
-    @classmethod
-    def find_by_id(cls, _id):
-        """
-            Finds by id
-        """
-        return cls.query.filter_by(id=_id).first()
+    def dict(self):
+        """  Coverts `self` to `dict` """
+        return {
+            "name": self.name,
+            "email": self.email,
+            "isAdmin": self.is_admin,
+            "isActive": self.is_active,
+            "isApproved": self.is_approved,
+            "createdAt": self.created_at,
+            "updatedAt": self.updated_at,
+        }
+
+    def __repr__(self):
+        """  Provides a Representation of `self` """
+        return "{}: {}".format(self.__class__.__name__, self.dict())
+
+    def log(self, log_at=None):
+        """  Logs Representation """
+        log_data = f"{log_at} => {self}" if log_at else self
+        print(log_data)

@@ -33,14 +33,12 @@ definitions:
           - echo "export STAGE=${STAGE}" >> env-vars-file
           - echo "export ENV=${ENV}" >> env-vars-file
           - echo "export FLASK_ENV=${ENV}" >> env-vars-file
-          - echo "export FLASK_RUN_PORT=5000" >> env-vars-file
+          - echo "export FLASK_RUN_PORT=${PORT}" >> env-vars-file
           - echo "export FLASK_APP=src/app.py" >> env-vars-file
           - echo "export FLASK_DEBUG=True" >> env-vars-file
 
-          - echo "export SQLALCHEMY_TRACK_MODIFICATIONS=False" >> env-vars-file
-          - echo "export PROPAGATE_EXCEPTIONS=True" >> env-vars-file
-          - echo "export DB_URL=$(echo ${DB_URL_TEMPLATE} | envsubst)" >> env-vars-file
-          - echo "export REDIS_HOST=$(echo ${REDIS_HOST_TEMPLATE} | envsubst)" >> env-vars-file
+          - echo "export DYNAMODB_TABLE_NAME_USERS=$(echo ${DYNO_TBL_USERS_TEMPLATE} | envsubst)" >> env-vars-file
+          - echo "export DYNAMODB_TABLE_NAME_BLACKLIST=$(echo ${DYNO_TBL_BLACKLIST_TEMPLATE} | envsubst)" >> env-vars-file
 
           - export DOCKER_IMAGE_NAME=$(echo ${ECR_REPOSITORY_TEMPLATE} | envsubst)
           - export DOCKER_IMAGE_URI=${ECR_URI}/${DOCKER_IMAGE_NAME}
@@ -67,6 +65,10 @@ definitions:
           - pip
         script:
           - while read line; do $line; done < env-vars-file
+
+          - export FLASK_ENV=testing
+          - export DYNAMODB_TABLE_NAME_USERS=users
+          - export DYNAMODB_TABLE_NAME_BLACKLIST=blacklist
 
           - pip install pipenv
           - pipenv install --dev

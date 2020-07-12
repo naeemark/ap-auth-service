@@ -39,9 +39,7 @@ service_unavailable_503 = {
 unprocessable_entity_422 = {
     "errorCode": "UNPROCESSABLE_ENTITY",
     "errorTitle": "Token Invalid",
-    "errorDescription": (
-        "Request was well-formed but was unable to be followed due to semantic errors specify correct token"
-    ),
+    "errorDescription": ("Request was well-formed but was unable to be followed due to semantic errors specify correct token"),
 }
 
 precondition_failed_412 = {
