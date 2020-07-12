@@ -2,13 +2,10 @@
   App Universal logger
 """
 import logging
-
-import watchtower
+import os
 
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-logger.addHandler(watchtower.CloudWatchLogHandler())
-logger.info("Hi")
+logger = logging.getLogger(os.environ["MICROSERVICE_NAME"])
 
 
 def info(log_data):
