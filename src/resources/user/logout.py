@@ -2,7 +2,7 @@
   User Logout Resource
 """
 from botocore.exceptions import ClientError
-from flask_jwt_extended import get_raw_jwt
+from flask_jwt_extended import get_jwt_claims
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 from src.resources.common import blacklist_auth
@@ -24,7 +24,7 @@ class LogoutUser(Resource):
         """
 
         try:
-            blacklist_auth(get_raw_jwt())
+            blacklist_auth(get_jwt_claims())
             return get_success_response(message=LOGOUT)
         except (ClientError) as error:
             error = DATABASE_CONNECTION if "ResourceNotFoundException" in str(error) else str(error)

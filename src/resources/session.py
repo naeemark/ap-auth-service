@@ -2,18 +2,18 @@
   auth Resource
 """
 from botocore.exceptions import ClientError
+from flask_jwt_extended import get_jwt_claims
 from flask_jwt_extended import get_jwt_identity
-from flask_jwt_extended import get_raw_jwt
 from flask_jwt_extended import jwt_refresh_token_required
 from flask_restful import reqparse
 from flask_restful import Resource
 from src.resources.common import blacklist_auth
+from src.resources.common import get_jwt_tokens
 from src.utils.constant.response_messages import DATABASE_CONNECTION
 from src.utils.constant.response_messages import REFRESH_SESSION
 from src.utils.constant.response_messages import VALIDATE_SESSION
 from src.utils.response_builder import get_error_response
 from src.utils.response_builder import get_success_response
-from src.utils.token_manager import get_jwt_tokens
 from src.utils.utils import add_parser_argument
 from src.validators.common import check_missing_properties
 
@@ -26,15 +26,10 @@ class RefreshSession(Resource):
     @jwt_refresh_token_required
     def post(self):
         """Returns new Tokens"""
-        payload = get_jwt_identity()
-        # TO-DO: need to log the payload
-        response_data = get_jwt_tokens(payload=payload)
         try:
-            if response_data:
-                # blacklist Header JWT refresh
-                blacklist_auth(get_raw_jwt())
-                return get_success_response(message=REFRESH_SESSION, data=response_data)
-            return get_error_response()
+            response_data = get_jwt_tokens(payload=get_jwt_identity())
+            blacklist_auth(get_jwt_claims())
+            return get_success_response(message=REFRESH_SESSION, data=response_data)
         except (ClientError) as error:
             error = DATABASE_CONNECTION if "ResourceNotFoundException" in str(error) else str(error)
             return get_error_response(status_code=503, message=error)

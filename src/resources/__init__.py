@@ -31,7 +31,9 @@ def initialize_jwt_manager(app):
 
     @jwt_manager.token_in_blacklist_loader
     def check_if_token_in_blacklist(decrypted_token):
-        return Blacklist.exists(token_id=decrypted_token["jti"])
+        user_claims = decrypted_token["user_claims"]
+        token_id = user_claims["access_token_id"] if decrypted_token["type"] == "access" else user_claims["refresh_token_id"]
+        return Blacklist.exists(token_id=token_id)
 
     @jwt_manager.revoked_token_loader
     def revoke_token_callback():
