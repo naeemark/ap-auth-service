@@ -20,6 +20,7 @@ def log_health_message():
 @app.before_request
 def log_request_info():
     """ Request Interceptor """
+    info("Request Path: {}".format(request.path))
     info("Request Headers:\n{}".format(str(request.headers).rstrip()))
     info("Request Body: {}".format(request.get_data().decode()))
 
