@@ -10,6 +10,7 @@ from src.resources.common import create_response_data
 from src.utils.constant.response_messages import DATABASE_CONNECTION
 from src.utils.constant.response_messages import INVALID_CREDENTIAL
 from src.utils.constant.response_messages import LOGGED_IN
+from src.utils.errors_collection import invalid_credentials_401
 from src.utils.response_builder import get_error_response
 from src.utils.response_builder import get_success_response
 from src.utils.utils import add_parser_argument
@@ -43,7 +44,7 @@ class LoginUser(Resource):
                 response_data = create_response_data(device_id, user.dict())
                 return get_success_response(message=LOGGED_IN, data=response_data)
 
-            return get_error_response(status_code=401, message=INVALID_CREDENTIAL)
+            return get_error_response(status_code=401, message=INVALID_CREDENTIAL, error=invalid_credentials_401)
         except (ClientError) as error:
             error = DATABASE_CONNECTION if "ResourceNotFoundException" in str(error) else str(error)
             return get_error_response(status_code=503, message=error)

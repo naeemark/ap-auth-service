@@ -8,8 +8,14 @@ uncaught = {
 
 invalid_credentials_401 = {
     "errorCode": "UNAUTHORIZED",
-    "errorTitle": "Invalid credentials provided",
+    "errorTitle": "Invalid auth credentials provided",
     "errorDescription": "Seems the provided input is not validated by the system",
+}
+
+invalid_jwt_401 = {
+    "errorCode": "UNAUTHORIZED",
+    "errorTitle": "Invalid credentials provided",
+    "errorDescription": "Seems the JWT Token has been revoked or expired",
 }
 
 bad_request_400 = {
@@ -56,7 +62,7 @@ email_not_valid_412 = {
 
 errors_collection = {
     400: bad_request_400,
-    401: invalid_credentials_401,
+    401: invalid_jwt_401,
     404: not_found_404,
     409: user_conflict_409,
     412: precondition_failed_412,
