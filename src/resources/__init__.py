@@ -11,8 +11,6 @@ from src.resources.user.init_verify_email import InitVerifyEmail
 from src.resources.user.login import LoginUser
 from src.resources.user.logout import LogoutUser
 from src.resources.user.register import RegisterUser
-from src.utils.constant.response_messages import FRESH_TOKEN
-from src.utils.constant.response_messages import TOKEN_EXPIRED
 from src.utils.constant.response_messages import TOKEN_REVOKED
 from src.utils.response_builder import get_error_response
 
@@ -27,7 +25,7 @@ def initialize_jwt_manager(app):
 
     @jwt_manager.needs_fresh_token_loader
     def fresh_token_required():
-        return get_error_response(status_code=401, message=FRESH_TOKEN)
+        return get_error_response(status_code=401, message=TOKEN_REVOKED)
 
     @jwt_manager.token_in_blacklist_loader
     def check_if_token_in_blacklist(decrypted_token):
@@ -41,7 +39,7 @@ def initialize_jwt_manager(app):
 
     @jwt_manager.expired_token_loader
     def expired_token_callback():
-        return get_error_response(status_code=401, message=TOKEN_EXPIRED)
+        return get_error_response(status_code=401, message=TOKEN_REVOKED)
 
     @jwt_manager.unauthorized_loader
     def unauthorized_loader_callback(reason):
