@@ -9,8 +9,9 @@ from src.utils.logger import info
 
 def send_reset_password_email(email=None, auth_key=None):
     """ send reset password email """
-    reset_password_page_url = os.environ["RESET_PASSWORD_PAGE_URL"]
-    reset_password_api_endpoint = os.environ["RESET_PASSWORD_API_ENDPOINT"]
+    api_host_url = os.environ["API_HOST_URL"]
+    reset_password_page_url = "{}{}".format(api_host_url, "reset-password")
+    reset_password_api_endpoint = "{}{}".format(api_host_url, "api/v1/user/resetPassword")
 
     reset_password_link = "{}?nextUrl={}&authKey={}".format(reset_password_page_url, reset_password_api_endpoint, auth_key)
     info(reset_password_link)

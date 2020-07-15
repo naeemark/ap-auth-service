@@ -1,6 +1,8 @@
 """
   Flask App
 """
+import os
+
 from flask import request
 from src import create_app
 from src.resources import initialize_resources
@@ -15,6 +17,7 @@ initialize_resources(app)
 def log_health_message():
     """ Greets """
     info(MESSAGE_WELCOME)
+    os.environ["API_HOST_URL"] = request.host_url
 
 
 @app.before_request
@@ -23,6 +26,13 @@ def log_request_info():
     info("Request Path: {}".format(request.path))
     info("Request Headers:\n{}".format(str(request.headers).rstrip()))
     info("Request Body: {}".format(request.get_data().decode()))
+
+
+# To-do Temporarily Adding static page url
+@app.route("/reset-password")
+def root():
+    """ Loads static page """
+    return app.send_static_file("reset-password.html")
 
 
 if __name__ == "__main__":
