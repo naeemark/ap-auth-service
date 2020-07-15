@@ -1,8 +1,6 @@
 """
   Flask App
 """
-import os
-
 from flask import request
 from src import create_app
 from src.resources import initialize_resources
@@ -17,7 +15,6 @@ initialize_resources(app)
 def log_health_message():
     """ Greets """
     info(MESSAGE_WELCOME)
-    os.environ["API_HOST_URL"] = request.host_url
 
 
 @app.before_request

@@ -5,6 +5,7 @@ definitions:
         script:
           - echo "export STAGE=dev" >> stage-prefixes
           - echo "export ENV=development" >> stage-prefixes
+          - echo "export API_HOST_URL=http://alb-ap-services-dev-1980141691.us-east-1.elb.amazonaws.com/" >> stage-prefixes
         artifacts:
           - stage-prefixes
 
@@ -13,6 +14,7 @@ definitions:
         script:
           - echo "export STAGE=stg" >> stage-prefixes
           - echo "export ENV=staging" >> stage-prefixes
+          - echo "export API_HOST_URL=http://alb-ap-services-stg-1105785516.us-east-1.elb.amazonaws.com/" >> stage-prefixes
         artifacts:
           - stage-prefixes
 
@@ -32,6 +34,7 @@ definitions:
 
           - echo "export STAGE=${STAGE}" >> env-vars-file
           - echo "export ENV=${ENV}" >> env-vars-file
+          - echo "export API_HOST_URL=${API_HOST_URL}" >> env-vars-file
           - echo "export FLASK_ENV=${ENV}" >> env-vars-file
           - echo "export FLASK_RUN_PORT=${PORT}" >> env-vars-file
           - echo "export FLASK_APP=src/app.py" >> env-vars-file
@@ -71,6 +74,7 @@ definitions:
           - export DYNAMODB_TABLE_NAME_BLACKLIST=blacklist
           - SES_SOURCE_EMAIL=source@email.com
           - JWT_WEB_AUTH_TOKEN_EXPIRES_MINUTES=10
+          - API_HOST_URL=http://localhost:5000
 
           - pip install pipenv
           - pipenv install --dev
