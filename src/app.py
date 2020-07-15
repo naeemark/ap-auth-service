@@ -26,7 +26,7 @@ def log_request_info():
 
 
 # To-do Temporarily Adding static page url
-@app.route("/reset-password")
+@app.route("/api/reset-password")
 def root():
     """ Loads static page """
     return app.send_static_file("reset-password.html")
