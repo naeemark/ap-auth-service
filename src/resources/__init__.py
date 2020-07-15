@@ -11,6 +11,7 @@ from src.resources.user.init_verify_email import InitVerifyEmail
 from src.resources.user.login import LoginUser
 from src.resources.user.logout import LogoutUser
 from src.resources.user.register import RegisterUser
+from src.resources.user.reset_password import ResetPassword
 from src.utils.constant.response_messages import TOKEN_REVOKED
 from src.utils.response_builder import get_error_response
 
@@ -75,6 +76,7 @@ def initialize_resources(app):
 
     # Adds resources for Auth Entity
     api.add_resource(InitResetPassword, "/user/initResetPassword")
+    api.add_resource(ResetPassword, "/user/resetPassword")
     api.add_resource(InitVerifyEmail, "/user/initVerifyEmail")
 
     # Adds resources for Auth Entity
