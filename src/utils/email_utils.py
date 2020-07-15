@@ -17,11 +17,8 @@ def send_reset_password_email(email=None, auth_key=None):
 
     text = "<h3>Reset Your password</h3><p>Please click on the link below to reset your password</p>"
     link = '<p><a class="ulink" href="{}" target="_blank">Click to change Password</a></p>'.format(reset_password_link)
-    body_html = "{}{}".format(text, link)
-
     body_text = "Reset your password by copying the link in new browser`s tab:\n\n {}".format(reset_password_link)
-
-    send_mail(recipient=email, subject="Alethea: Reset You Password", body_html=body_html, body_text=body_text)
+    send_mail(recipient=email, subject="Alethea: Reset Your Password", body_html="{}{}".format(text, link), body_text=body_text)
 
 
 def send_mail(recipient=None, subject=None, body_html=None, body_text=None):
