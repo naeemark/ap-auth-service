@@ -151,6 +151,11 @@ pipelines:
       - step: *build-lint-test
 
   branches:
+    quick:
+      - step: *init-deploy-dev
+      - step: *pre-deploy
+      - step: *build_push_docker_image
+      - step: *deploy-dev
     develop:
       - step: *init-deploy-dev
       - step: *pre-deploy
