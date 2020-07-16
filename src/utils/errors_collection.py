@@ -18,6 +18,24 @@ invalid_jwt_401 = {
     "errorDescription": "Seems the JWT Token has been revoked or expired",
 }
 
+inactive_user_401 = {
+    "errorCode": "UNAUTHORIZED",
+    "errorTitle": "Invalid Parameters provided",
+    "errorDescription": "Seems caller is deactivated and can not perform this operation",
+}
+
+pending_approval_401 = {
+    "errorCode": "UNAUTHORIZED",
+    "errorTitle": "Invalid Parameters provided",
+    "errorDescription": "Registration is not approved by the Admin yet",
+}
+
+not_admin_401 = {
+    "errorCode": "UNAUTHORIZED",
+    "errorTitle": "Admin Operation Called by Non-Admin User",
+    "errorDescription": "Seems you don't have sufficient permissions to perform the operation",
+}
+
 bad_request_400 = {
     "errorCode": "VALIDATION_ERROR",
     "errorTitle": "Invalid Parameters provided",

@@ -39,7 +39,6 @@ class UserModel(DynaModel):
         self.is_approved = kwargs.get("is_approved", False)
         self.created_at = int(kwargs.get("created_at", get_epoch_utc_timestamp()))
         self.updated_at = int(kwargs.get("updated_at", get_epoch_utc_timestamp()))
-        self.log()
 
     class Schema:
         """  Attributes Schema """
@@ -74,6 +73,11 @@ class UserModel(DynaModel):
     def get(cls, email=None):
         """  Overridden Get """
         return super(UserModel, cls).get(entity_hash_key=SLUG_ENTITY_HASH_KEY, entity_sort_key=SLUG_ENTITY_SORT_KEY.format(email))
+
+    @classmethod
+    def get_all(cls):
+        """  Get All Users """
+        return super(UserModel, cls).query(entity_hash_key=SLUG_ENTITY_HASH_KEY)
 
     def dict(self):
         """  Coverts `self` to `dict` """
