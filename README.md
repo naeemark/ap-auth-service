@@ -80,6 +80,7 @@ _NOTE_: `pre-commit run --all-files` should always be validated before doing a c
 ### Postman Environments
 
 - DEV: https://www.dropbox.com/s/axjle3fdzee9t7d/%5Benv-dev%5D%20alethea.postman_environment.json?dl=0
+- STG: https://www.dropbox.com/s/lv9ouqw4ct4odfx/%5Benv-stg%5D%20alethea.postman_environment.json?dl=0
 
 ### Postman Collection
 

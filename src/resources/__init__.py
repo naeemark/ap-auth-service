@@ -7,6 +7,7 @@ from src.resources.session import RefreshSession
 from src.resources.session import ValidateSession
 from src.resources.user.admin import ApproveUser
 from src.resources.user.admin import GetUsers
+from src.resources.user.admin import ToggelUserAccess
 from src.resources.user.change_password import ChangePassword
 from src.resources.user.init_reset_password import InitResetPassword
 from src.resources.user.init_verify_email import InitVerifyEmail
@@ -84,6 +85,7 @@ def initialize_resources(app):
     # Adds Admin API Endpoints
     api.add_resource(GetUsers, "/admin/users")
     api.add_resource(ApproveUser, "/admin/users/<email>/approve")
+    api.add_resource(ToggelUserAccess, "/admin/users/<email>/toggleAccess")
 
     # Adds resources for Auth Entity
     api.add_resource(RefreshSession, "/session/refresh")

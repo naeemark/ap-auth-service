@@ -8,11 +8,11 @@ class ApplicationError(Exception):
 
 
 class ErrorDeactivatedUser(ApplicationError):
-    """ DeactivatedUser """
+    """ ErrorDeactivatedUser """
 
 
 class ErrorCallerIsNotAdmin(ApplicationError):
-    """ CallerIsNotAdmin """
+    """ ErrorCallerIsNotAdmin """
 
 
 class ErrorPendingApproval(ApplicationError):
@@ -20,8 +20,12 @@ class ErrorPendingApproval(ApplicationError):
 
 
 class ErrorUserAlreadyApproved(ApplicationError):
-    """ CallerIsNotAdmin """
+    """ ErrorUserAlreadyApproved """
+
+
+class ErrorUserNotFound(ApplicationError):
+    """ ErrorUserNotFound """
 
 
 class ErrorUserNotApprovedYet(ApplicationError):
-    """ CallerIsNotAdmin """
+    """ ErrorUserNotApprovedYet """

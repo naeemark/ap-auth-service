@@ -5,8 +5,8 @@ from flask_restful import reqparse
 from flask_restful import Resource
 from src.models.user import UserModel
 from src.resources.common import get_web_auth_jwt_token
+from src.utils.constant.response_messages import EMAIL_NOT_FOUND
 from src.utils.constant.response_messages import RESET_PASSWORD_LINK_SENT
-from src.utils.constant.response_messages import USER_NOT_FOUND
 from src.utils.email_utils import send_reset_password_email
 from src.utils.response_builder import get_error_response
 from src.utils.response_builder import get_success_response
@@ -43,4 +43,4 @@ class InitResetPassword(Resource):
             message = str(error).strip("'")
             return get_error_response(status_code=400, message=message)
         except AttributeError:
-            return get_error_response(status_code=404, message=USER_NOT_FOUND)
+            return get_error_response(status_code=404, message=EMAIL_NOT_FOUND)

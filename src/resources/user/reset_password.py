@@ -11,10 +11,10 @@ from src.models.black_list import BlacklistModel as Blacklist
 from src.models.user import UserModel
 from src.resources.common import blacklist_token
 from src.utils.constant.response_messages import DATABASE_CONNECTION
+from src.utils.constant.response_messages import EMAIL_NOT_FOUND
 from src.utils.constant.response_messages import LINK_EXPIRED_ERROR
 from src.utils.constant.response_messages import REUSE_PASSWORD_ERROR
 from src.utils.constant.response_messages import UPDATED_PASSWORD
-from src.utils.constant.response_messages import USER_NOT_FOUND
 from src.utils.response_builder import get_error_response
 from src.utils.response_builder import get_success_response
 from src.utils.utils import add_parser_argument
@@ -72,4 +72,4 @@ class ResetPassword(Resource):
         except ValueError:
             return get_error_response(status_code=412, message=REUSE_PASSWORD_ERROR)
         except AttributeError:
-            return get_error_response(status_code=404, message=USER_NOT_FOUND)
+            return get_error_response(status_code=404, message=EMAIL_NOT_FOUND)
