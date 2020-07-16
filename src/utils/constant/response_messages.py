@@ -12,6 +12,7 @@ REFRESH_SESSION = "Refresh Session"
 VALIDATE_SESSION = "Validate Session"
 RESET_PASSWORD_LINK_SENT = "An email with the reset-password link has been sent."
 GET_ALL_USERS = "Get Users"
+USER_APPROVED = "User approved Successfully"
 
 REDIS_CONNECTION = "Redis Connectivity Error"
 HEADERS_REQUIRED = "'{properties}' is required"
@@ -33,3 +34,4 @@ LINK_EXPIRED_ERROR = "The emailed link is already used or expired. Please try ag
 UNAUTHORIZED_REQUEST = "You are not authorized for such operations"
 ACCOUNT_NOT_APPROVED = "This account is not approved for login yet. Please contant Administrator"
 ACCOUNT_NOT_ACTIVE = "This account is Deactivated. Please contant Administrator"
+USER_ALREADY_APPROVED = "The User is approved already"

@@ -5,6 +5,7 @@ from src.models.black_list import BlacklistModel as Blacklist
 from src.resources.health import Health
 from src.resources.session import RefreshSession
 from src.resources.session import ValidateSession
+from src.resources.user.admin import ApproveUser
 from src.resources.user.admin import GetUsers
 from src.resources.user.change_password import ChangePassword
 from src.resources.user.init_reset_password import InitResetPassword
@@ -82,6 +83,7 @@ def initialize_resources(app):
 
     # Adds Admin API Endpoints
     api.add_resource(GetUsers, "/admin/users")
+    api.add_resource(ApproveUser, "/admin/users/<email>/approve")
 
     # Adds resources for Auth Entity
     api.add_resource(RefreshSession, "/session/refresh")

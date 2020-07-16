@@ -54,6 +54,12 @@ user_conflict_409 = {
     "errorDescription": "A user with that identity already exists",
 }
 
+already_approved_409 = {
+    "errorCode": "CONFLICT",
+    "errorTitle": "User already Approved",
+    "errorDescription": "A user with that identity already approved",
+}
+
 service_unavailable_503 = {
     "errorCode": "SERVICE_UNAVAILABLE",
     "errorTitle": "Service unavailable",

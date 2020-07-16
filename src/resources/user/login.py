@@ -7,10 +7,13 @@ from flask_restful import reqparse
 from flask_restful import Resource
 from src.models.user import UserModel
 from src.resources.common import create_response_data
+from src.utils.application_errors import ErrorPendingApproval
+from src.utils.constant.response_messages import ACCOUNT_NOT_APPROVED
 from src.utils.constant.response_messages import DATABASE_CONNECTION
 from src.utils.constant.response_messages import INVALID_CREDENTIAL
 from src.utils.constant.response_messages import LOGGED_IN
 from src.utils.errors_collection import invalid_credentials_401
+from src.utils.errors_collection import pending_approval_401
 from src.utils.response_builder import get_error_response
 from src.utils.response_builder import get_success_response
 from src.utils.utils import add_parser_argument
@@ -40,6 +43,9 @@ class LoginUser(Resource):
             device_id = data["Device-ID"]
             user = UserModel.get(email=data["email"])
 
+            if not user.is_approved:
+                raise ErrorPendingApproval()
+
             if user and bcrypt.checkpw(data["password"].encode(), user.password.encode()):
                 response_data = create_response_data(device_id, user.dict())
                 return get_success_response(message=LOGGED_IN, data=response_data)
@@ -50,3 +56,5 @@ class LoginUser(Resource):
             return get_error_response(status_code=503, message=error)
         except LookupError as lookup_error:
             return get_error_response(status_code=400, message=str(lookup_error))
+        except ErrorPendingApproval:
+            return get_error_response(status_code=401, message=ACCOUNT_NOT_APPROVED, error=pending_approval_401)
