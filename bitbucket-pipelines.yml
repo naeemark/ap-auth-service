@@ -69,6 +69,7 @@ definitions:
         script:
           - while read line; do $line; done < env-vars-file
 
+          - export STAGE=test
           - export FLASK_ENV=testing
           - export DYNAMODB_TABLE_NAME_USERS=users
           - export DYNAMODB_TABLE_NAME_BLACKLIST=blacklist
