@@ -10,7 +10,6 @@ from src.utils.application_errors import ErrorCannotPerformSelfOperation
 from src.utils.application_errors import ErrorDeactivatedUser
 from src.utils.application_errors import ErrorUserAlreadyApproved
 from src.utils.application_errors import ErrorUserNotFound
-from src.utils.constant.response_messages import ACCOUNT_NOT_ACTIVE
 from src.utils.constant.response_messages import GET_ALL_USERS
 from src.utils.constant.response_messages import TOGGLE_SUCCESS
 from src.utils.constant.response_messages import UNAUTHORIZED_REQUEST
@@ -48,7 +47,7 @@ class GetUsers(Resource):
             message = str(error).strip("'")
             return get_error_response(status_code=400, message=message)
         except ErrorDeactivatedUser:
-            return get_error_response(status_code=401, message=ACCOUNT_NOT_ACTIVE, error=inactive_user_401)
+            return get_error_response(status_code=401, message=UNAUTHORIZED_REQUEST, error=inactive_user_401)
         except ErrorCallerIsNotAdmin:
             return get_error_response(status_code=401, message=UNAUTHORIZED_REQUEST, error=not_admin_401)
 
@@ -82,7 +81,7 @@ class ApproveUser(Resource):
             message = str(error).strip("'")
             return get_error_response(status_code=400, message=message)
         except ErrorDeactivatedUser:
-            return get_error_response(status_code=401, message=ACCOUNT_NOT_ACTIVE, error=inactive_user_401)
+            return get_error_response(status_code=401, message=UNAUTHORIZED_REQUEST, error=inactive_user_401)
         except ErrorCallerIsNotAdmin:
             return get_error_response(status_code=401, message=UNAUTHORIZED_REQUEST, error=not_admin_401)
         except ErrorCannotPerformSelfOperation:
@@ -119,7 +118,7 @@ class ToggelUserAccess(Resource):
             message = str(error).strip("'")
             return get_error_response(status_code=400, message=message)
         except ErrorDeactivatedUser:
-            return get_error_response(status_code=401, message=ACCOUNT_NOT_ACTIVE, error=inactive_user_401)
+            return get_error_response(status_code=401, message=UNAUTHORIZED_REQUEST, error=inactive_user_401)
         except ErrorCallerIsNotAdmin:
             return get_error_response(status_code=401, message=UNAUTHORIZED_REQUEST, error=not_admin_401)
         except ErrorCannotPerformSelfOperation:
