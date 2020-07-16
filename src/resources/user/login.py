@@ -31,7 +31,6 @@ class LoginUser(Resource):
     add_parser_argument(parser=request_parser, arg_name="email")
     add_parser_argument(parser=request_parser, arg_name="password")
 
-    # @jwt_required
     def post(self):
         """
             Returns a new Token

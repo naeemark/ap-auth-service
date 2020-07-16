@@ -11,6 +11,7 @@ from src.utils.application_errors import ErrorDeactivatedUser
 from src.utils.application_errors import ErrorUserAlreadyApproved
 from src.utils.application_errors import ErrorUserNotFound
 from src.utils.constant.response_messages import GET_ALL_USERS
+from src.utils.constant.response_messages import GET_USER_BY_EMAIL
 from src.utils.constant.response_messages import TOGGLE_SUCCESS
 from src.utils.constant.response_messages import UNAUTHORIZED_REQUEST
 from src.utils.constant.response_messages import USER_ALREADY_APPROVED
@@ -52,8 +53,42 @@ class GetUsers(Resource):
             return get_error_response(status_code=401, message=UNAUTHORIZED_REQUEST, error=not_admin_401)
 
 
-class ApproveUser(Resource):
+class GetUserByEmail(Resource):
     """ Resource GetUsers """
+
+    @jwt_required
+    def get(self, email=None):
+        """ Get All Users """
+        try:
+            admin = get_jwt_identity()["user"]
+
+            if not admin["isActive"]:
+                raise ErrorDeactivatedUser()
+            if not admin["isAdmin"]:
+                raise ErrorCallerIsNotAdmin()
+            if admin["email"] == email:
+                raise ErrorCannotPerformSelfOperation()
+
+            user = User.get(email=email)
+            if not user:
+                raise ErrorUserNotFound()
+
+            return get_success_response(message=GET_USER_BY_EMAIL, data=user.dict())
+        except LookupError as error:
+            message = str(error).strip("'")
+            return get_error_response(status_code=400, message=message)
+        except ErrorDeactivatedUser:
+            return get_error_response(status_code=401, message=UNAUTHORIZED_REQUEST, error=inactive_user_401)
+        except ErrorCallerIsNotAdmin:
+            return get_error_response(status_code=401, message=UNAUTHORIZED_REQUEST, error=not_admin_401)
+        except ErrorCannotPerformSelfOperation:
+            return get_error_response(status_code=401, message=UNAUTHORIZED_REQUEST, error=restricted_self_operation_401)
+        except ErrorUserNotFound:
+            return get_error_response(status_code=404, message=USER_NOT_FOUND)
+
+
+class ApproveUser(Resource):
+    """ Resource ApproveUser """
 
     @jwt_required
     def get(self, email=None):
@@ -93,7 +128,7 @@ class ApproveUser(Resource):
 
 
 class ToggelUserAccess(Resource):
-    """ Resource GetUsers """
+    """ Resource ToggelUserAccess """
 
     @jwt_required
     def get(self, email=None):

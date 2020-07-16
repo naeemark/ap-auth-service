@@ -8,15 +8,13 @@ from email_validator import EmailNotValidError
 from flask_restful import reqparse
 from flask_restful import Resource
 from src.models.user import UserModel
-from src.resources.common import create_response_data
 from src.utils.constant.response_messages import DATABASE_CONNECTION
 from src.utils.constant.response_messages import DUPLICATE_USER
-from src.utils.constant.response_messages import USER_CREATION
+from src.utils.constant.response_messages import SUCCESS_USER_CREATION
 from src.utils.errors_collection import email_not_valid_412
 from src.utils.response_builder import get_error_response
 from src.utils.response_builder import get_success_response
 from src.utils.utils import add_parser_argument
-from src.utils.utils import add_parser_headers_argument
 from src.validators.common import check_missing_properties
 from src.validators.user import validate_register_user_data
 
@@ -27,7 +25,6 @@ class RegisterUser(Resource):
     """
 
     request_parser = reqparse.RequestParser()
-    add_parser_headers_argument(parser=request_parser, arg_name="Device-ID")
     add_parser_argument(parser=request_parser, arg_name="name")
     add_parser_argument(parser=request_parser, arg_name="email")
     add_parser_argument(parser=request_parser, arg_name="password")
@@ -41,7 +38,6 @@ class RegisterUser(Resource):
 
             validate_register_user_data(data=data)
 
-            device_id = data["Device-ID"]
             name, email, password = data["name"], data["email"], data["password"].encode()
 
             # To-Do need to write the details of the salt
@@ -51,8 +47,7 @@ class RegisterUser(Resource):
             user = UserModel(email=email, name=name, password=hashed_password)
             user.save()
 
-            response_data = create_response_data(device_id, user.dict())
-            return get_success_response(status_code=201, message=USER_CREATION, data=response_data)
+            return get_success_response(status_code=201, message=SUCCESS_USER_CREATION)
         except HashKeyExists:
             return get_error_response(status_code=409, message=DUPLICATE_USER)
         except ClientError as error:

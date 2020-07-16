@@ -6,9 +6,11 @@ from src.resources.health import Health
 from src.resources.session import RefreshSession
 from src.resources.session import ValidateSession
 from src.resources.user.admin import ApproveUser
+from src.resources.user.admin import GetUserByEmail
 from src.resources.user.admin import GetUsers
 from src.resources.user.admin import ToggelUserAccess
 from src.resources.user.change_password import ChangePassword
+from src.resources.user.get_user import GetUser
 from src.resources.user.init_reset_password import InitResetPassword
 from src.resources.user.init_verify_email import InitVerifyEmail
 from src.resources.user.login import LoginUser
@@ -77,6 +79,7 @@ def initialize_resources(app):
     api.add_resource(LoginUser, "/user/login")
     api.add_resource(ChangePassword, "/user/changePassword")
     api.add_resource(LogoutUser, "/user/logout")
+    api.add_resource(GetUser, "/user")
 
     # Adds resources for Auth Entity
     api.add_resource(InitResetPassword, "/user/initResetPassword")
@@ -86,6 +89,7 @@ def initialize_resources(app):
 
     # Adds Admin API Endpoints
     api.add_resource(GetUsers, "/admin/users")
+    api.add_resource(GetUserByEmail, "/admin/users/<email>")
     api.add_resource(ApproveUser, "/admin/users/<email>/approve")
     api.add_resource(ToggelUserAccess, "/admin/users/<email>/toggleAccess")
 
