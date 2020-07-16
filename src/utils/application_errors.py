@@ -29,3 +29,7 @@ class ErrorUserNotFound(ApplicationError):
 
 class ErrorUserNotApprovedYet(ApplicationError):
     """ ErrorUserNotApprovedYet """
+
+
+class ErrorEmailAlreadyVerified(ApplicationError):
+    """ ErrorUserNotApprovedYet """

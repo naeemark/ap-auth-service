@@ -7,6 +7,20 @@ import boto3
 from src.utils.logger import info
 
 
+def send_account_verification_email(email=None, auth_key=None):
+    """ send reset password email """
+    api_host_url = os.environ["API_HOST_URL"]
+    verify_email_api_endpoint = "{}{}".format(api_host_url, "/api/v1/user/verifyEmail")
+
+    verify_email_link = "{}?&authKey={}".format(verify_email_api_endpoint, auth_key)
+    info(verify_email_link)
+
+    text = "<h3>Verify your Email</h3><p>Please click on the link below to verify your email</p>"
+    link = '<p><a class="ulink" href="{}" target="_blank">Click to verify this Email</a></p>'.format(verify_email_link)
+    body_text = "Verify your email by copying the link in browser`s new tab:\n\n {}".format(verify_email_link)
+    send_mail(recipient=email, subject="Alethea: Verify you Email", body_html="{}{}".format(text, link), body_text=body_text)
+
+
 def send_reset_password_email(email=None, auth_key=None):
     """ send reset password email """
     api_host_url = os.environ["API_HOST_URL"]
@@ -18,7 +32,7 @@ def send_reset_password_email(email=None, auth_key=None):
 
     text = "<h3>Reset Your password</h3><p>Please click on the link below to reset your password</p>"
     link = '<p><a class="ulink" href="{}" target="_blank">Click to change Password</a></p>'.format(reset_password_link)
-    body_text = "Reset your password by copying the link in new browser`s tab:\n\n {}".format(reset_password_link)
+    body_text = "Reset your password by copying the link in browser`s new  tab:\n\n {}".format(reset_password_link)
     send_mail(recipient=email, subject="Alethea: Reset Your Password", body_html="{}{}".format(text, link), body_text=body_text)
 
 

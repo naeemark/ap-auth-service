@@ -15,6 +15,7 @@ from src.resources.user.login import LoginUser
 from src.resources.user.logout import LogoutUser
 from src.resources.user.register import RegisterUser
 from src.resources.user.reset_password import ResetPassword
+from src.resources.user.verify_email import VerifyEmail
 from src.utils.constant.response_messages import TOKEN_REVOKED
 from src.utils.response_builder import get_error_response
 
@@ -81,6 +82,7 @@ def initialize_resources(app):
     api.add_resource(InitResetPassword, "/user/initResetPassword")
     api.add_resource(ResetPassword, "/user/resetPassword")
     api.add_resource(InitVerifyEmail, "/user/initVerifyEmail")
+    api.add_resource(VerifyEmail, "/user/verifyEmail")
 
     # Adds Admin API Endpoints
     api.add_resource(GetUsers, "/admin/users")

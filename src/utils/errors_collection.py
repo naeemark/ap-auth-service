@@ -60,6 +60,12 @@ already_approved_409 = {
     "errorDescription": "A user with that identity already approved",
 }
 
+email_already_verified_409 = {
+    "errorCode": "CONFLICT",
+    "errorTitle": "Email already Verified",
+    "errorDescription": "A user with that identity already verified",
+}
+
 service_unavailable_503 = {
     "errorCode": "SERVICE_UNAVAILABLE",
     "errorTitle": "Service unavailable",

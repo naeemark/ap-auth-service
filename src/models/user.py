@@ -37,6 +37,7 @@ class UserModel(DynaModel):
         self.is_admin = kwargs.get("is_admin", False)
         self.is_active = kwargs.get("is_active", False)
         self.is_approved = kwargs.get("is_approved", False)
+        self.is_email_verified = kwargs.get("is_email_verified", False)
         self.created_at = int(kwargs.get("created_at", get_epoch_utc_timestamp()))
         self.updated_at = int(kwargs.get("updated_at", get_epoch_utc_timestamp()))
 
@@ -51,6 +52,7 @@ class UserModel(DynaModel):
         is_admin = fields.Boolean(default=False)
         is_active = fields.Boolean(default=False)
         is_approved = fields.Boolean(default=False)
+        is_email_verified = fields.Boolean(default=False)
         created_at = fields.Integer()
         updated_at = fields.Integer()
 
@@ -87,6 +89,7 @@ class UserModel(DynaModel):
             "isAdmin": self.is_admin,
             "isActive": self.is_active,
             "isApproved": self.is_approved,
+            "isEmailVerified": self.is_email_verified,
             "createdAt": self.created_at,
             "updatedAt": self.updated_at,
         }
