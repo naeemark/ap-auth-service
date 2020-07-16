@@ -36,6 +36,12 @@ not_admin_401 = {
     "errorDescription": "Seems you don't have sufficient permissions to perform the operation",
 }
 
+restricted_self_operation_401 = {
+    "errorCode": "UNAUTHORIZED",
+    "errorTitle": "Admin Operation called for self user",
+    "errorDescription": "Seems you don't have sufficient permissions to perform the operation",
+}
+
 bad_request_400 = {
     "errorCode": "VALIDATION_ERROR",
     "errorTitle": "Invalid Parameters provided",

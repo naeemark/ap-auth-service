@@ -33,3 +33,7 @@ class ErrorUserNotApprovedYet(ApplicationError):
 
 class ErrorEmailAlreadyVerified(ApplicationError):
     """ ErrorUserNotApprovedYet """
+
+
+class ErrorCannotPerformSelfOperation(ApplicationError):
+    """ ErrorCannotPerformSelfOperation """
