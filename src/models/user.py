@@ -35,7 +35,7 @@ class UserModel(DynaModel):
         self.name = kwargs.get("name")
         self.password = kwargs.get("password")
         self.is_admin = kwargs.get("is_admin", False)
-        self.is_active = kwargs.get("is_active", False)
+        self.is_active = kwargs.get("is_active", True)
         self.is_approved = kwargs.get("is_approved", False)
         self.is_email_verified = kwargs.get("is_email_verified", False)
         self.created_at = int(kwargs.get("created_at", get_epoch_utc_timestamp()))
