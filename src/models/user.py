@@ -50,7 +50,7 @@ class UserModel(DynaModel):
         name = fields.String()
         password = fields.String()
         is_admin = fields.Boolean(default=False)
-        is_active = fields.Boolean(default=False)
+        is_active = fields.Boolean(default=True)
         is_approved = fields.Boolean(default=False)
         is_email_verified = fields.Boolean(default=False)
         created_at = fields.Integer()

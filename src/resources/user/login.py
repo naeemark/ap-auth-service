@@ -43,12 +43,12 @@ class LoginUser(Resource):
             device_id = data["Device-ID"]
             user = UserModel.get(email=data["email"])
 
-            if not user.is_approved:
-                raise ErrorPendingApproval()
-
             if user and bcrypt.checkpw(data["password"].encode(), user.password.encode()):
                 response_data = create_response_data(device_id, user.dict())
                 return get_success_response(message=LOGGED_IN, data=response_data)
+
+            if not user.is_approved:
+                raise ErrorPendingApproval()
 
             return get_error_response(status_code=401, message=INVALID_CREDENTIAL, error=invalid_credentials_401)
         except (ClientError) as error:
