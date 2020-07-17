@@ -1,99 +1,99 @@
 """ Error Collection for the application"""
 
 uncaught = {
-    "errorCode": "UNCAUGHT",
-    "errorTitle": "We seem to have a problem!",
-    "errorDescription": "Our internal system is having problem, please contact our administrator!",
+    "code": "UNCAUGHT",
+    "title": "We seem to have a problem!",
+    "description": "Our internal system is having problem, please contact our administrator!",
 }
 
 invalid_credentials_401 = {
-    "errorCode": "UNAUTHORIZED",
-    "errorTitle": "Invalid auth credentials provided",
-    "errorDescription": "Seems the provided input is not validated by the system",
+    "code": "UNAUTHORIZED",
+    "title": "Invalid auth credentials provided",
+    "description": "Seems the provided input is not validated by the system",
 }
 
 invalid_jwt_401 = {
-    "errorCode": "UNAUTHORIZED",
-    "errorTitle": "Invalid credentials provided",
-    "errorDescription": "Seems the JWT Token has been revoked or expired",
+    "code": "UNAUTHORIZED",
+    "title": "Invalid credentials provided",
+    "description": "Seems the JWT Token has been revoked or expired",
 }
 
 inactive_user_401 = {
-    "errorCode": "UNAUTHORIZED",
-    "errorTitle": "Invalid Parameters provided",
-    "errorDescription": "Seems caller is deactivated and can not perform this operation",
+    "code": "UNAUTHORIZED",
+    "title": "Invalid Parameters provided",
+    "description": "Seems caller is deactivated and can not perform this operation",
 }
 
 pending_approval_401 = {
-    "errorCode": "UNAUTHORIZED",
-    "errorTitle": "Invalid Parameters provided",
-    "errorDescription": "Registration is not approved by the Admin yet",
+    "code": "UNAUTHORIZED",
+    "title": "Invalid Parameters provided",
+    "description": "Registration is not approved by the Admin yet",
 }
 
 not_admin_401 = {
-    "errorCode": "UNAUTHORIZED",
-    "errorTitle": "Admin Operation Called by Non-Admin User",
-    "errorDescription": "Seems you don't have sufficient permissions to perform the operation",
+    "code": "UNAUTHORIZED",
+    "title": "Admin Operation Called by Non-Admin User",
+    "description": "Seems you don't have sufficient permissions to perform the operation",
 }
 
 restricted_self_operation_401 = {
-    "errorCode": "UNAUTHORIZED",
-    "errorTitle": "Admin Operation called for self user",
-    "errorDescription": "Seems you don't have sufficient permissions to perform the operation",
+    "code": "UNAUTHORIZED",
+    "title": "Admin Operation called for self user",
+    "description": "Seems you don't have sufficient permissions to perform the operation",
 }
 
 bad_request_400 = {
-    "errorCode": "VALIDATION_ERROR",
-    "errorTitle": "Invalid Parameters provided",
-    "errorDescription": "Seems the provided input is not validated by the system",
+    "code": "VALIDATION_ERROR",
+    "title": "Invalid Parameters provided",
+    "description": "Seems the provided input is not validated by the system",
 }
 
 not_found_404 = {
-    "errorCode": "RESOURCE_NOT_FOUND",
-    "errorTitle": "Resource not found",
-    "errorDescription": "Seems the object which you are trying to find is not available",
+    "code": "RESOURCE_NOT_FOUND",
+    "title": "Resource not found",
+    "description": "Seems the object which you are trying to find is not available",
 }
 
 user_conflict_409 = {
-    "errorCode": "CONFLICT",
-    "errorTitle": "User already Exists",
-    "errorDescription": "A user with that identity already exists",
+    "code": "CONFLICT",
+    "title": "User already Exists",
+    "description": "A user with that identity already exists",
 }
 
 already_approved_409 = {
-    "errorCode": "CONFLICT",
-    "errorTitle": "User already Approved",
-    "errorDescription": "A user with that identity already approved",
+    "code": "CONFLICT",
+    "title": "User already Approved",
+    "description": "A user with that identity already approved",
 }
 
 email_already_verified_409 = {
-    "errorCode": "CONFLICT",
-    "errorTitle": "Email already Verified",
-    "errorDescription": "A user with that identity already verified",
+    "code": "CONFLICT",
+    "title": "Email already Verified",
+    "description": "A user with that identity already verified",
 }
 
 service_unavailable_503 = {
-    "errorCode": "SERVICE_UNAVAILABLE",
-    "errorTitle": "Service unavailable",
-    "errorDescription": "One or more services are not available at the moment.",
+    "code": "SERVICE_UNAVAILABLE",
+    "title": "Service unavailable",
+    "description": "One or more services are not available at the moment.",
 }
 
 unprocessable_entity_422 = {
-    "errorCode": "UNPROCESSABLE_ENTITY",
-    "errorTitle": "Token Invalid",
-    "errorDescription": ("Request was well-formed but was unable to be followed due to semantic errors specify correct token"),
+    "code": "UNPROCESSABLE_ENTITY",
+    "title": "Token Invalid",
+    "description": ("Request was well-formed but was unable to be followed due to semantic errors specify correct token"),
 }
 
 precondition_failed_412 = {
-    "errorCode": "PRECONDITION_FAILED",
-    "errorTitle": "Password precondition failed",
-    "errorDescription": "'Password' policy not followed",
+    "code": "PRECONDITION_FAILED",
+    "title": "Password precondition failed",
+    "description": "'Password' policy not followed",
 }
 
 email_not_valid_412 = {
-    "errorCode": "EmailNotValidError",
-    "errorTitle": "Email not valid",
-    "errorDescription": "Provided value is not a valid email address.",
+    "code": "EmailNotValidError",
+    "title": "Email not valid",
+    "description": "Provided value is not a valid email address.",
 }
 
 errors_collection = {

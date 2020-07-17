@@ -9,6 +9,7 @@ from datetime import timedelta
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import create_refresh_token
 from src.models.black_list import BlacklistModel as Blacklist
+from src.utils.logger import error as log_error
 from src.utils.logger import info
 from src.utils.utils import get_epoch_timestamp
 
@@ -65,7 +66,7 @@ def blacklist_token(token_id=None, token_type=None, time_to_live=get_epoch_times
     Blacklist(token_id=token_id, type=token_type, time_to_live=time_to_live).save()
 
 
-def blacklist_auth(jwt_claims):
+def blacklist_auth(jwt_claims=None):
     """Sends auth Tokens to blacklist"""
 
     id_access_token = jwt_claims["access_token_id"]
@@ -75,3 +76,14 @@ def blacklist_auth(jwt_claims):
     id_refresh_token = jwt_claims["refresh_token_id"]
     ttl_refresh_token = jwt_claims["expires_refresh_at"]
     blacklist_token(token_id=id_refresh_token, token_type="refresh", time_to_live=ttl_refresh_token)
+
+
+def is_token_blacklisted(decrypted_token=None):
+    """ Verifies if the Token is blacklisted """
+    try:
+        user_claims = decrypted_token["user_claims"]
+        token_id = user_claims["access_token_id"] if decrypted_token["type"] == "access" else user_claims["refresh_token_id"]
+        return Blacklist.exists(token_id=token_id)
+    except Exception as error:
+        log_error(f" Blacklist.exists(): {error}")
+        return True

@@ -9,7 +9,7 @@ class ApplicationError(Exception):
 
 
 class InactiveUserError(ApplicationError):
-    pass
+    code, message = 400, "Here is message"
 
 
 class CallerIsNotAdminError(ApplicationError):
