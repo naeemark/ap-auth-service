@@ -28,7 +28,7 @@ class GetUsers(Resource):
         try:
             admin = get_jwt_identity()["user"]
 
-            is_authorized(admin=admin, target_email="admin@alethea.com")
+            is_authorized(admin=admin)
 
             users = User.get_all()
             # removes self
