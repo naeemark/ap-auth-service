@@ -13,14 +13,14 @@ from src.utils.constant.response_messages import REUSE_PASSWORD_ERROR
 from src.utils.constant.response_messages import UNAUTHORIZED_REQUEST
 from src.utils.constant.response_messages import USER_ALREADY_APPROVED
 from src.utils.constant.response_messages import USER_NOT_FOUND
-from src.utils.errors_collection import already_approved_409
-from src.utils.errors_collection import email_already_verified_409
-from src.utils.errors_collection import inactive_user_401
-from src.utils.errors_collection import invalid_credentials_401
-from src.utils.errors_collection import invalid_jwt_401
-from src.utils.errors_collection import not_admin_401
-from src.utils.errors_collection import pending_approval_401
-from src.utils.errors_collection import restricted_self_operation_401
+from src.utils.errors.errors_collection import already_approved_409
+from src.utils.errors.errors_collection import email_already_verified_409
+from src.utils.errors.errors_collection import inactive_user_401
+from src.utils.errors.errors_collection import invalid_credentials_401
+from src.utils.errors.errors_collection import invalid_jwt_401
+from src.utils.errors.errors_collection import not_admin_401
+from src.utils.errors.errors_collection import pending_approval_401
+from src.utils.errors.errors_collection import restricted_self_operation_401
 
 
 class ApplicationError(Exception):

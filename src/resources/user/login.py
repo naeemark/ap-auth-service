@@ -6,10 +6,10 @@ from flask_restful import reqparse
 from flask_restful import Resource
 from src.models.user import UserModel
 from src.resources.common import create_response_data
-from src.utils.application_errors import InactiveUserError
-from src.utils.application_errors import InvalidCredentialsError
-from src.utils.application_errors import PendingApprovalError
 from src.utils.constant.response_messages import LOGGED_IN
+from src.utils.errors.application_errors import InactiveUserError
+from src.utils.errors.application_errors import InvalidCredentialsError
+from src.utils.errors.application_errors import PendingApprovalError
 from src.utils.errors.error_handler import get_handled_app_error
 from src.utils.response_builder import get_success_response
 from src.utils.utils import add_parser_argument
@@ -38,14 +38,15 @@ class LoginUser(Resource):
             device_id = data["Device-ID"]
             user = UserModel.get(email=data["email"])
 
-            if user and bcrypt.checkpw(data["password"].encode(), user.password.encode()):
-                if not user.is_approved:
-                    raise PendingApprovalError()
-                if not user.is_active:
-                    raise InactiveUserError()
-                response_data = create_response_data(device_id, user.dict())
-                return get_success_response(message=LOGGED_IN, data=response_data)
+            is_auth_valid = user and bcrypt.checkpw(data["password"].encode(), user.password.encode())
+            if not is_auth_valid:
+                raise InvalidCredentialsError()
+            if not user.is_approved:
+                raise PendingApprovalError()
+            if not user.is_active:
+                raise InactiveUserError()
+            response_data = create_response_data(device_id, user.dict())
+            return get_success_response(message=LOGGED_IN, data=response_data)
 
-            raise InvalidCredentialsError()
         except Exception as error:
             return get_handled_app_error(error)

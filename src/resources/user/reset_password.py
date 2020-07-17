@@ -8,9 +8,9 @@ from flask_restful import Resource
 from src.models.black_list import BlacklistModel as Blacklist
 from src.models.user import UserModel
 from src.resources.common import blacklist_token
-from src.utils.application_errors import ExpiredEmailedSignatureError
-from src.utils.application_errors import ReusePasswordError
 from src.utils.constant.response_messages import UPDATED_PASSWORD
+from src.utils.errors.application_errors import ExpiredEmailedSignatureError
+from src.utils.errors.application_errors import ReusePasswordError
 from src.utils.errors.error_handler import get_handled_app_error
 from src.utils.response_builder import get_success_response
 from src.utils.utils import add_parser_argument

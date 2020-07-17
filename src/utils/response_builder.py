@@ -1,5 +1,5 @@
 """Response Builder for the application"""
-from src.utils.errors_collection import errors_collection
+from src.utils.errors.errors_collection import errors_collection
 from src.utils.logger import error as log_error
 from src.utils.logger import info
 
