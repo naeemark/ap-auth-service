@@ -7,11 +7,14 @@ from flask_restful import reqparse
 from flask_restful import Resource
 from src.models.user import UserModel
 from src.resources.common import create_response_data
+from src.utils.application_errors import ErrorDeactivatedUser
 from src.utils.application_errors import ErrorPendingApproval
+from src.utils.constant.response_messages import ACCOUNT_NOT_ACTIVE
 from src.utils.constant.response_messages import ACCOUNT_NOT_APPROVED
 from src.utils.constant.response_messages import DATABASE_CONNECTION
 from src.utils.constant.response_messages import INVALID_CREDENTIAL
 from src.utils.constant.response_messages import LOGGED_IN
+from src.utils.errors_collection import inactive_user_401
 from src.utils.errors_collection import invalid_credentials_401
 from src.utils.errors_collection import pending_approval_401
 from src.utils.response_builder import get_error_response
@@ -45,6 +48,8 @@ class LoginUser(Resource):
             if user and bcrypt.checkpw(data["password"].encode(), user.password.encode()):
                 if not user.is_approved:
                     raise ErrorPendingApproval()
+                if not user.is_active:
+                    raise ErrorDeactivatedUser()
                 response_data = create_response_data(device_id, user.dict())
                 return get_success_response(message=LOGGED_IN, data=response_data)
 
@@ -56,3 +61,5 @@ class LoginUser(Resource):
             return get_error_response(status_code=400, message=str(lookup_error))
         except ErrorPendingApproval:
             return get_error_response(status_code=401, message=ACCOUNT_NOT_APPROVED, error=pending_approval_401)
+        except ErrorDeactivatedUser:
+            return get_error_response(status_code=401, message=ACCOUNT_NOT_ACTIVE, error=inactive_user_401)
