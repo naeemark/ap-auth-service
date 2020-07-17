@@ -34,3 +34,13 @@ def get_error_response(status_code=500, message="Something bad happened!", error
     }
     log_error(error)
     return error, status_code
+
+
+def get_app_error_response(application_error=None):
+    """
+    Returns error stub
+        :param error:   An ApplicationError object
+
+        :return: an error dict, status code
+    """
+    return get_error_response(status_code=application_error.status_code, message=application_error.message, error=application_error.error)

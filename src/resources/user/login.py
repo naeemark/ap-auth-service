@@ -2,22 +2,15 @@
   User Login Resource
 """
 import bcrypt
-from botocore.exceptions import ClientError
 from flask_restful import reqparse
 from flask_restful import Resource
 from src.models.user import UserModel
 from src.resources.common import create_response_data
 from src.utils.application_errors import InactiveUserError
+from src.utils.application_errors import InvalidCredentialsError
 from src.utils.application_errors import PendingApprovalError
-from src.utils.constant.response_messages import ACCOUNT_NOT_ACTIVE
-from src.utils.constant.response_messages import ACCOUNT_NOT_APPROVED
-from src.utils.constant.response_messages import DATABASE_CONNECTION
-from src.utils.constant.response_messages import INVALID_CREDENTIAL
 from src.utils.constant.response_messages import LOGGED_IN
-from src.utils.errors_collection import inactive_user_401
-from src.utils.errors_collection import invalid_credentials_401
-from src.utils.errors_collection import pending_approval_401
-from src.utils.response_builder import get_error_response
+from src.utils.errors.error_handler import get_handled_api_error
 from src.utils.response_builder import get_success_response
 from src.utils.utils import add_parser_argument
 from src.utils.utils import add_parser_headers_argument
@@ -53,13 +46,6 @@ class LoginUser(Resource):
                 response_data = create_response_data(device_id, user.dict())
                 return get_success_response(message=LOGGED_IN, data=response_data)
 
-            return get_error_response(status_code=401, message=INVALID_CREDENTIAL, error=invalid_credentials_401)
-        except (ClientError) as error:
-            error = DATABASE_CONNECTION if "ResourceNotFoundException" in str(error) else str(error)
-            return get_error_response(status_code=503, message=error)
-        except LookupError as lookup_error:
-            return get_error_response(status_code=400, message=str(lookup_error))
-        except PendingApprovalError:
-            return get_error_response(status_code=401, message=ACCOUNT_NOT_APPROVED, error=pending_approval_401)
-        except InactiveUserError:
-            return get_error_response(status_code=401, message=ACCOUNT_NOT_ACTIVE, error=inactive_user_401)
+            raise InvalidCredentialsError()
+        except Exception as error:
+            return get_handled_api_error(error)
