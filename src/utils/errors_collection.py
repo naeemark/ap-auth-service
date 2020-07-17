@@ -12,10 +12,16 @@ invalid_credentials_401 = {
     "description": "Seems the provided input is not validated by the system",
 }
 
-invalid_jwt_401 = {
+expired_jwt_401 = {
     "code": "UNAUTHORIZED",
     "title": "Invalid credentials provided",
     "description": "Seems the JWT Token has been revoked or expired",
+}
+
+invalid_jwt_401 = {
+    "code": "UNAUTHORIZED",
+    "title": "Invalid credentials provided",
+    "description": "Seems the `Authorization` does not contain required info",
 }
 
 inactive_user_401 = {
@@ -81,7 +87,7 @@ service_unavailable_503 = {
 unprocessable_entity_422 = {
     "code": "UNPROCESSABLE_ENTITY",
     "title": "Token Invalid",
-    "description": ("Request was well-formed but was unable to be followed due to semantic errors specify correct token"),
+    "description": "Request was well-formed but was unable to be followed due to semantic errors specify correct token",
 }
 
 precondition_failed_412 = {
@@ -98,7 +104,7 @@ email_not_valid_412 = {
 
 errors_collection = {
     400: bad_request_400,
-    401: invalid_jwt_401,
+    401: expired_jwt_401,
     404: not_found_404,
     409: user_conflict_409,
     412: precondition_failed_412,

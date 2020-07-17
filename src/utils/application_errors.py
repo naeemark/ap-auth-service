@@ -11,6 +11,7 @@ from src.utils.constant.response_messages import REUSE_PASSWORD_ERROR
 from src.utils.errors_collection import email_already_verified_409
 from src.utils.errors_collection import inactive_user_401
 from src.utils.errors_collection import invalid_credentials_401
+from src.utils.errors_collection import invalid_jwt_401
 from src.utils.errors_collection import pending_approval_401
 
 
@@ -23,7 +24,7 @@ class InvalidCredentialsError(ApplicationError):
 
 
 class InvalidJwtCredentialsError(ApplicationError):
-    status_code, message, error = 401, INVALID_JWT_TOKEN, invalid_credentials_401
+    status_code, message, error = 401, INVALID_JWT_TOKEN, invalid_jwt_401
 
 
 class InactiveUserError(ApplicationError):
