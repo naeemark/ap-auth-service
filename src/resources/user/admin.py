@@ -13,15 +13,9 @@ from src.utils.application_errors import UserNotFoundError
 from src.utils.constant.response_messages import GET_ALL_USERS
 from src.utils.constant.response_messages import GET_USER_BY_EMAIL
 from src.utils.constant.response_messages import TOGGLE_SUCCESS
-from src.utils.constant.response_messages import UNAUTHORIZED_REQUEST
-from src.utils.constant.response_messages import USER_ALREADY_APPROVED
 from src.utils.constant.response_messages import USER_APPROVED
-from src.utils.constant.response_messages import USER_NOT_FOUND
-from src.utils.errors_collection import already_approved_409
-from src.utils.errors_collection import inactive_user_401
-from src.utils.errors_collection import not_admin_401
-from src.utils.errors_collection import restricted_self_operation_401
-from src.utils.response_builder import get_error_response
+from src.utils.errors.error_handler import get_handled_app_error
+from src.utils.logger import info
 from src.utils.response_builder import get_success_response
 
 
@@ -34,23 +28,15 @@ class GetUsers(Resource):
         try:
             admin = get_jwt_identity()["user"]
 
-            if not admin["isActive"]:
-                raise InactiveUserError()
-            if not admin["isAdmin"]:
-                raise CallerIsNotAdminError()
+            is_authorized(admin=admin, target_email="admin@alethea.com")
 
             users = User.get_all()
             # removes self
             users_list = [user.dict() for user in users if user.email != admin["email"]]
-
+            info(f"Users Retrieved: {len(users_list)}")
             return get_success_response(message=GET_ALL_USERS, data=users_list)
-        except LookupError as error:
-            message = str(error).strip("'")
-            return get_error_response(status_code=400, message=message)
-        except InactiveUserError:
-            return get_error_response(status_code=401, message=UNAUTHORIZED_REQUEST, error=inactive_user_401)
-        except CallerIsNotAdminError:
-            return get_error_response(status_code=401, message=UNAUTHORIZED_REQUEST, error=not_admin_401)
+        except Exception as error:
+            return get_handled_app_error(error)
 
 
 class GetUserByEmail(Resource):
@@ -61,30 +47,15 @@ class GetUserByEmail(Resource):
         """ Get All Users """
         try:
             admin = get_jwt_identity()["user"]
-
-            if not admin["isActive"]:
-                raise InactiveUserError()
-            if not admin["isAdmin"]:
-                raise CallerIsNotAdminError()
-            if admin["email"] == email:
-                raise CannotPerformSelfOperationError()
+            is_authorized(admin=admin, target_email=email)
 
             user = User.get(email=email)
             if not user:
                 raise UserNotFoundError()
 
             return get_success_response(message=GET_USER_BY_EMAIL, data=user.dict())
-        except LookupError as error:
-            message = str(error).strip("'")
-            return get_error_response(status_code=400, message=message)
-        except InactiveUserError:
-            return get_error_response(status_code=401, message=UNAUTHORIZED_REQUEST, error=inactive_user_401)
-        except CallerIsNotAdminError:
-            return get_error_response(status_code=401, message=UNAUTHORIZED_REQUEST, error=not_admin_401)
-        except CannotPerformSelfOperationError:
-            return get_error_response(status_code=401, message=UNAUTHORIZED_REQUEST, error=restricted_self_operation_401)
-        except UserNotFoundError:
-            return get_error_response(status_code=404, message=USER_NOT_FOUND)
+        except Exception as error:
+            return get_handled_app_error(error)
 
 
 class ApproveUser(Resource):
@@ -95,13 +66,7 @@ class ApproveUser(Resource):
         """ Approve User """
         try:
             admin = get_jwt_identity()["user"]
-
-            if not admin["isActive"]:
-                raise InactiveUserError()
-            if not admin["isAdmin"]:
-                raise CallerIsNotAdminError()
-            if admin["email"] == email:
-                raise CannotPerformSelfOperationError()
+            is_authorized(admin=admin, target_email=email)
 
             user = User.get(email=email)
             if not user:
@@ -112,19 +77,8 @@ class ApproveUser(Resource):
 
             user.update(is_approved=True)
             return get_success_response(message=USER_APPROVED)
-        except LookupError as error:
-            message = str(error).strip("'")
-            return get_error_response(status_code=400, message=message)
-        except InactiveUserError:
-            return get_error_response(status_code=401, message=UNAUTHORIZED_REQUEST, error=inactive_user_401)
-        except CallerIsNotAdminError:
-            return get_error_response(status_code=401, message=UNAUTHORIZED_REQUEST, error=not_admin_401)
-        except CannotPerformSelfOperationError:
-            return get_error_response(status_code=401, message=UNAUTHORIZED_REQUEST, error=restricted_self_operation_401)
-        except UserNotFoundError:
-            return get_error_response(status_code=404, message=USER_NOT_FOUND)
-        except UserAlreadyApprovedError:
-            return get_error_response(status_code=409, message=USER_ALREADY_APPROVED, error=already_approved_409)
+        except Exception as error:
+            return get_handled_app_error(error)
 
 
 class ToggelUserAccess(Resource):
@@ -135,13 +89,7 @@ class ToggelUserAccess(Resource):
         """ Approve User """
         try:
             admin = get_jwt_identity()["user"]
-
-            if not admin["isActive"]:
-                raise InactiveUserError()
-            if not admin["isAdmin"]:
-                raise CallerIsNotAdminError()
-            if admin["email"] == email:
-                raise CannotPerformSelfOperationError()
+            is_authorized(admin=admin, target_email=email)
 
             user = User.get(email=email)
             if not user:
@@ -149,14 +97,16 @@ class ToggelUserAccess(Resource):
             user.update(is_active=not user.is_active)
 
             return get_success_response(message=TOGGLE_SUCCESS)
-        except LookupError as error:
-            message = str(error).strip("'")
-            return get_error_response(status_code=400, message=message)
-        except InactiveUserError:
-            return get_error_response(status_code=401, message=UNAUTHORIZED_REQUEST, error=inactive_user_401)
-        except CallerIsNotAdminError:
-            return get_error_response(status_code=401, message=UNAUTHORIZED_REQUEST, error=not_admin_401)
-        except CannotPerformSelfOperationError:
-            return get_error_response(status_code=401, message=UNAUTHORIZED_REQUEST, error=restricted_self_operation_401)
-        except UserNotFoundError:
-            return get_error_response(status_code=404, message=USER_NOT_FOUND)
+        except Exception as error:
+            return get_handled_app_error(error)
+
+
+def is_authorized(admin=None, target_email=None):
+    """ validates if the admin is allowed for the actions """
+
+    if not admin["isActive"]:
+        raise InactiveUserError()
+    if not admin["isAdmin"]:
+        raise CallerIsNotAdminError()
+    if target_email and admin["email"] == target_email:
+        raise CannotPerformSelfOperationError()

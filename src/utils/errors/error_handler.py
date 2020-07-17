@@ -1,14 +1,22 @@
+# pylint: disable=bad-continuation
 """
   Api error Handler
 """
 from botocore.exceptions import ClientError
 from dynamorm.exceptions import HashKeyExists
 from email_validator import EmailNotValidError
+from src.utils.application_errors import CallerIsNotAdminError
+from src.utils.application_errors import CannotPerformSelfOperationError
 from src.utils.application_errors import EmailAlreadyVerifiedError
+from src.utils.application_errors import EmailNotRegisteredError
+from src.utils.application_errors import ExpiredEmailedSignatureError
 from src.utils.application_errors import InactiveUserError
 from src.utils.application_errors import InvalidCredentialsError
+from src.utils.application_errors import InvalidJwtCredentialsError
 from src.utils.application_errors import PendingApprovalError
 from src.utils.application_errors import ReusePasswordError
+from src.utils.application_errors import UserAlreadyApprovedError
+from src.utils.application_errors import UserNotFoundError
 from src.utils.constant.response_messages import DATABASE_CONNECTION
 from src.utils.constant.response_messages import DUPLICATE_USER
 from src.utils.errors_collection import email_not_valid_412
@@ -23,7 +31,23 @@ def get_handled_app_error(error=None):
         message = str(error).strip("'")
         return get_error_response(status_code=400, message=message)
 
-    if isinstance(error, (InactiveUserError, InvalidCredentialsError, PendingApprovalError, ReusePasswordError, EmailAlreadyVerifiedError)):
+    if isinstance(
+        error,
+        (
+            CallerIsNotAdminError,
+            CannotPerformSelfOperationError,
+            EmailAlreadyVerifiedError,
+            EmailNotRegisteredError,
+            ExpiredEmailedSignatureError,
+            InactiveUserError,
+            InvalidCredentialsError,
+            InvalidJwtCredentialsError,
+            PendingApprovalError,
+            ReusePasswordError,
+            UserAlreadyApprovedError,
+            UserNotFoundError,
+        ),
+    ):
         return get_app_error_response(error)
 
     if isinstance(error, HashKeyExists):
