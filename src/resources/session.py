@@ -10,7 +10,7 @@ from src.resources.common import blacklist_auth
 from src.resources.common import get_jwt_tokens
 from src.utils.constant.response_messages import REFRESH_SESSION
 from src.utils.constant.response_messages import VALIDATE_SESSION
-from src.utils.errors.error_handler import get_handled_api_error
+from src.utils.errors.error_handler import get_handled_app_error
 from src.utils.response_builder import get_success_response
 
 
@@ -27,7 +27,7 @@ class RefreshSession(Resource):
             blacklist_auth(get_jwt_claims())
             return get_success_response(message=REFRESH_SESSION, data=response_data)
         except Exception as error:
-            return get_handled_api_error(error)
+            return get_handled_app_error(error)
 
 
 class ValidateSession(Resource):

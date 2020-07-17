@@ -6,7 +6,7 @@ from flask_restful import reqparse
 from flask_restful import Resource
 from src.models.user import UserModel
 from src.utils.constant.response_messages import SUCCESS_USER_CREATION
-from src.utils.errors.error_handler import get_handled_api_error
+from src.utils.errors.error_handler import get_handled_app_error
 from src.utils.response_builder import get_success_response
 from src.utils.utils import add_parser_argument
 from src.validators.common import check_missing_properties
@@ -42,4 +42,4 @@ class RegisterUser(Resource):
             return get_success_response(status_code=201, message=SUCCESS_USER_CREATION)
 
         except Exception as error:
-            return get_handled_api_error(error)
+            return get_handled_app_error(error)

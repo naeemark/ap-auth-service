@@ -1,7 +1,6 @@
 """
     A misc utility file
 """
-import json
 from datetime import datetime
 
 from src.utils.logger import info
@@ -37,4 +36,4 @@ def log_request_info(request=None):
     if request:
         info("Request Path: {}".format(request.path))
         info("Request Headers:\n{}".format(str(request.headers).rstrip()))
-        info("Request Body: {}".format(json.loads(request.get_data().decode())))
+        info("Request Body: {}".format(request.get_data().decode()))

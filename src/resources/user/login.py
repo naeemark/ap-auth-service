@@ -10,7 +10,7 @@ from src.utils.application_errors import InactiveUserError
 from src.utils.application_errors import InvalidCredentialsError
 from src.utils.application_errors import PendingApprovalError
 from src.utils.constant.response_messages import LOGGED_IN
-from src.utils.errors.error_handler import get_handled_api_error
+from src.utils.errors.error_handler import get_handled_app_error
 from src.utils.response_builder import get_success_response
 from src.utils.utils import add_parser_argument
 from src.utils.utils import add_parser_headers_argument
@@ -48,4 +48,4 @@ class LoginUser(Resource):
 
             raise InvalidCredentialsError()
         except Exception as error:
-            return get_handled_api_error(error)
+            return get_handled_app_error(error)
