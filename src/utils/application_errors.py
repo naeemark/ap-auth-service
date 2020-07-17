@@ -1,3 +1,4 @@
+# pylint: disable=missing-class-docstring
 """
     Application Errors
 """
@@ -7,33 +8,33 @@ class ApplicationError(Exception):
     """ ApplicationError """
 
 
-class ErrorDeactivatedUser(ApplicationError):
-    """ ErrorDeactivatedUser """
+class InactiveUserError(ApplicationError):
+    pass
 
 
-class ErrorCallerIsNotAdmin(ApplicationError):
-    """ ErrorCallerIsNotAdmin """
+class CallerIsNotAdminError(ApplicationError):
+    pass
 
 
-class ErrorPendingApproval(ApplicationError):
-    """ ErrorPendingApproval """
+class PendingApprovalError(ApplicationError):
+    pass
 
 
-class ErrorUserAlreadyApproved(ApplicationError):
-    """ ErrorUserAlreadyApproved """
+class UserAlreadyApprovedError(ApplicationError):
+    pass
 
 
-class ErrorUserNotFound(ApplicationError):
-    """ ErrorUserNotFound """
+class UserNotFoundError(ApplicationError):
+    pass
 
 
-class ErrorUserNotApprovedYet(ApplicationError):
-    """ ErrorUserNotApprovedYet """
+class UserNotApprovedYetError(ApplicationError):
+    pass
 
 
-class ErrorEmailAlreadyVerified(ApplicationError):
-    """ ErrorUserNotApprovedYet """
+class EmailAlreadyVerifiedError(ApplicationError):
+    pass
 
 
-class ErrorCannotPerformSelfOperation(ApplicationError):
-    """ ErrorCannotPerformSelfOperation """
+class CannotPerformSelfOperationError(ApplicationError):
+    pass

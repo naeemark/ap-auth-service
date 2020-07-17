@@ -7,8 +7,8 @@ from flask_restful import reqparse
 from flask_restful import Resource
 from src.models.user import UserModel
 from src.resources.common import create_response_data
-from src.utils.application_errors import ErrorDeactivatedUser
-from src.utils.application_errors import ErrorPendingApproval
+from src.utils.application_errors import InactiveUserError
+from src.utils.application_errors import PendingApprovalError
 from src.utils.constant.response_messages import ACCOUNT_NOT_ACTIVE
 from src.utils.constant.response_messages import ACCOUNT_NOT_APPROVED
 from src.utils.constant.response_messages import DATABASE_CONNECTION
@@ -47,9 +47,9 @@ class LoginUser(Resource):
 
             if user and bcrypt.checkpw(data["password"].encode(), user.password.encode()):
                 if not user.is_approved:
-                    raise ErrorPendingApproval()
+                    raise PendingApprovalError()
                 if not user.is_active:
-                    raise ErrorDeactivatedUser()
+                    raise InactiveUserError()
                 response_data = create_response_data(device_id, user.dict())
                 return get_success_response(message=LOGGED_IN, data=response_data)
 
@@ -59,7 +59,7 @@ class LoginUser(Resource):
             return get_error_response(status_code=503, message=error)
         except LookupError as lookup_error:
             return get_error_response(status_code=400, message=str(lookup_error))
-        except ErrorPendingApproval:
+        except PendingApprovalError:
             return get_error_response(status_code=401, message=ACCOUNT_NOT_APPROVED, error=pending_approval_401)
-        except ErrorDeactivatedUser:
+        except InactiveUserError:
             return get_error_response(status_code=401, message=ACCOUNT_NOT_ACTIVE, error=inactive_user_401)

@@ -6,7 +6,7 @@ from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 from src.models.user import UserModel as User
 from src.resources.common import get_web_auth_jwt_token
-from src.utils.application_errors import ErrorEmailAlreadyVerified
+from src.utils.application_errors import EmailAlreadyVerifiedError
 from src.utils.constant.response_messages import EMAIL_ALREADY_VERIFIED
 from src.utils.constant.response_messages import INVALID_JWT_TOKEN
 from src.utils.constant.response_messages import VERIFY_EMAIL_LINK_SENT
@@ -37,7 +37,7 @@ class InitVerifyEmail(Resource):
             user = User.get(email=email)
 
             if user.is_email_verified:
-                raise ErrorEmailAlreadyVerified()
+                raise EmailAlreadyVerifiedError()
 
             jwt_token = get_web_auth_jwt_token({"email": email})
             send_account_verification_email(email=email, auth_key=jwt_token)
@@ -45,5 +45,5 @@ class InitVerifyEmail(Resource):
         except LookupError as error:
             message = str(error).strip("'")
             return get_error_response(status_code=400, message=message)
-        except ErrorEmailAlreadyVerified:
+        except EmailAlreadyVerifiedError:
             return get_error_response(status_code=409, message=EMAIL_ALREADY_VERIFIED, error=email_already_verified_409)

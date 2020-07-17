@@ -5,11 +5,11 @@ from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 from src.models.user import UserModel as User
-from src.utils.application_errors import ErrorCallerIsNotAdmin
-from src.utils.application_errors import ErrorCannotPerformSelfOperation
-from src.utils.application_errors import ErrorDeactivatedUser
-from src.utils.application_errors import ErrorUserAlreadyApproved
-from src.utils.application_errors import ErrorUserNotFound
+from src.utils.application_errors import CallerIsNotAdminError
+from src.utils.application_errors import CannotPerformSelfOperationError
+from src.utils.application_errors import InactiveUserError
+from src.utils.application_errors import UserAlreadyApprovedError
+from src.utils.application_errors import UserNotFoundError
 from src.utils.constant.response_messages import GET_ALL_USERS
 from src.utils.constant.response_messages import GET_USER_BY_EMAIL
 from src.utils.constant.response_messages import TOGGLE_SUCCESS
@@ -35,9 +35,9 @@ class GetUsers(Resource):
             admin = get_jwt_identity()["user"]
 
             if not admin["isActive"]:
-                raise ErrorDeactivatedUser()
+                raise InactiveUserError()
             if not admin["isAdmin"]:
-                raise ErrorCallerIsNotAdmin()
+                raise CallerIsNotAdminError()
 
             users = User.get_all()
             # removes self
@@ -47,9 +47,9 @@ class GetUsers(Resource):
         except LookupError as error:
             message = str(error).strip("'")
             return get_error_response(status_code=400, message=message)
-        except ErrorDeactivatedUser:
+        except InactiveUserError:
             return get_error_response(status_code=401, message=UNAUTHORIZED_REQUEST, error=inactive_user_401)
-        except ErrorCallerIsNotAdmin:
+        except CallerIsNotAdminError:
             return get_error_response(status_code=401, message=UNAUTHORIZED_REQUEST, error=not_admin_401)
 
 
@@ -63,27 +63,27 @@ class GetUserByEmail(Resource):
             admin = get_jwt_identity()["user"]
 
             if not admin["isActive"]:
-                raise ErrorDeactivatedUser()
+                raise InactiveUserError()
             if not admin["isAdmin"]:
-                raise ErrorCallerIsNotAdmin()
+                raise CallerIsNotAdminError()
             if admin["email"] == email:
-                raise ErrorCannotPerformSelfOperation()
+                raise CannotPerformSelfOperationError()
 
             user = User.get(email=email)
             if not user:
-                raise ErrorUserNotFound()
+                raise UserNotFoundError()
 
             return get_success_response(message=GET_USER_BY_EMAIL, data=user.dict())
         except LookupError as error:
             message = str(error).strip("'")
             return get_error_response(status_code=400, message=message)
-        except ErrorDeactivatedUser:
+        except InactiveUserError:
             return get_error_response(status_code=401, message=UNAUTHORIZED_REQUEST, error=inactive_user_401)
-        except ErrorCallerIsNotAdmin:
+        except CallerIsNotAdminError:
             return get_error_response(status_code=401, message=UNAUTHORIZED_REQUEST, error=not_admin_401)
-        except ErrorCannotPerformSelfOperation:
+        except CannotPerformSelfOperationError:
             return get_error_response(status_code=401, message=UNAUTHORIZED_REQUEST, error=restricted_self_operation_401)
-        except ErrorUserNotFound:
+        except UserNotFoundError:
             return get_error_response(status_code=404, message=USER_NOT_FOUND)
 
 
@@ -97,33 +97,33 @@ class ApproveUser(Resource):
             admin = get_jwt_identity()["user"]
 
             if not admin["isActive"]:
-                raise ErrorDeactivatedUser()
+                raise InactiveUserError()
             if not admin["isAdmin"]:
-                raise ErrorCallerIsNotAdmin()
+                raise CallerIsNotAdminError()
             if admin["email"] == email:
-                raise ErrorCannotPerformSelfOperation()
+                raise CannotPerformSelfOperationError()
 
             user = User.get(email=email)
             if not user:
-                raise ErrorUserNotFound()
+                raise UserNotFoundError()
 
             if user.is_approved:
-                raise ErrorUserAlreadyApproved()
+                raise UserAlreadyApprovedError()
 
             user.update(is_approved=True)
             return get_success_response(message=USER_APPROVED)
         except LookupError as error:
             message = str(error).strip("'")
             return get_error_response(status_code=400, message=message)
-        except ErrorDeactivatedUser:
+        except InactiveUserError:
             return get_error_response(status_code=401, message=UNAUTHORIZED_REQUEST, error=inactive_user_401)
-        except ErrorCallerIsNotAdmin:
+        except CallerIsNotAdminError:
             return get_error_response(status_code=401, message=UNAUTHORIZED_REQUEST, error=not_admin_401)
-        except ErrorCannotPerformSelfOperation:
+        except CannotPerformSelfOperationError:
             return get_error_response(status_code=401, message=UNAUTHORIZED_REQUEST, error=restricted_self_operation_401)
-        except ErrorUserNotFound:
+        except UserNotFoundError:
             return get_error_response(status_code=404, message=USER_NOT_FOUND)
-        except ErrorUserAlreadyApproved:
+        except UserAlreadyApprovedError:
             return get_error_response(status_code=409, message=USER_ALREADY_APPROVED, error=already_approved_409)
 
 
@@ -137,26 +137,26 @@ class ToggelUserAccess(Resource):
             admin = get_jwt_identity()["user"]
 
             if not admin["isActive"]:
-                raise ErrorDeactivatedUser()
+                raise InactiveUserError()
             if not admin["isAdmin"]:
-                raise ErrorCallerIsNotAdmin()
+                raise CallerIsNotAdminError()
             if admin["email"] == email:
-                raise ErrorCannotPerformSelfOperation()
+                raise CannotPerformSelfOperationError()
 
             user = User.get(email=email)
             if not user:
-                raise ErrorUserNotFound()
+                raise UserNotFoundError()
             user.update(is_active=not user.is_active)
 
             return get_success_response(message=TOGGLE_SUCCESS)
         except LookupError as error:
             message = str(error).strip("'")
             return get_error_response(status_code=400, message=message)
-        except ErrorDeactivatedUser:
+        except InactiveUserError:
             return get_error_response(status_code=401, message=UNAUTHORIZED_REQUEST, error=inactive_user_401)
-        except ErrorCallerIsNotAdmin:
+        except CallerIsNotAdminError:
             return get_error_response(status_code=401, message=UNAUTHORIZED_REQUEST, error=not_admin_401)
-        except ErrorCannotPerformSelfOperation:
+        except CannotPerformSelfOperationError:
             return get_error_response(status_code=401, message=UNAUTHORIZED_REQUEST, error=restricted_self_operation_401)
-        except ErrorUserNotFound:
+        except UserNotFoundError:
             return get_error_response(status_code=404, message=USER_NOT_FOUND)
