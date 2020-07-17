@@ -1,7 +1,10 @@
 """
     A misc utility file
 """
+import json
 from datetime import datetime
+
+from src.utils.logger import info
 
 
 def add_parser_headers_argument(parser=None, arg_name=None, arg_type=str, location="headers"):
@@ -27,3 +30,11 @@ def get_epoch_utc_timestamp():
 def get_epoch_timestamp():
     """Returns a local epoch timestamp"""
     return int(datetime.now().timestamp())
+
+
+def log_request_info(request=None):
+    """ logs request attributes """
+    if request:
+        info("Request Path: {}".format(request.path))
+        info("Request Headers:\n{}".format(str(request.headers).rstrip()))
+        info("Request Body: {}".format(json.loads(request.get_data().decode())))
