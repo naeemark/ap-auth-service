@@ -9,8 +9,8 @@ from datetime import timedelta
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import create_refresh_token
 from src.models.black_list import BlacklistModel as Blacklist
-from src.utils.logger import error as log_error
-from src.utils.logger import info
+from src.utils.logger import log_error
+from src.utils.logger import log_info
 from src.utils.utils import get_epoch_timestamp
 
 
@@ -31,11 +31,11 @@ def get_jwt_tokens(payload=None):
     """creates and return jwt token in a dictionary"""
 
     user_claims = get_user_claim()
-    info(user_claims)
+    log_info(user_claims)
     access_token = create_access_token(identity=payload, fresh=True, user_claims=user_claims)
     refresh_token = create_refresh_token(identity=payload, user_claims=user_claims)
     tokens_dict = {"accessToken": access_token, "refreshToken": refresh_token}
-    info(tokens_dict)
+    log_info(tokens_dict)
     return tokens_dict
 
 
@@ -47,7 +47,7 @@ def get_web_auth_jwt_token(payload=None):
     user_claims = {"access_token_id": str(uuid.uuid4()), "expires_access_at": int(expires_at.timestamp())}
 
     jwt_token = create_access_token(identity=payload, expires_delta=expires_delta, user_claims=user_claims)
-    info(jwt_token)
+    log_info(jwt_token)
     return jwt_token
 
 

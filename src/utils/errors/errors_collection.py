@@ -66,6 +66,12 @@ user_conflict_409 = {
     "description": "A user with that identity already exists",
 }
 
+entity_conflict_409 = {
+    "code": "CONFLICT",
+    "title": "Entity already Exists",
+    "description": "An entity with the same identity already exists",
+}
+
 already_approved_409 = {
     "code": "CONFLICT",
     "title": "User already Approved",
@@ -106,7 +112,7 @@ errors_collection = {
     400: bad_request_400,
     401: expired_jwt_401,
     404: not_found_404,
-    409: user_conflict_409,
+    409: entity_conflict_409,
     412: precondition_failed_412,
     422: unprocessable_entity_422,
     500: uncaught,

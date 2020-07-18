@@ -2,10 +2,12 @@
   User Register Resource
 """
 import bcrypt
+from dynamorm.exceptions import HashKeyExists
 from flask_restful import reqparse
 from flask_restful import Resource
 from src.models.user import UserModel
 from src.utils.constant.response_messages import SUCCESS_USER_CREATION
+from src.utils.errors.application_errors import EmailAlreadyExistError
 from src.utils.errors.error_handler import get_handled_app_error
 from src.utils.response_builder import get_success_response
 from src.utils.utils import add_parser_argument
@@ -41,5 +43,7 @@ class RegisterUser(Resource):
             user.save()
             return get_success_response(status_code=201, message=SUCCESS_USER_CREATION)
 
+        except HashKeyExists:
+            return get_handled_app_error(EmailAlreadyExistError())
         except Exception as error:
             return get_handled_app_error(error)

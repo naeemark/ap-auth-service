@@ -1,6 +1,7 @@
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
+from src.resources.analysis_profile import AnalysisProfile
 from src.resources.common import is_token_blacklisted
 from src.resources.health import Health
 from src.resources.session import RefreshSession
@@ -84,6 +85,9 @@ def initialize_resources(app):
     api.add_resource(ResetPassword, "/user/resetPassword")
     api.add_resource(InitVerifyEmail, "/user/initVerifyEmail")
     api.add_resource(VerifyEmail, "/user/verifyEmail")
+
+    # Adds resources for Analysis Profile
+    api.add_resource(AnalysisProfile, "/analysisProfile")
 
     # Adds Admin API Endpoints
     api.add_resource(GetUsers, "/admin/users")

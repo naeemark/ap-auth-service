@@ -4,7 +4,7 @@
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource
-from src.models.user import UserModel as User
+from src.models.user import UserModel
 from src.utils.constant.response_messages import GET_ALL_USERS
 from src.utils.constant.response_messages import GET_USER_BY_EMAIL
 from src.utils.constant.response_messages import TOGGLE_SUCCESS
@@ -15,7 +15,7 @@ from src.utils.errors.application_errors import InactiveUserError
 from src.utils.errors.application_errors import UserAlreadyApprovedError
 from src.utils.errors.application_errors import UserNotFoundError
 from src.utils.errors.error_handler import get_handled_app_error
-from src.utils.logger import info
+from src.utils.logger import log_info
 from src.utils.response_builder import get_success_response
 
 
@@ -30,10 +30,10 @@ class GetUsers(Resource):
 
             is_authorized(admin=admin)
 
-            users = User.get_all()
+            users = UserModel.get_all()
             # removes self
             users_list = [user.dict() for user in users if user.email != admin["email"]]
-            info(f"Users Retrieved: {len(users_list)}")
+            log_info(f"Users Retrieved: {len(users_list)}")
             return get_success_response(message=GET_ALL_USERS, data=users_list)
         except Exception as error:
             return get_handled_app_error(error)
@@ -49,7 +49,7 @@ class GetUserByEmail(Resource):
             admin = get_jwt_identity()["user"]
             is_authorized(admin=admin, target_email=email)
 
-            user = User.get(email=email)
+            user = UserModel.get(email=email)
             if not user:
                 raise UserNotFoundError()
 
@@ -68,7 +68,7 @@ class ApproveUser(Resource):
             admin = get_jwt_identity()["user"]
             is_authorized(admin=admin, target_email=email)
 
-            user = User.get(email=email)
+            user = UserModel.get(email=email)
             if not user:
                 raise UserNotFoundError()
 
@@ -91,7 +91,7 @@ class ToggelUserAccess(Resource):
             admin = get_jwt_identity()["user"]
             is_authorized(admin=admin, target_email=email)
 
-            user = User.get(email=email)
+            user = UserModel.get(email=email)
             if not user:
                 raise UserNotFoundError()
             user.update(is_active=not user.is_active)
