@@ -3,11 +3,13 @@
 """
 import uuid
 
+from dynamorm.exceptions import HashKeyExists
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from flask_restful import reqparse
 from flask_restful import Resource
 from src.models.analysis_profile import AnalysisProfileModel
+from src.utils.errors.application_errors import AnalysisProfileAlreadyExistError
 from src.utils.errors.error_handler import get_handled_app_error
 from src.utils.response_builder import get_success_response
 from src.utils.utils import add_parser_argument
@@ -40,5 +42,7 @@ class AnalysisProfile(Resource):
             )
             analysis_profile.save()
             return get_success_response(data=analysis_profile.dict())
+        except HashKeyExists:
+            return get_handled_app_error(AnalysisProfileAlreadyExistError())
         except Exception as error:
             return get_handled_app_error(error)

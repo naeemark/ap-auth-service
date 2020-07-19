@@ -10,7 +10,7 @@ from src.utils.logger import log_info
 from src.utils.utils import get_epoch_utc_timestamp
 
 SLUG_ENTITY_HASH_KEY = "#AP-ANALYSIS-PROFILE#"
-SLUG_ENTITY_SORT_KEY = "#ANLS-PRF#{}#"
+SLUG_ENTITY_SORT_KEY = "#ANLS-PRF#USR#{}#"
 
 
 class AnalysisProfileModel(DynaModel):

@@ -66,6 +66,12 @@ user_conflict_409 = {
     "description": "A user with that identity already exists",
 }
 
+analysis_profile_forbidden_403 = {
+    "code": "FORBIDDEN",
+    "title": "Analysis Profile already Exists",
+    "description": "An Analysis Profile for the user already exists",
+}
+
 entity_conflict_409 = {
     "code": "CONFLICT",
     "title": "Entity already Exists",

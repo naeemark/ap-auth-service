@@ -4,6 +4,7 @@
 """
 from src.utils.constant.response_messages import ACCOUNT_NOT_ACTIVE
 from src.utils.constant.response_messages import ACCOUNT_NOT_APPROVED
+from src.utils.constant.response_messages import DUPLICATE_ANALYSIS_PROFILE
 from src.utils.constant.response_messages import DUPLICATE_ENTITY_ERROR
 from src.utils.constant.response_messages import DUPLICATE_USER
 from src.utils.constant.response_messages import EMAIL_ALREADY_VERIFIED
@@ -16,6 +17,7 @@ from src.utils.constant.response_messages import UNAUTHORIZED_REQUEST
 from src.utils.constant.response_messages import USER_ALREADY_APPROVED
 from src.utils.constant.response_messages import USER_NOT_FOUND
 from src.utils.errors.errors_collection import already_approved_409
+from src.utils.errors.errors_collection import analysis_profile_forbidden_403
 from src.utils.errors.errors_collection import email_already_verified_409
 from src.utils.errors.errors_collection import entity_conflict_409
 from src.utils.errors.errors_collection import inactive_user_401
@@ -73,6 +75,10 @@ class ReusePasswordError(ApplicationError):
 
 class EmailAlreadyExistError(ApplicationError):
     status_code, message, error = 409, DUPLICATE_USER, user_conflict_409
+
+
+class AnalysisProfileAlreadyExistError(ApplicationError):
+    status_code, message, error = 403, DUPLICATE_ANALYSIS_PROFILE, analysis_profile_forbidden_403
 
 
 class EntityAlreadyExistError(ApplicationError):
