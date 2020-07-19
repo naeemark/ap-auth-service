@@ -10,7 +10,7 @@ from src.utils.logger import log_info
 from src.utils.utils import get_epoch_utc_timestamp
 
 SLUG_ENTITY_HASH_KEY = "#AP-ANALYSIS-PROFILE#"
-SLUG_ENTITY_SORT_KEY = "#ANS-PRF#{}#"
+SLUG_ENTITY_SORT_KEY = "#ANLS-PRF#{}#"
 
 
 class AnalysisProfileModel(DynaModel):
@@ -28,7 +28,7 @@ class AnalysisProfileModel(DynaModel):
 
     def __init__(self, **kwargs):
         self.entity_hash_key = SLUG_ENTITY_HASH_KEY
-        self.entity_sort_key = SLUG_ENTITY_SORT_KEY.format(kwargs.get("analysis_profile_id"))
+        self.entity_sort_key = SLUG_ENTITY_SORT_KEY.format(kwargs.get("created_by"))
         self.analysis_profile_id = kwargs.get("analysis_profile_id")
         self.zignal_profile_id = kwargs.get("zignal_profile_id", None)
         self.zignal_profile_json = kwargs.get("zignal_profile_json", None)
