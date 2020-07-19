@@ -141,6 +141,24 @@ class GetAnalysisProfileById(Resource):
             return get_handled_app_error(error)
 
 
+class DeleteAnalysisProfileById(Resource):
+    """ Resource GetAnalysisProfileById """
+
+    @jwt_required
+    def delete(self, analysis_profile_id=None):
+        """ Get GetAnalysisProfileById """
+        try:
+            admin = get_jwt_identity()["user"]
+            is_authorized(admin=admin)
+
+            analysis_profile = get_analysis_profile(analysis_profile_id=analysis_profile_id)
+            analysis_profile.delete()
+
+            return get_success_response(message="Analysis Profile Deleted")
+        except Exception as error:
+            return get_handled_app_error(error)
+
+
 class ApproveAnalysisProfile(Resource):
     """ Resource ApproveAnalysisProfile """
 

@@ -8,6 +8,7 @@ from src.resources.session import RefreshSession
 from src.resources.session import ValidateSession
 from src.resources.user.admin import ApproveAnalysisProfile
 from src.resources.user.admin import ApproveUser
+from src.resources.user.admin import DeleteAnalysisProfileById
 from src.resources.user.admin import GetAnalysisProfileById
 from src.resources.user.admin import GetAnalysisProfiles
 from src.resources.user.admin import GetUserByEmail
@@ -104,6 +105,7 @@ def initialize_resources(app):
     api.add_resource(GetAnalysisProfileById, "/admin/analysisProfiles/<analysis_profile_id>")
     api.add_resource(ApproveAnalysisProfile, "/admin/analysisProfiles/<analysis_profile_id>/approve")
     api.add_resource(ToggelAnalysisProfileStatus, "/admin/analysisProfiles/<analysis_profile_id>/toggleAccess")
+    api.add_resource(DeleteAnalysisProfileById, "/admin/analysisProfiles/<analysis_profile_id>")
 
     # Adds resources for Auth Entity
     api.add_resource(RefreshSession, "/session/refresh")
