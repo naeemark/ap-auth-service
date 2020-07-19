@@ -33,6 +33,8 @@ class AnalysisProfileModel(DynaModel):
         self.zignal_profile_id = kwargs.get("zignal_profile_id", None)
         self.zignal_profile_json = kwargs.get("zignal_profile_json", None)
         self.created_by = kwargs.get("created_by")
+        self.is_active = kwargs.get("is_active", True)
+        self.is_approved = kwargs.get("is_approved", False)
         self.created_at = int(kwargs.get("created_at", get_epoch_utc_timestamp()))
         self.updated_at = int(kwargs.get("updated_at", get_epoch_utc_timestamp()))
 
@@ -44,7 +46,9 @@ class AnalysisProfileModel(DynaModel):
         analysis_profile_id = fields.String(required=True)
         zignal_profile_id = fields.String(required=False)
         zignal_profile_json = fields.Mapping(required=False)
-        created_by = fields.String(required=True, unique=True)
+        created_by = fields.String(required=True)
+        is_active = fields.Boolean(default=True)
+        is_approved = fields.Boolean(default=False)
         created_at = fields.Integer()
         updated_at = fields.Integer()
 
@@ -73,6 +77,8 @@ class AnalysisProfileModel(DynaModel):
             "zignalProfileId": self.zignal_profile_id,
             "zignalProfileJson": self.zignal_profile_json,
             "createdBy": self.created_by,
+            "isActive": self.is_active,
+            "isApproved": self.is_approved,
             "createdAt": self.created_at,
             "updatedAt": self.updated_at,
         }

@@ -12,6 +12,7 @@ from src.utils.constant.response_messages import EMAIL_NOT_FOUND
 from src.utils.constant.response_messages import INVALID_CREDENTIAL
 from src.utils.constant.response_messages import INVALID_JWT_TOKEN
 from src.utils.constant.response_messages import LINK_EXPIRED_ERROR
+from src.utils.constant.response_messages import RESOURCE_NOT_FOUND
 from src.utils.constant.response_messages import REUSE_PASSWORD_ERROR
 from src.utils.constant.response_messages import UNAUTHORIZED_REQUEST
 from src.utils.constant.response_messages import USER_ALREADY_APPROVED
@@ -91,3 +92,7 @@ class UserAlreadyApprovedError(ApplicationError):
 
 class UserNotFoundError(ApplicationError):
     status_code, message, error = 404, USER_NOT_FOUND, None
+
+
+class ResourceNotFoundError(ApplicationError):
+    status_code, message, error = 404, RESOURCE_NOT_FOUND, None

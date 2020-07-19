@@ -10,6 +10,7 @@ from flask_restful import reqparse
 from flask_restful import Resource
 from src.models.analysis_profile import AnalysisProfileModel
 from src.utils.errors.application_errors import AnalysisProfileAlreadyExistError
+from src.utils.errors.application_errors import ResourceNotFoundError
 from src.utils.errors.error_handler import get_handled_app_error
 from src.utils.response_builder import get_success_response
 from src.utils.utils import add_parser_argument
@@ -45,5 +46,18 @@ class AnalysisProfile(Resource):
             return get_success_response(data=analysis_profile.dict())
         except HashKeyExists:
             return get_handled_app_error(AnalysisProfileAlreadyExistError())
+        except Exception as error:
+            return get_handled_app_error(error)
+
+    @jwt_required
+    def get(self):
+        """ Gets Analysis Profile """
+        try:
+            user = get_jwt_identity()["user"]
+            analysis_profile = AnalysisProfileModel.get(email=user["email"])
+
+            if not analysis_profile:
+                raise ResourceNotFoundError()
+            return get_success_response(data=analysis_profile.dict())
         except Exception as error:
             return get_handled_app_error(error)
