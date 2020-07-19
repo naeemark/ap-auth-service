@@ -29,7 +29,7 @@ class AnalysisProfile(Resource):
         """ Gets Analysis Profile """
         try:
             user = get_jwt_identity()["user"]
-            analysis_profile = AnalysisProfileModel.get(email=user["email"])
+            analysis_profile = AnalysisProfileModel.get(created_by=user["email"])
 
             if not analysis_profile:
                 raise ResourceNotFoundError()
@@ -77,7 +77,7 @@ class AnalysisProfile(Resource):
             check_missing_properties(data.items())
             zignal_profile_json = data["zignalProfile"]
 
-            analysis_profile = AnalysisProfileModel.get(email=user["email"])
+            analysis_profile = AnalysisProfileModel.get(created_by=user["email"])
 
             if not analysis_profile or data["analysisProfileId"] != analysis_profile.analysis_profile_id:
                 raise ResourceNotFoundError()
@@ -92,7 +92,7 @@ class AnalysisProfile(Resource):
         """ Gets Analysis Profile """
         try:
             user = get_jwt_identity()["user"]
-            analysis_profile = AnalysisProfileModel.get(email=user["email"])
+            analysis_profile = AnalysisProfileModel.get(created_by=user["email"])
             if not analysis_profile:
                 raise ResourceNotFoundError()
             analysis_profile.delete()

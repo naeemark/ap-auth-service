@@ -12,6 +12,7 @@ from src.utils.constant.response_messages import EMAIL_NOT_FOUND
 from src.utils.constant.response_messages import INVALID_CREDENTIAL
 from src.utils.constant.response_messages import INVALID_JWT_TOKEN
 from src.utils.constant.response_messages import LINK_EXPIRED_ERROR
+from src.utils.constant.response_messages import RESOURCE_ALREADY_APPROVED
 from src.utils.constant.response_messages import RESOURCE_NOT_FOUND
 from src.utils.constant.response_messages import REUSE_PASSWORD_ERROR
 from src.utils.constant.response_messages import UNAUTHORIZED_REQUEST
@@ -26,6 +27,7 @@ from src.utils.errors.errors_collection import invalid_credentials_401
 from src.utils.errors.errors_collection import invalid_jwt_401
 from src.utils.errors.errors_collection import not_admin_401
 from src.utils.errors.errors_collection import pending_approval_401
+from src.utils.errors.errors_collection import resource_already_approved_409
 from src.utils.errors.errors_collection import restricted_self_operation_401
 from src.utils.errors.errors_collection import user_conflict_409
 
@@ -88,6 +90,10 @@ class EntityAlreadyExistError(ApplicationError):
 
 class UserAlreadyApprovedError(ApplicationError):
     status_code, message, error = 409, USER_ALREADY_APPROVED, already_approved_409
+
+
+class ResourceAlreadyApprovedError(ApplicationError):
+    status_code, message, error = 409, RESOURCE_ALREADY_APPROVED, resource_already_approved_409
 
 
 class UserNotFoundError(ApplicationError):

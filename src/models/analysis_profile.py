@@ -61,9 +61,14 @@ class AnalysisProfileModel(DynaModel):
         super(AnalysisProfileModel, self).update(updated_at=get_epoch_utc_timestamp(), **kwargs)
 
     @classmethod
-    def get(cls, email=None):
+    def get(cls, created_by=None):
         """  Overridden Get """
-        return super(AnalysisProfileModel, cls).get(entity_hash_key=SLUG_ENTITY_HASH_KEY, entity_sort_key=SLUG_ENTITY_SORT_KEY.format(email))
+        return super(AnalysisProfileModel, cls).get(entity_hash_key=SLUG_ENTITY_HASH_KEY, entity_sort_key=SLUG_ENTITY_SORT_KEY.format(created_by))
+
+    @classmethod
+    def get_by_id(cls, analysis_profile_id=None):
+        """  Overridden Get """
+        return super(AnalysisProfileModel, cls).query(entity_hash_key=SLUG_ENTITY_HASH_KEY, analysis_profile_id=analysis_profile_id)
 
     @classmethod
     def get_all(cls):

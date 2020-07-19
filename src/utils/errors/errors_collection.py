@@ -84,6 +84,12 @@ already_approved_409 = {
     "description": "A user with that identity already approved",
 }
 
+resource_already_approved_409 = {
+    "code": "CONFLICT",
+    "title": "Resource already Approved",
+    "description": "A Resource with that identity already approved",
+}
+
 email_already_verified_409 = {
     "code": "CONFLICT",
     "title": "Email already Verified",

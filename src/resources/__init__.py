@@ -6,9 +6,13 @@ from src.resources.common import is_token_blacklisted
 from src.resources.health import Health
 from src.resources.session import RefreshSession
 from src.resources.session import ValidateSession
+from src.resources.user.admin import ApproveAnalysisProfile
 from src.resources.user.admin import ApproveUser
+from src.resources.user.admin import GetAnalysisProfileById
+from src.resources.user.admin import GetAnalysisProfiles
 from src.resources.user.admin import GetUserByEmail
 from src.resources.user.admin import GetUsers
+from src.resources.user.admin import ToggelAnalysisProfileStatus
 from src.resources.user.admin import ToggelUserAccess
 from src.resources.user.change_password import ChangePassword
 from src.resources.user.get_user import GetUser
@@ -89,11 +93,17 @@ def initialize_resources(app):
     # Adds resources for Analysis Profile
     api.add_resource(AnalysisProfile, "/analysisProfile")
 
-    # Adds Admin API Endpoints
+    # Adds Admin API Endpoints for Users
     api.add_resource(GetUsers, "/admin/users")
     api.add_resource(GetUserByEmail, "/admin/users/<email>")
     api.add_resource(ApproveUser, "/admin/users/<email>/approve")
     api.add_resource(ToggelUserAccess, "/admin/users/<email>/toggleAccess")
+
+    # Adds Admin API Endpoints for Analysis Profiles
+    api.add_resource(GetAnalysisProfiles, "/admin/analysisProfiles")
+    api.add_resource(GetAnalysisProfileById, "/admin/analysisProfiles/<analysis_profile_id>")
+    api.add_resource(ApproveAnalysisProfile, "/admin/analysisProfiles/<analysis_profile_id>/approve")
+    api.add_resource(ToggelAnalysisProfileStatus, "/admin/analysisProfiles/<analysis_profile_id>/toggleAccess")
 
     # Adds resources for Auth Entity
     api.add_resource(RefreshSession, "/session/refresh")
