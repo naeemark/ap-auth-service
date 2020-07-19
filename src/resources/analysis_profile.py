@@ -26,7 +26,10 @@ class AnalysisProfile(Resource):
 
     @jwt_required
     def post(self):
-        """Returns new Tokens"""
+        """
+            Creates a new Analysis Profile
+            Each User is allowed to create only one Analysis Profile
+        """
         try:
             user = get_jwt_identity()["user"]
 
@@ -34,8 +37,6 @@ class AnalysisProfile(Resource):
             check_missing_properties(data.items())
 
             zignal_profile_json = data["zignalProfile"]
-
-            # To-do - make a check to create a single Zignal Profile for each user
 
             analysis_profile = AnalysisProfileModel(
                 analysis_profile_id=str(uuid.uuid4()), created_by=user["email"], zignal_profile_json=zignal_profile_json
