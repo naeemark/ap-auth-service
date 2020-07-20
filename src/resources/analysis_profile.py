@@ -16,8 +16,6 @@ from src.utils.response_builder import get_success_response
 from src.utils.utils import add_parser_argument
 from src.validators.common import check_missing_properties
 
-request_parser = RequestParser()
-
 
 class AnalysisProfile(Resource):
     """
@@ -43,7 +41,7 @@ class AnalysisProfile(Resource):
             Creates a new Analysis Profile
             Each User is allowed to create only one Analysis Profile
         """
-
+        request_parser = RequestParser()
         add_parser_argument(parser=request_parser, arg_name="zignalProfile", arg_type=dict)
         try:
             user = get_jwt_identity()["user"]
@@ -69,7 +67,7 @@ class AnalysisProfile(Resource):
             Creates a new Analysis Profile
             Each User is allowed to create only one Analysis Profile
         """
-
+        request_parser = RequestParser()
         add_parser_argument(parser=request_parser, arg_name="analysisProfileId")
         add_parser_argument(parser=request_parser, arg_name="zignalProfile", arg_type=dict)
         try:
