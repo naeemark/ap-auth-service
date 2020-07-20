@@ -5,7 +5,7 @@ from flask_jwt_extended import decode_token
 from flask_restful import reqparse
 from flask_restful import Resource
 from src.models.black_list import BlacklistModel as Blacklist
-from src.models.user import UserModel as User
+from src.models.user import UserModel
 from src.resources.common import blacklist_token
 from src.utils.constant.response_messages import VERIFIED_EMAIL
 from src.utils.errors.application_errors import ExpiredEmailedSignatureError
@@ -42,7 +42,7 @@ class VerifyEmail(Resource):
             if Blacklist.exists(token_id=token_id):
                 raise ExpiredEmailedSignatureError()
 
-            user = User.get(email=email)
+            user = UserModel.get(email=email)
             user.update(is_email_verified=True)
             blacklist_token(token_id=token_id, token_type="access", time_to_live=token_expiry)
 

@@ -4,7 +4,7 @@
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource
-from src.models.user import UserModel as User
+from src.models.user import UserModel
 from src.resources.common import get_web_auth_jwt_token
 from src.utils.constant.response_messages import VERIFY_EMAIL_LINK_SENT
 from src.utils.email_utils import send_account_verification_email
@@ -31,7 +31,7 @@ class InitVerifyEmail(Resource):
                 raise InvalidJwtCredentialsError()
 
             email = jwt_identity["user"]["email"]
-            user = User.get(email=email)
+            user = UserModel.get(email=email)
 
             if user.is_email_verified:
                 raise EmailAlreadyVerifiedError()

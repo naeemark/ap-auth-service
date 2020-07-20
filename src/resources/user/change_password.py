@@ -6,7 +6,7 @@ from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from flask_restful import reqparse
 from flask_restful import Resource
-from src.models.user import UserModel as User
+from src.models.user import UserModel
 from src.utils.constant.response_messages import UPDATED_PASSWORD
 from src.utils.errors.application_errors import InvalidJwtCredentialsError
 from src.utils.errors.application_errors import ReusePasswordError
@@ -42,7 +42,7 @@ class ChangePassword(Resource):
 
             new_password = data["newPassword"]
             validate_password_data_param(password_param=new_password)
-            user = User.get(email=email)
+            user = UserModel.get(email=email)
 
             if bcrypt.checkpw(new_password.encode(), user.password.encode()):
                 raise ReusePasswordError()

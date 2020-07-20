@@ -7,7 +7,7 @@ from dynamorm import DynaModel
 from email_validator import validate_email
 from marshmallow import fields
 from marshmallow import validates
-from src.utils.logger import info
+from src.utils.logger import log_info
 from src.utils.utils import get_epoch_utc_timestamp
 
 SLUG_ENTITY_HASH_KEY = "#AP-USER#"
@@ -101,4 +101,4 @@ class UserModel(DynaModel):
     def log(self, log_at=None):
         """  Logs Representation """
         log_data = f"{log_at} => {self}" if log_at else self
-        info(log_data)
+        log_info(log_data)

@@ -1,13 +1,19 @@
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
+from src.resources.analysis_profile import AnalysisProfile
 from src.resources.common import is_token_blacklisted
 from src.resources.health import Health
 from src.resources.session import RefreshSession
 from src.resources.session import ValidateSession
+from src.resources.user.admin import ApproveAnalysisProfile
 from src.resources.user.admin import ApproveUser
+from src.resources.user.admin import DeleteAnalysisProfileById
+from src.resources.user.admin import GetAnalysisProfileById
+from src.resources.user.admin import GetAnalysisProfiles
 from src.resources.user.admin import GetUserByEmail
 from src.resources.user.admin import GetUsers
+from src.resources.user.admin import ToggelAnalysisProfileStatus
 from src.resources.user.admin import ToggelUserAccess
 from src.resources.user.change_password import ChangePassword
 from src.resources.user.get_user import GetUser
@@ -61,7 +67,7 @@ def initialize_resources(app):
 
     initialize_jwt_manager(app)
 
-    api_prefix = "/api/v1"
+    api_prefix = "/api/auth"
 
     # Allow Origins
     CORS(app, resources={r"*": {"origins": "*"}})
@@ -73,27 +79,37 @@ def initialize_resources(app):
     api.add_resource(Health, "/health")
 
     # Adds resources for User Entity
-    api.add_resource(RegisterUser, "/user/register")
-    api.add_resource(LoginUser, "/user/login")
-    api.add_resource(ChangePassword, "/user/changePassword")
-    api.add_resource(LogoutUser, "/user/logout")
-    api.add_resource(GetUser, "/user")
+    api.add_resource(RegisterUser, "/v1/user/register")
+    api.add_resource(LoginUser, "/v1/user/login")
+    api.add_resource(ChangePassword, "/v1/user/changePassword")
+    api.add_resource(LogoutUser, "/v1/user/logout")
+    api.add_resource(GetUser, "/v1/user")
 
     # Adds resources for Auth Entity
-    api.add_resource(InitResetPassword, "/user/initResetPassword")
-    api.add_resource(ResetPassword, "/user/resetPassword")
-    api.add_resource(InitVerifyEmail, "/user/initVerifyEmail")
-    api.add_resource(VerifyEmail, "/user/verifyEmail")
+    api.add_resource(InitResetPassword, "/v1/user/initResetPassword")
+    api.add_resource(ResetPassword, "/v1/user/resetPassword")
+    api.add_resource(InitVerifyEmail, "/v1/user/initVerifyEmail")
+    api.add_resource(VerifyEmail, "/v1/user/verifyEmail")
 
-    # Adds Admin API Endpoints
-    api.add_resource(GetUsers, "/admin/users")
-    api.add_resource(GetUserByEmail, "/admin/users/<email>")
-    api.add_resource(ApproveUser, "/admin/users/<email>/approve")
-    api.add_resource(ToggelUserAccess, "/admin/users/<email>/toggleAccess")
+    # Adds resources for Analysis Profile
+    api.add_resource(AnalysisProfile, "/v1/analysisProfile")
+
+    # Adds Admin API Endpoints for Users
+    api.add_resource(GetUsers, "/v1/admin/users")
+    api.add_resource(GetUserByEmail, "/v1/admin/users/<email>")
+    api.add_resource(ApproveUser, "/v1/admin/users/<email>/approve")
+    api.add_resource(ToggelUserAccess, "/v1/admin/users/<email>/toggleAccess")
+
+    # Adds Admin API Endpoints for Analysis Profiles
+    api.add_resource(GetAnalysisProfiles, "/v1/admin/analysisProfiles")
+    api.add_resource(GetAnalysisProfileById, "/v1/admin/analysisProfiles/<analysis_profile_id>")
+    api.add_resource(ApproveAnalysisProfile, "/v1/admin/analysisProfiles/<analysis_profile_id>/approve")
+    api.add_resource(ToggelAnalysisProfileStatus, "/v1/admin/analysisProfiles/<analysis_profile_id>/toggleAccess")
+    api.add_resource(DeleteAnalysisProfileById, "/v1/admin/analysisProfiles/<analysis_profile_id>")
 
     # Adds resources for Auth Entity
-    api.add_resource(RefreshSession, "/session/refresh")
-    api.add_resource(ValidateSession, "/session/validate")
+    api.add_resource(RefreshSession, "/v1/session/refresh")
+    api.add_resource(ValidateSession, "/v1/session/validate")
 
     # Adding api-prefix for logging purposes
     app.config["API_PREFIX"] = api_prefix

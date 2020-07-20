@@ -4,7 +4,7 @@
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource
-from src.models.user import UserModel as User
+from src.models.user import UserModel
 from src.utils.constant.response_messages import GET_USER
 from src.utils.errors.application_errors import InvalidJwtCredentialsError
 from src.utils.errors.error_handler import get_handled_app_error
@@ -28,7 +28,7 @@ class GetUser(Resource):
                 raise InvalidJwtCredentialsError()
 
             email = jwt_identity["user"]["email"]
-            user = User.get(email=email)
+            user = UserModel.get(email=email)
             return get_success_response(message=GET_USER, data=user.dict())
         except Exception as error:
             return get_handled_app_error(error)

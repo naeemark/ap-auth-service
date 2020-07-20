@@ -66,10 +66,28 @@ user_conflict_409 = {
     "description": "A user with that identity already exists",
 }
 
+analysis_profile_forbidden_403 = {
+    "code": "FORBIDDEN",
+    "title": "Analysis Profile already Exists",
+    "description": "An Analysis Profile for the user already exists",
+}
+
+entity_conflict_409 = {
+    "code": "CONFLICT",
+    "title": "Entity already Exists",
+    "description": "An entity with the same identity already exists",
+}
+
 already_approved_409 = {
     "code": "CONFLICT",
     "title": "User already Approved",
     "description": "A user with that identity already approved",
+}
+
+resource_already_approved_409 = {
+    "code": "CONFLICT",
+    "title": "Resource already Approved",
+    "description": "A Resource with that identity already approved",
 }
 
 email_already_verified_409 = {
@@ -106,7 +124,7 @@ errors_collection = {
     400: bad_request_400,
     401: expired_jwt_401,
     404: not_found_404,
-    409: user_conflict_409,
+    409: entity_conflict_409,
     412: precondition_failed_412,
     422: unprocessable_entity_422,
     500: uncaught,

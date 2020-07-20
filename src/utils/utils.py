@@ -3,7 +3,7 @@
 """
 from datetime import datetime
 
-from src.utils.logger import info
+from src.utils.logger import log_info
 
 
 def add_parser_headers_argument(parser=None, arg_name=None, arg_type=str, location="headers"):
@@ -34,6 +34,6 @@ def get_epoch_timestamp():
 def log_request_info(request=None):
     """ logs request attributes """
     if request:
-        info("Request Path: {}".format(request.path))
-        info("Request Headers:\n{}".format(str(request.headers).rstrip()))
-        info("Request Body: {}".format(request.get_data().decode()))
+        log_info("Request Path: {}".format(request.path))
+        log_info("Request Headers:\n{}".format(str(request.headers).rstrip()))
+        log_info("Request Body: {}".format(request.get_data().decode()))
