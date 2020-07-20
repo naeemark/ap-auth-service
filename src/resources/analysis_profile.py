@@ -56,7 +56,7 @@ class AnalysisProfile(Resource):
                 analysis_profile_id=str(uuid.uuid4()), created_by=user["email"], zignal_profile_json=zignal_profile_json
             )
             analysis_profile.save()
-            return get_success_response(message="Create Analysis Profile", data=analysis_profile.dict())
+            return get_success_response(message="Create Analysis Profile", data={"analysisProfileId": analysis_profile.analysis_profile_id})
         except HashKeyExists:
             return get_handled_app_error(AnalysisProfileAlreadyExistError())
         except Exception as error:
