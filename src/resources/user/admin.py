@@ -116,7 +116,7 @@ class GetAnalysisProfiles(Resource):
             is_authorized(admin=admin)
 
             analysis_profiles = AnalysisProfileModel.get_all()
-            analysis_profiles_list = [analysis_profile.dict() for analysis_profile in analysis_profiles]
+            analysis_profiles_list = [analysis_profile.dict_minimal() for analysis_profile in analysis_profiles]
 
             log_info(f"AnalysisProfiles Retrieved: {len(analysis_profiles_list)}")
             return get_success_response(message="Get Analysis Profiles", data=analysis_profiles_list)

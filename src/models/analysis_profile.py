@@ -75,6 +75,17 @@ class AnalysisProfileModel(DynaModel):
         """  Get All """
         return super(AnalysisProfileModel, cls).query(entity_hash_key=SLUG_ENTITY_HASH_KEY)
 
+    def dict_minimal(self):
+        """  Coverts `self` to `dict` """
+        return {
+            "analysisProfileId": self.analysis_profile_id,
+            "createdBy": self.created_by,
+            "isActive": self.is_active,
+            "isApproved": self.is_approved,
+            "createdAt": self.created_at,
+            "updatedAt": self.updated_at,
+        }
+
     def dict(self):
         """  Coverts `self` to `dict` """
         return {
