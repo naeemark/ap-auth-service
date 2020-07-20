@@ -52,11 +52,12 @@ class AnalysisProfile(Resource):
             check_missing_properties(data.items())
             zignal_profile_json = data["zignalProfile"]
 
+            analysis_profile_id = str(uuid.uuid4())
             analysis_profile = AnalysisProfileModel(
-                analysis_profile_id=str(uuid.uuid4()), created_by=user["email"], zignal_profile_json=zignal_profile_json
+                analysis_profile_id=analysis_profile_id, created_by=user["email"], zignal_profile_json=zignal_profile_json
             )
             analysis_profile.save()
-            return get_success_response(message="Create Analysis Profile", data={"analysisProfileId": analysis_profile.analysis_profile_id})
+            return get_success_response(status_code=201, message="Analysis Profile Created", data={"analysisProfileId": analysis_profile_id})
         except HashKeyExists:
             return get_handled_app_error(AnalysisProfileAlreadyExistError())
         except Exception as error:
@@ -83,7 +84,7 @@ class AnalysisProfile(Resource):
                 raise ResourceNotFoundError()
 
             analysis_profile.update(zignal_profile_json=zignal_profile_json)
-            return get_success_response(message="Update Analysis Profile", data=analysis_profile.dict())
+            return get_success_response(message="Analysis Profile Updated")
         except Exception as error:
             return get_handled_app_error(error)
 

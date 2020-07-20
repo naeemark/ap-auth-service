@@ -175,7 +175,7 @@ class ApproveAnalysisProfile(Resource):
                 raise ResourceAlreadyApprovedError()
 
             analysis_profile.update(is_approved=True)
-            return get_success_response(message="Approved Analysis Profile")
+            return get_success_response(message="Analysis Profile Approved")
         except Exception as error:
             return get_handled_app_error(error)
 
