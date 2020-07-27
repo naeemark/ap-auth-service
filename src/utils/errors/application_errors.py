@@ -9,6 +9,7 @@ from src.utils.constant.response_messages import DUPLICATE_ENTITY_ERROR
 from src.utils.constant.response_messages import DUPLICATE_USER
 from src.utils.constant.response_messages import EMAIL_ALREADY_VERIFIED
 from src.utils.constant.response_messages import EMAIL_NOT_FOUND
+from src.utils.constant.response_messages import EXTERNAL_API_ERROR
 from src.utils.constant.response_messages import INVALID_CREDENTIAL
 from src.utils.constant.response_messages import INVALID_JWT_TOKEN
 from src.utils.constant.response_messages import LINK_EXPIRED_ERROR
@@ -22,6 +23,7 @@ from src.utils.errors.errors_collection import already_approved_409
 from src.utils.errors.errors_collection import analysis_profile_forbidden_403
 from src.utils.errors.errors_collection import email_already_verified_409
 from src.utils.errors.errors_collection import entity_conflict_409
+from src.utils.errors.errors_collection import external_api_error_400
 from src.utils.errors.errors_collection import inactive_user_401
 from src.utils.errors.errors_collection import invalid_credentials_401
 from src.utils.errors.errors_collection import invalid_jwt_401
@@ -102,3 +104,10 @@ class UserNotFoundError(ApplicationError):
 
 class ResourceNotFoundError(ApplicationError):
     status_code, message, error = 404, RESOURCE_NOT_FOUND, None
+
+
+class ExternalApiInvalidResponseError(ApplicationError):
+    def __init__(self, error=None):  # pylint: disable=super-init-not-called
+        self.status_code, self.message, self.error = 400, EXTERNAL_API_ERROR, external_api_error_400
+        if error:
+            self.error["title"] = error
