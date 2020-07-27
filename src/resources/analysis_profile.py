@@ -110,6 +110,16 @@ class AnalysisProfile(Resource):
             analysis_profile = AnalysisProfileModel.get(created_by=user["email"])
             if not analysis_profile:
                 raise ResourceNotFoundError()
+
+            # Delete Zignal Profile
+            parts = os.environ["ZIGNAL_CREATE_PROFILE_URL"].split("?")
+            delete_url = "{}/{}?{}".format(parts[0], analysis_profile.zignal_profile_id, parts[1])
+            result = requests.delete(delete_url)
+            result_json = json.loads(result.text)
+            log_info(result_json)
+            if result.status_code != 200:
+                raise ExternalApiInvalidResponseError("From Zignal: {}".format(result_json["error"]))
+
             analysis_profile.delete()
             return get_success_response(message="Delete Analysis Profile")
         except Exception as error:
