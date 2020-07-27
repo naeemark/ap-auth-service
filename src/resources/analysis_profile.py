@@ -97,6 +97,15 @@ class AnalysisProfile(Resource):
             if not analysis_profile or data["analysisProfileId"] != analysis_profile.analysis_profile_id:
                 raise ResourceNotFoundError()
 
+            # Delete Zignal Profile
+            parts = os.environ["ZIGNAL_CREATE_PROFILE_URL"].split("?")
+            put_url = "{}/{}?{}".format(parts[0], analysis_profile.zignal_profile_id, parts[1])
+            result = requests.put(put_url, json=zignal_profile_json)
+            result_json = json.loads(result.text)
+            log_info(result_json)
+            if result.status_code != 200:
+                raise ExternalApiInvalidResponseError("From Zignal: {}".format(result_json["error"]))
+
             analysis_profile.update(zignal_profile_json=zignal_profile_json)
             return get_success_response(message="Analysis Profile Updated")
         except Exception as error:
