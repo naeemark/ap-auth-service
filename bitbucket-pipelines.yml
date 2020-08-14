@@ -76,7 +76,7 @@ definitions:
           - SES_SOURCE_EMAIL=source@email.com
           - JWT_WEB_AUTH_TOKEN_EXPIRES_MINUTES=10
           - API_HOST_URL=http://localhost:5000
-          - ZIGNAL_CREATE_PROFILE_URL=http://zignal.api.com/createProfile
+          - ZIGNAL_UPDATE_PROFILE_URL=http://zignal.api.com/updateProfile
 
           - pip install pipenv
           - pipenv install --dev
