@@ -3,6 +3,7 @@
     Analysis Profile Model
 """
 import os
+import uuid
 
 from dynamorm import DynaModel
 from marshmallow import fields
@@ -84,6 +85,15 @@ class AnalysisProfileModel(DynaModel):
             "isApproved": self.is_approved,
             "createdAt": self.created_at,
             "updatedAt": self.updated_at,
+        }
+
+    def dict_analysis_payload(self):
+        """  Coverts `self` to `dict` """
+        return {
+            "analysisId": str(uuid.uuid4()),
+            "analysisProfileId": self.analysis_profile_id,
+            "analysisProfileOwnerEmail": self.created_by,
+            "zignalProfileJson": self.zignal_profile_json,
         }
 
     def dict(self):
