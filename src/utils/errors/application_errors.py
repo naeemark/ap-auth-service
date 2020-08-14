@@ -110,4 +110,4 @@ class ExternalApiInvalidResponseError(ApplicationError):
     def __init__(self, error=None):  # pylint: disable=super-init-not-called
         self.status_code, self.message, self.error = 400, EXTERNAL_API_ERROR, external_api_error_400
         if error:
-            self.error["title"] = error
+            self.error["description"] = error

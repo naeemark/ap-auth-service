@@ -1,20 +1,21 @@
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
+from src.resources.admin import AnalysisInitPayload
+from src.resources.admin import ApproveAnalysisProfile
+from src.resources.admin import ApproveUser
+from src.resources.admin import DeleteAnalysisProfileById
+from src.resources.admin import GetAnalysisProfileById
+from src.resources.admin import GetAnalysisProfiles
+from src.resources.admin import GetUserByEmail
+from src.resources.admin import GetUsers
+from src.resources.admin import ToggelAnalysisProfileStatus
+from src.resources.admin import ToggelUserAccess
 from src.resources.analysis_profile import AnalysisProfile
 from src.resources.common import is_token_blacklisted
 from src.resources.health import Health
 from src.resources.session import RefreshSession
 from src.resources.session import ValidateSession
-from src.resources.user.admin import ApproveAnalysisProfile
-from src.resources.user.admin import ApproveUser
-from src.resources.user.admin import DeleteAnalysisProfileById
-from src.resources.user.admin import GetAnalysisProfileById
-from src.resources.user.admin import GetAnalysisProfiles
-from src.resources.user.admin import GetUserByEmail
-from src.resources.user.admin import GetUsers
-from src.resources.user.admin import ToggelAnalysisProfileStatus
-from src.resources.user.admin import ToggelUserAccess
 from src.resources.user.change_password import ChangePassword
 from src.resources.user.get_user import GetUser
 from src.resources.user.init_reset_password import InitResetPassword
@@ -106,6 +107,7 @@ def initialize_resources(app):
     api.add_resource(ApproveAnalysisProfile, "/v1/admin/analysisProfiles/<analysis_profile_id>/approve")
     api.add_resource(ToggelAnalysisProfileStatus, "/v1/admin/analysisProfiles/<analysis_profile_id>/toggleAccess")
     api.add_resource(DeleteAnalysisProfileById, "/v1/admin/analysisProfiles/<analysis_profile_id>")
+    api.add_resource(AnalysisInitPayload, "/v1/admin/analysisProfiles/analysisInitPayload")
 
     # Adds resources for Auth Entity
     api.add_resource(RefreshSession, "/v1/session/refresh")

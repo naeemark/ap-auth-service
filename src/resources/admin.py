@@ -200,6 +200,30 @@ class ToggelAnalysisProfileStatus(Resource):
             return get_handled_app_error(error)
 
 
+class AnalysisInitPayload(Resource):
+    """ Resource AnalysisInitPayload """
+
+    @jwt_required
+    def get(self):
+        """ Returns AnalysisInitPayload """
+        try:
+            admin = get_jwt_identity()["user"]
+
+            is_authorized(admin=admin)
+
+            analysis_profiles = AnalysisProfileModel.get_all()
+
+            analysis_init_payload = []
+            for analysis_profile in analysis_profiles:
+                if analysis_profile.is_approved and analysis_profile.is_active:
+                    analysis_init_payload.append(analysis_profile.dict_analysis_payload())
+
+            log_info(f"Eligible AnalysisProfiles: {len(analysis_init_payload)}")
+            return get_success_response(message="Get Analysis Payload", data=analysis_init_payload)
+        except Exception as error:
+            return get_handled_app_error(error)
+
+
 def is_authorized(admin=None, target_email=None):
     """ Util: validates if the admin is allowed for the actions """
 
