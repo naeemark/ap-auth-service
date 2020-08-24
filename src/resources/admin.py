@@ -104,6 +104,27 @@ class ToggelUserAccess(Resource):
             return get_handled_app_error(error)
 
 
+class ToggelUser2Fa(Resource):
+    """ Resource Toggel2Fa """
+
+    @jwt_required
+    def get(self, email=None):
+        """ Toggel2Fa of the User """
+        try:
+            admin = get_jwt_identity()["user"]
+            is_authorized(admin=admin, target_email=email)
+
+            user = UserModel.get(email=email)
+            if not user:
+                raise UserNotFoundError()
+            user.update(is_2fa_enabled=not user.is_2fa_enabled)
+
+            message = "Target User's 2-FA is `{}` now".format("Enabled" if user.is_2fa_enabled else "Disabled")
+            return get_success_response(message=message)
+        except Exception as error:
+            return get_handled_app_error(error)
+
+
 class GetAnalysisProfiles(Resource):
     """ Resource GetAnalysisProfiles """
 

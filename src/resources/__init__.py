@@ -10,6 +10,7 @@ from src.resources.admin import GetAnalysisProfiles
 from src.resources.admin import GetUserByEmail
 from src.resources.admin import GetUsers
 from src.resources.admin import ToggelAnalysisProfileStatus
+from src.resources.admin import ToggelUser2Fa
 from src.resources.admin import ToggelUserAccess
 from src.resources.analysis_profile import AnalysisProfile
 from src.resources.common import is_token_blacklisted
@@ -24,6 +25,7 @@ from src.resources.user.login import LoginUser
 from src.resources.user.logout import LogoutUser
 from src.resources.user.register import RegisterUser
 from src.resources.user.reset_password import ResetPassword
+from src.resources.user.toggle_2fa import Toggel2Fa
 from src.resources.user.verify_email import VerifyEmail
 from src.utils.constant.response_messages import TOKEN_REVOKED
 from src.utils.response_builder import get_error_response
@@ -91,6 +93,7 @@ def initialize_resources(app):
     api.add_resource(ResetPassword, "/v1/user/resetPassword")
     api.add_resource(InitVerifyEmail, "/v1/user/initVerifyEmail")
     api.add_resource(VerifyEmail, "/v1/user/verifyEmail")
+    api.add_resource(Toggel2Fa, "/v1/user/toggle2fa")
 
     # Adds resources for Analysis Profile
     api.add_resource(AnalysisProfile, "/v1/analysisProfile")
@@ -100,6 +103,7 @@ def initialize_resources(app):
     api.add_resource(GetUserByEmail, "/v1/admin/users/<email>")
     api.add_resource(ApproveUser, "/v1/admin/users/<email>/approve")
     api.add_resource(ToggelUserAccess, "/v1/admin/users/<email>/toggleAccess")
+    api.add_resource(ToggelUser2Fa, "/v1/admin/users/<email>/toggle2fa")
 
     # Adds Admin API Endpoints for Analysis Profiles
     api.add_resource(GetAnalysisProfiles, "/v1/admin/analysisProfiles")
