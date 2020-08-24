@@ -26,6 +26,8 @@ from src.resources.user.logout import LogoutUser
 from src.resources.user.register import RegisterUser
 from src.resources.user.reset_password import ResetPassword
 from src.resources.user.toggle_2fa import Toggel2Fa
+from src.resources.user.two_factor_auth import Pair2Fa
+from src.resources.user.two_factor_auth import Validate2Fa
 from src.resources.user.verify_email import VerifyEmail
 from src.utils.constant.response_messages import TOKEN_REVOKED
 from src.utils.response_builder import get_error_response
@@ -93,6 +95,8 @@ def initialize_resources(app):
     api.add_resource(ResetPassword, "/v1/user/resetPassword")
     api.add_resource(InitVerifyEmail, "/v1/user/initVerifyEmail")
     api.add_resource(VerifyEmail, "/v1/user/verifyEmail")
+    api.add_resource(Pair2Fa, "/v1/user/pair2fa")
+    api.add_resource(Validate2Fa, "/v1/user/validate2fa/<code>")
     api.add_resource(Toggel2Fa, "/v1/user/toggle2fa")
 
     # Adds resources for Analysis Profile
