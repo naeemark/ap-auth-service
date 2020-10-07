@@ -87,14 +87,9 @@ class AnalysisProfileModel(DynaModel):
             "updatedAt": self.updated_at,
         }
 
-    def dict_analysis_payload(self):
+    def dict_init_analysis_payload(self):
         """  Coverts `self` to `dict` """
-        return {
-            "analysisId": str(uuid.uuid4()),
-            "analysisProfileId": self.analysis_profile_id,
-            "analysisProfileOwnerEmail": self.created_by,
-            "zignalProfileJson": self.zignal_profile_json,
-        }
+        return {"analysisId": str(uuid.uuid4()), "analysisProfileId": self.analysis_profile_id, "analysisProfileOwnerEmail": self.created_by}
 
     def dict(self):
         """  Coverts `self` to `dict` """
